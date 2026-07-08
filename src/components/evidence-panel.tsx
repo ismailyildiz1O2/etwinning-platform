@@ -135,13 +135,14 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
         });
 
         if (!res.ok) {
-          throw new Error("Dosya yüklenemedi");
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Dosya yüklenemedi");
         }
 
         toast.success(`"${file.name}" yüklendi`);
         onUpdate();
       } catch (error) {
-        toast.error("Dosya yüklenemedi");
+        toast.error(error instanceof Error ? error.message : "Dosya yüklenemedi");
       } finally {
         setUploading(false);
       }
