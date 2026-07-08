@@ -171,7 +171,7 @@ export default function ProjectDetailPage() {
         <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-2">
           Aşamalar
         </p>
-        {project.phases
+        {[...project.phases]
           .sort((a, b) => a.order - b.order)
           .map((phase) => {
             const phaseCompleted =
@@ -410,7 +410,7 @@ export default function ProjectDetailPage() {
           {/* Main Content Areas */}
           {activeTab === "tasks" && (
             <div className="space-y-4">
-              {project.phases
+              {[...project.phases]
                 .sort((a, b) => a.order - b.order)
                 .map((phase) => (
                   <PhaseCard
