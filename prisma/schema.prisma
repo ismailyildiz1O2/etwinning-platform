@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String          @id @default(cuid())
+  name      String
+  email     String?         @unique
+  username  String?         @unique
+  password  String?
+  image     String?
+  role      String          @default("teacher")
+  language  String          @default("en")
+  projects  ProjectMember[]
+  tasks     Task[]          @relation("AssignedTasks")
+  notes     Note[]
+  accounts  Account[]
+  sessions  Session[]
+  createdAt DateTime        @default(now())
+  deletedAt DateTime?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  name           String
+  description    String?
+  status         String          @default("active")
+  language       String          @default("TR")
+  startDate      DateTime
+  endDate        DateTime
+  country        String?
+  partnerSchools String          @default("[]")
+  twinspaceUrl   String?
+  members        ProjectMember[]
+  phases         Phase[]
+  notes          Note[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
+}
+
+model ProjectMember {
+  id        String    @id @default(cuid())
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      String    @default("member")
+  invitedAt DateTime  @default(now())
+  joinedAt  DateTime?
+
+  @@unique([projectId, userId])
+}
+
+model Phase {
+  id          String    @id @default(cuid())
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  title       String
+  description String?
+  order       Int
+  startDate   DateTime?
+  endDate     DateTime?
+  tasks       Task[]
+  isCompleted Boolean   @default(false)
+  color       String?
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  phase       Phase     @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId     String
+  title       String
+  description String?
+  isCompleted Boolean   @default(false)
+  priority    String    @default("medium")
+  tags        String    @default("[]")
+  dueDate     DateTime?
+  alarmDate   DateTime?
+  alarmSent   Boolean   @default(false)
+  assignee    User?     @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  assigneeId  String?
+  parentId    String?
+  parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subTasks    Task[]    @relation("SubTasks")
+  files       File[]
+  notes       Note[]
+  aiGenerated Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model File {
+  id         String   @id @default(cuid())
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId     String
+  name       String
+  url        String
+  publicId   String
+  fileType   String
+  tags       String   @default("[]") // JSON string for Quality Label tags
+  isExternal Boolean  @default(false)
+  externalUrl String?
+  uploadedAt DateTime @default(now())
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  projectId  String
+  userId     String
+  action     String
+  entityType String
+  entityId   String
+  metadata   String?
+  createdAt  DateTime @default(now())
+}
