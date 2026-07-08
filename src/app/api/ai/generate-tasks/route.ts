@@ -72,9 +72,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    // If we have an Anthropic API key, use Claude for AI generation
+    // If we have an API key, use Gemini for AI generation
     if (apiKey) {
       try {
         const productLabels: Record<string, string> = {
@@ -115,38 +115,22 @@ JSON formatı:
   ]
 }`;
 
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 2000,
-            system: systemPrompt,
-            messages: [{ role: "user", content: userPrompt }],
-          }),
-        });
+        const { generateContentWithGemini } = await import("@/lib/ai");
+        const content = await generateContentWithGemini(userPrompt, systemPrompt);
 
-        if (response.ok) {
-          const data = await response.json();
-          const content = data.content?.[0]?.text;
-          if (content) {
-            // Try to parse the JSON from AI response
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              return NextResponse.json({
-                phase2Tasks: parsed.phase2Tasks || [],
-                phase3Tasks: parsed.phase3Tasks || [],
-                source: "ai",
-              });
-            }
+        if (content) {
+          // Try to parse the JSON from AI response
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            return NextResponse.json({
+              phase2Tasks: parsed.phase2Tasks || [],
+              phase3Tasks: parsed.phase3Tasks || [],
+              source: "ai",
+            });
           }
         }
-        // If AI fails, fall through to fallback
+        // If AI fails or returns invalid JSON, fall through to fallback
       } catch (aiError) {
         console.error("AI generation failed, using fallback:", aiError);
       }

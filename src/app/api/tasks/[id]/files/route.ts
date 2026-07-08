@@ -211,6 +211,14 @@ export async function POST(
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    // Check if Cloudinary is configured
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json(
+        { error: "Dosya yükleme henüz yapılandırılmadı. Lütfen Cloudinary ayarlarınızı kontrol edin." },
+        { status: 501 } // Not Implemented
+      );
+    }
+
     // Upload to Cloudinary via upload_stream
     const uploadResult = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(

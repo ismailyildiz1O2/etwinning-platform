@@ -183,9 +183,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    // If we have an Anthropic API key, use Claude for AI suggestions
+    // If we have an API key, use Gemini for AI suggestions
     if (apiKey) {
       try {
         const systemPrompt = `Sen bir eTwinning proje asistanısın. Öğretmenlere görev bazında pratik, uygulanabilir öneriler sunuyorsun.
@@ -217,45 +217,29 @@ JSON formatı:
   ]
 }`;
 
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1500,
-            system: systemPrompt,
-            messages: [{ role: "user", content: userPrompt }],
-          }),
-        });
+        const { generateContentWithGemini } = await import("@/lib/ai");
+        const content = await generateContentWithGemini(userPrompt, systemPrompt);
 
-        if (response.ok) {
-          const data = await response.json();
-          const content = data.content?.[0]?.text;
-          if (content) {
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              const suggestions: Suggestion[] = (parsed.suggestions || [])
-                .slice(0, 5)
-                .map((s: { text: string; type: string; icon: string }) => ({
-                  id: generateId(),
-                  text: s.text,
-                  type: s.type as Suggestion["type"],
-                  icon: s.icon || "💡",
-                }));
+        if (content) {
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            const suggestions: Suggestion[] = (parsed.suggestions || [])
+              .slice(0, 5)
+              .map((s: { text: string; type: string; icon: string }) => ({
+                id: generateId(),
+                text: s.text,
+                type: s.type as Suggestion["type"],
+                icon: s.icon || "💡",
+              }));
 
-              return NextResponse.json({
-                suggestions,
-                source: "ai",
-              });
-            }
+            return NextResponse.json({
+              suggestions,
+              source: "ai",
+            });
           }
         }
-        // If AI fails, fall through to fallback
+        // If AI fails or returns invalid JSON, fall through to fallback
       } catch (aiError) {
         console.error("AI suggestion generation failed, using fallback:", aiError);
       }
