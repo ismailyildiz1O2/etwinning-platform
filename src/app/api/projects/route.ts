@@ -153,30 +153,32 @@ export async function POST(request: NextRequest) {
         { ...PHASE_4_FIXED },
       ];
 
-      for (const phaseTemplate of allPhases) {
-        const phase = await prisma.phase.create({
-          data: {
-            projectId: project.id,
-            title: phaseTemplate.title,
-            description: phaseTemplate.description,
-            order: phaseTemplate.order,
-            color: phaseTemplate.color,
-          },
-        });
-
-        const tasks = phaseTemplate.tasks || [];
-        for (const taskTemplate of tasks) {
-          const isAiPhase = phaseTemplate.order === 2 || phaseTemplate.order === 3;
-          await prisma.task.create({
+      await Promise.all(
+        allPhases.map(async (phaseTemplate) => {
+          const phase = await prisma.phase.create({
             data: {
-              phaseId: phase.id,
-              title: taskTemplate.title,
-              priority: taskTemplate.priority,
-              aiGenerated: isAiPhase,
+              projectId: project.id,
+              title: phaseTemplate.title,
+              description: phaseTemplate.description,
+              order: phaseTemplate.order,
+              color: phaseTemplate.color,
             },
           });
-        }
-      }
+
+          const tasks = phaseTemplate.tasks || [];
+          if (tasks.length > 0) {
+            const isAiPhase = phaseTemplate.order === 2 || phaseTemplate.order === 3;
+            await prisma.task.createMany({
+              data: tasks.map((taskTemplate) => ({
+                phaseId: phase.id,
+                title: taskTemplate.title,
+                priority: taskTemplate.priority,
+                aiGenerated: isAiPhase,
+              })),
+            });
+          }
+        })
+      );
     }
 
     // Fetch the complete project with all relations

@@ -14,10 +14,12 @@ export function cn(...inputs: ClassValue[]): string {
  * Example: "8 Haziran 2026, Pazartesi"
  */
 export function formatDate(
-  date: string | Date,
+  date: string | Date | null | undefined,
   options?: Intl.DateTimeFormatOptions
 ): string {
+  if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "";
   const defaultOptions: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",
@@ -31,8 +33,10 @@ export function formatDate(
  * Format a date as a short Turkish date string.
  * Example: "08.06.2026"
  */
-export function formatShortDate(date: string | Date): string {
+export function formatShortDate(date: string | Date | null | undefined): string {
+  if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "";
   return d.toLocaleDateString("tr-TR", {
     year: "numeric",
     month: "2-digit",
@@ -44,8 +48,10 @@ export function formatShortDate(date: string | Date): string {
  * Get a human-readable relative time string in Turkish.
  * Examples: "az önce", "3 dakika önce", "2 saat önce", "dün", "3 gün önce"
  */
-export function getRelativeDate(date: string | Date): string {
+export function getRelativeDate(date: string | Date | null | undefined): string {
+  if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "";
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const diffSec = Math.floor(diffMs / 1000);
@@ -201,6 +207,7 @@ export function getDueDateColor(
 ): string {
   if (!dueDate) return "text-gray-400";
   const d = typeof dueDate === "string" ? new Date(dueDate) : dueDate;
+  if (isNaN(d.getTime())) return "text-gray-400";
   const now = new Date();
   const diffDays = Math.ceil(
     (d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
