@@ -62,14 +62,14 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    const projectsWithCounts = projects.map((project) => {
+    const projectsWithCounts = projects.map((project: any) => {
       const totalTasks = project.phases.reduce(
-        (sum, phase) => sum + phase._count.tasks,
+        (sum: number, phase: any) => sum + phase._count.tasks,
         0
       );
       const completedTasks = project.phases.reduce(
-        (sum, phase) =>
-          sum + phase.tasks.filter((t) => t.isCompleted).length,
+        (sum: number, phase: any) =>
+          sum + phase.tasks.filter((t: any) => t.isCompleted).length,
         0
       );
 
