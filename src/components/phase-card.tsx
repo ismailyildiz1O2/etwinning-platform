@@ -57,8 +57,8 @@ export function PhaseCard({
 }: PhaseCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const completedTasks = phase.tasks.filter((t) => t.isCompleted).length;
-  const totalTasks = phase.tasks.length;
+  const completedTasks = (phase.tasks || []).filter((t) => t.isCompleted).length;
+  const totalTasks = (phase.tasks || []).length;
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   const phaseColor = phaseColors[phase.order] || phaseColors[1];
@@ -149,8 +149,8 @@ export function PhaseCard({
         )}
       >
         <div className="px-6 pb-4 space-y-2">
-          {phase.tasks.length > 0 ? (
-            phase.tasks.map((task) => (
+          {(phase.tasks || []).length > 0 ? (
+            (phase.tasks || []).map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}

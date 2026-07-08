@@ -431,7 +431,7 @@ export default function ProjectDetailPage() {
           {activeTab === "calendar" && (
             <div className="space-y-4">
               <CalendarView
-                tasks={(project?.phases || []).flatMap((p: any) => p.tasks)}
+                tasks={(project?.phases || []).flatMap((p: any) => p.tasks || [])}
                 onTaskClick={handleTaskClick}
               />
             </div>

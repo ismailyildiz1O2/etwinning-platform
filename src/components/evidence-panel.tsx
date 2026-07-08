@@ -32,7 +32,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
   // Collect all files from all tasks
   const allFiles: any[] = [];
   (project?.phases || []).forEach((phase: any) => {
-    phase.tasks.forEach((task: any) => {
+    (phase.tasks || []).forEach((task: any) => {
       if (task.files) {
         task.files.forEach((file: any) => {
           allFiles.push({
