@@ -2,8 +2,8 @@
 
 import { QUALITY_LABEL_CRITERIA } from "@/lib/constants";
 import { cn, formatDate } from "@/lib/utils";
-import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2, Upload } from "lucide-react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 
 interface EvidencePanelProps {
@@ -28,6 +28,8 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
   const [linkName, setLinkName] = useState("");
   const [linkTags, setLinkTags] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   // Collect all files from all tasks
   const allFiles: any[] = [];
@@ -103,6 +105,53 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const firstTask = project.phases[0]?.tasks[0];
+    if (!firstTask) {
+      toast.error("Lütfen önce bir görev oluşturun.");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const filesToUpload = Array.from(fileList);
+
+    for (const file of filesToUpload) {
+      if (file.size > maxSize) {
+        toast.error(`"${file.name}" dosyası 10MB'dan büyük`);
+        continue;
+      }
+
+      setUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`/api/tasks/${firstTask.id}/files`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          throw new Error("Dosya yüklenemedi");
+        }
+
+        toast.success(`"${file.name}" yüklendi`);
+        onUpdate();
+      } catch (error) {
+        toast.error("Dosya yüklenemedi");
+      } finally {
+        setUploading(false);
+      }
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleDeleteFile = async (e: React.MouseEvent, taskId: string, fileId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -150,13 +199,31 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             </button>
           ))}
         </div>
-        <button
-          onClick={() => setIsAddingLink(!isAddingLink)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg text-xs font-medium transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Dış Bağlantı Ekle
-        </button>
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+          >
+            {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+            Dosya Yükle
+          </button>
+          <button
+            onClick={() => setIsAddingLink(!isAddingLink)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg text-xs font-medium transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Dış Bağlantı Ekle
+          </button>
+        </div>
       </div>
 
       {isAddingLink && (
