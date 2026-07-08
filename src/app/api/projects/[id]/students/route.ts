@@ -68,7 +68,7 @@ export async function POST(
     const hashedPassword = await hash(password, 12);
 
     // Run in transaction to ensure both user creation and project member addition succeed
-    const newStudent = await prisma.$transaction(async (tx) => {
+    const newStudent = await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.create({
         data: {
           name,
