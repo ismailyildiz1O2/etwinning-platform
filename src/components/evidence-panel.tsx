@@ -31,7 +31,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
   // Collect all files from all tasks
   const allFiles: any[] = [];
-  project.phases.forEach((phase: any) => {
+  (project?.phases || []).forEach((phase: any) => {
     phase.tasks.forEach((task: any) => {
       if (task.files) {
         task.files.forEach((file: any) => {
@@ -50,8 +50,13 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
     if (filter === "all") return true;
     let fileTags: string[] = [];
     let taskTags: string[] = [];
-    try { fileTags = JSON.parse(file.tags || "[]"); } catch (e) {}
-    try { taskTags = file.taskTags || []; } catch (e) {}
+    try { 
+      const parsed = JSON.parse(file.tags || "[]");
+      fileTags = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {}
+    try { 
+      taskTags = Array.isArray(file.taskTags) ? file.taskTags : [];
+    } catch (e) {}
     return fileTags.includes(filter) || taskTags.includes(filter);
   });
 
@@ -236,8 +241,13 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             
             let fileTags: string[] = [];
             let taskTags: string[] = [];
-            try { fileTags = JSON.parse(file.tags || "[]"); } catch (e) {}
-            try { taskTags = file.taskTags || []; } catch (e) {}
+            try { 
+              const parsed = JSON.parse(file.tags || "[]");
+              fileTags = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {}
+            try { 
+              taskTags = Array.isArray(file.taskTags) ? file.taskTags : [];
+            } catch (e) {}
             const combinedTags = Array.from(new Set([...fileTags, ...taskTags]));
 
             return (
