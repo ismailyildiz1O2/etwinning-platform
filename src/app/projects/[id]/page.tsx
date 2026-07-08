@@ -138,18 +138,18 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const totalTasks = project.phases.reduce(
-    (sum, phase) => sum + phase.tasks.length,
+  const totalTasks = (project.phases || []).reduce(
+    (sum, phase) => sum + (phase.tasks || []).length,
     0
   );
-  const completedTasks = project.phases.reduce(
-    (sum, phase) => sum + phase.tasks.filter((t) => t.isCompleted).length,
+  const completedTasks = (project.phases || []).reduce(
+    (sum, phase) => sum + (phase.tasks || []).filter((t) => t.isCompleted).length,
     0
   );
   const progress =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  const projectMembers = project.members.map((m) => m.user);
+  const projectMembers = (project.members || []).map((m) => m.user);
   const isStudent = session?.user?.role === "student";
 
   return (
@@ -175,8 +175,8 @@ export default function ProjectDetailPage() {
           .sort((a, b) => a.order - b.order)
           .map((phase) => {
             const phaseCompleted =
-              phase.tasks.length > 0 &&
-              phase.tasks.every((t) => t.isCompleted);
+              (phase.tasks || []).length > 0 &&
+              (phase.tasks || []).every((t: any) => t.isCompleted);
             return (
               <button
                 key={phase.id}
