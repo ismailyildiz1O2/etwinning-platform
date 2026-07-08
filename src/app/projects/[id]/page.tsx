@@ -25,6 +25,7 @@ import {
   Wrench,
   NotebookText,
   ExternalLink,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -155,6 +156,18 @@ export default function ProjectDetailPage() {
     <div className="flex h-[calc(100vh-4rem)]">
       {/* Phase navigation sidebar */}
       <div className="hidden xl:flex flex-col w-56 border-r border-gray-200/80 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 shrink-0">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 px-3 py-2.5 mb-6 rounded-xl text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group"
+        >
+          <div className="w-6 h-6 rounded-md bg-gray-100 dark:bg-gray-900 flex items-center justify-center shrink-0 group-hover:bg-gray-200 dark:group-hover:bg-gray-800 transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+          </div>
+          <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
+            Ana Sayfaya Dön
+          </span>
+        </Link>
+
         <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-2">
           Aşamalar
         </p>

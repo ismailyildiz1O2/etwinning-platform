@@ -2,7 +2,7 @@
 
 import { QUALITY_LABEL_CRITERIA } from "@/lib/constants";
 import { cn, formatDate } from "@/lib/utils";
-import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check } from "lucide-react";
+import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -92,6 +92,27 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
       toast.error("Bağlantı eklenemedi.");
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleDeleteFile = async (e: React.MouseEvent, taskId: string, fileId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!confirm("Bu kanıtı silmek istediğinize emin misiniz?")) return;
+
+    try {
+      const res = await fetch(`/api/tasks/${taskId}/files`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileId }),
+      });
+
+      if (!res.ok) throw new Error();
+      toast.success("Kanıt başarıyla silindi");
+      onUpdate();
+    } catch {
+      toast.error("Kanıt silinemedi");
     }
   };
 
@@ -225,7 +246,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                   <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800", iconConfig.color)}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 pr-2">
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={file.name}>
                       {file.name}
                     </h3>
@@ -233,7 +254,16 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                       {file.taskTitle}
                     </p>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors shrink-0" />
+                  <div className="flex items-center gap-1 shrink-0">
+                    <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                    <button
+                      onClick={(e) => handleDeleteFile(e, file.taskId, file.id)}
+                      className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                      title="Sil"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
