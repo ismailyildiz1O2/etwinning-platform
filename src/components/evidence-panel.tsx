@@ -48,8 +48,11 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
   const filteredFiles = allFiles.filter(file => {
     if (filter === "all") return true;
-    const fileTags = JSON.parse(file.tags || "[]");
-    return fileTags.includes(filter) || file.taskTags.includes(filter);
+    let fileTags: string[] = [];
+    let taskTags: string[] = [];
+    try { fileTags = JSON.parse(file.tags || "[]"); } catch (e) {}
+    try { taskTags = file.taskTags || []; } catch (e) {}
+    return fileTags.includes(filter) || taskTags.includes(filter);
   });
 
   const handleAddLink = async () => {
@@ -231,18 +234,19 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             const iconConfig = isExternal ? FILE_TYPE_ICONS.link : (FILE_TYPE_ICONS[file.fileType] || FILE_TYPE_ICONS.document);
             const Icon = iconConfig.icon;
             
-            const fileTags = JSON.parse(file.tags || "[]");
-            const combinedTags = Array.from(new Set([...fileTags, ...file.taskTags]));
+            let fileTags: string[] = [];
+            let taskTags: string[] = [];
+            try { fileTags = JSON.parse(file.tags || "[]"); } catch (e) {}
+            try { taskTags = file.taskTags || []; } catch (e) {}
+            const combinedTags = Array.from(new Set([...fileTags, ...taskTags]));
 
             return (
-              <a
+              <div
                 key={file.id}
-                href={file.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all"
+                className="group flex flex-col p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all relative"
               >
-                <div className="flex items-start gap-3 mb-3">
+                <a href={file.url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-0 rounded-xl" aria-label={file.name} />
+                <div className="flex items-start gap-3 mb-3 relative z-10 pointer-events-none">
                   <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800", iconConfig.color)}>
                     <Icon className="w-5 h-5" />
                   </div>
@@ -254,8 +258,10 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                       {file.taskTitle}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                  <div className="flex items-center gap-1 shrink-0 pointer-events-auto">
+                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1">
+                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                    </a>
                     <button
                       onClick={(e) => handleDeleteFile(e, file.taskId, file.id)}
                       className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
@@ -266,7 +272,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                   </div>
                 </div>
                 
-                <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between relative z-10 pointer-events-none">
                   <span className="text-[10px] text-gray-400">{formatDate(file.uploadedAt)}</span>
                   <div className="flex -space-x-1">
                     {combinedTags.map((tagId: string) => {
@@ -282,7 +288,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                     })}
                   </div>
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>
