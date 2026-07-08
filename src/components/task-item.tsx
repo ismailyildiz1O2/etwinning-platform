@@ -111,7 +111,8 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
 
   let parsedTags: string[] = [];
   try {
-    parsedTags = task.tags ? JSON.parse(task.tags) : [];
+    const parsed = task.tags ? JSON.parse(task.tags) : [];
+    parsedTags = Array.isArray(parsed) ? parsed : [];
   } catch {
     parsedTags = [];
   }

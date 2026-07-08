@@ -146,7 +146,8 @@ export function TaskDrawer({
       setTagsInput(
         (() => {
           try {
-            return JSON.parse(data.tags || "[]").join(",");
+            const parsed = JSON.parse(data.tags || "[]");
+            return Array.isArray(parsed) ? parsed.join(",") : "";
           } catch {
             return "";
           }

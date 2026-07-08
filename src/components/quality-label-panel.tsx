@@ -24,7 +24,8 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
     project.phases.forEach((phase: any) => {
       phase.tasks.forEach((task: any) => {
         try {
-          const tags = JSON.parse(task.tags || "[]");
+          const parsed = JSON.parse(task.tags || "[]");
+          const tags = Array.isArray(parsed) ? parsed : [];
           if (tags.includes(criteria.id)) {
             taskCount++;
             // If the task has the tag, count its files
