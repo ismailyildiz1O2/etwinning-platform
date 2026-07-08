@@ -48,9 +48,9 @@ export async function POST(request: NextRequest) {
     const criteriaTags: Record<string, any[]> = {};
     QUALITY_LABEL_CRITERIA.forEach(c => criteriaTags[c.id] = []);
 
-    project.phases.forEach((phase) => {
+    project.phases.forEach((phase: any) => {
       projectContext += `- ${phase.title}\n`;
-      phase.tasks.forEach((task) => {
+      phase.tasks.forEach((task: any) => {
         projectContext += `  * Görev: ${task.title} (Durum: ${task.isCompleted ? 'Tamamlandı' : 'Devam Ediyor'})\n`;
         if (task.description) {
           projectContext += `    Açıklama: ${task.description}\n`;
