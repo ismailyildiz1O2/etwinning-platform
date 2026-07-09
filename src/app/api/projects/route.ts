@@ -153,6 +153,11 @@ export async function POST(request: NextRequest) {
         { ...PHASE_4_FIXED },
       ];
 
+      const startDateMs = new Date(startDate).getTime();
+      const endDateMs = new Date(endDate).getTime();
+      const totalDurationMs = Math.max(0, endDateMs - startDateMs);
+      const phaseDurationMs = totalDurationMs / 4;
+
       await Promise.all(
         allPhases.map(async (phaseTemplate) => {
           const phase = await prisma.phase.create({
@@ -168,13 +173,20 @@ export async function POST(request: NextRequest) {
           const tasks = phaseTemplate.tasks || [];
           if (tasks.length > 0) {
             const isAiPhase = phaseTemplate.order === 2 || phaseTemplate.order === 3;
+            const phaseStartMs = startDateMs + (phaseTemplate.order - 1) * phaseDurationMs;
+            const taskDurationMs = phaseDurationMs / tasks.length;
+
             await prisma.task.createMany({
-              data: tasks.map((taskTemplate) => ({
-                phaseId: phase.id,
-                title: taskTemplate.title,
-                priority: taskTemplate.priority,
-                aiGenerated: isAiPhase,
-              })),
+              data: tasks.map((taskTemplate, index) => {
+                const taskDueMs = phaseStartMs + (index + 1) * taskDurationMs;
+                return {
+                  phaseId: phase.id,
+                  title: taskTemplate.title,
+                  priority: taskTemplate.priority,
+                  aiGenerated: isAiPhase,
+                  dueDate: new Date(taskDueMs),
+                };
+              }),
             });
           }
         })
