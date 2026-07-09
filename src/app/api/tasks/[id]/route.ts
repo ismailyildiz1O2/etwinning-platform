@@ -166,7 +166,9 @@ export async function PUT(
     if (alarmDate !== undefined)
       updateData.alarmDate = alarmDate ? new Date(alarmDate) : null;
     if (assigneeId !== undefined) updateData.assigneeId = assigneeId || null;
-    if (tags !== undefined) updateData.tags = JSON.stringify(tags);
+    if (tags !== undefined) {
+      updateData.tags = typeof tags === "string" ? tags : JSON.stringify(tags);
+    }
     if (phaseId !== undefined) updateData.phaseId = phaseId;
 
     const task = await prisma.task.update({

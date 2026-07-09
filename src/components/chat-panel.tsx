@@ -235,6 +235,37 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                 ))}
               </div>
             </div>
+
+            <div>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase mb-1 px-2 mt-4">Öğrenciler</h3>
+              <div className="space-y-1">
+                {projectMembers.filter(m => m.role === "student").map((member: any) => (
+                  <div key={member.user.id} className="flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg group text-sm">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                        {member.user.image ? (
+                          <img src={member.user.image} alt="" className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          <span className="text-emerald-600 text-xs font-semibold">
+                            {member.user.name?.charAt(0) || "S"}
+                          </span>
+                        )}
+                      </div>
+                      <span className="truncate text-gray-700 dark:text-gray-300">{member.user.name}</span>
+                    </div>
+                    {member.user.id !== session?.user?.id && session?.user?.role !== "student" && (
+                      <button 
+                        onClick={() => setAssignPopoverUser(member.user)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                        title="Bu kişiye görev ata"
+                      >
+                        <CheckCircle className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

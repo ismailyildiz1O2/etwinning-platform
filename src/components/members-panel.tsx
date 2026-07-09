@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectId: string; projectMembers: any[]; onUpdate?: () => void }) {
   const { data: session } = useSession();
-  const isAdmin = session?.user?.role === "admin" || projectMembers.some(m => m.user.id === session?.user?.id && ["owner", "admin"].includes(m.role));
+  const isAdmin = session?.user?.role === "admin" || projectMembers.some(m => m.user.id === session?.user?.id && m.role !== "student");
 
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
