@@ -66,6 +66,7 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
       const res = await fetch(`/api/projects/${projectId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: studentName, 
           username: studentUsername, 
           password: studentPassword
@@ -89,6 +90,8 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
     } finally {
       setLoading(false);
     }
+  };
+
   const handleEditStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editStudentName || !editStudentUsername) return;
