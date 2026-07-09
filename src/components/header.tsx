@@ -15,6 +15,7 @@ import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { GlobalSettingsModal } from "./global-settings-modal";
 
@@ -176,11 +177,14 @@ export function Header({ onMenuToggle }: HeaderProps) {
           )}
         </div>
       </div>
-      <GlobalSettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-        defaultTab={settingsTab} 
-      />
+      {mounted && typeof document !== "undefined" && createPortal(
+        <GlobalSettingsModal 
+          isOpen={isSettingsOpen} 
+          onClose={() => setIsSettingsOpen(false)} 
+          defaultTab={settingsTab} 
+        />,
+        document.body
+      )}
     </header>
   );
 }

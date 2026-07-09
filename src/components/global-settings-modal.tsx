@@ -171,7 +171,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
       <div 
         className="absolute inset-0 bg-black/40 backdrop-blur-sm dark:bg-black/60"
         onClick={onClose}
