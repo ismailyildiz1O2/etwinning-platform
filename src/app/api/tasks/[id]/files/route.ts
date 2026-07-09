@@ -376,3 +376,85 @@ export async function DELETE(
     );
   }
 }
+
+// PATCH /api/tasks/[id]/files - Update a file (tags, description, name)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const userId = session.user.id;
+
+    const task = await prisma.task.findUnique({
+      where: { id, deletedAt: null },
+      include: {
+        phase: {
+          select: { projectId: true },
+        },
+      },
+    });
+
+    if (!task) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    const membership = await prisma.projectMember.findUnique({
+      where: {
+        projectId_userId: {
+          projectId: task.phase.projectId,
+          userId,
+        },
+      },
+    });
+
+    if (!membership) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { fileId, name, tags, description } = body;
+
+    if (!fileId) {
+      return NextResponse.json({ error: "fileId is required" }, { status: 400 });
+    }
+
+    const fileRecord = await prisma.file.findUnique({
+      where: { id: fileId },
+    });
+
+    if (!fileRecord || fileRecord.taskId !== id) {
+      return NextResponse.json({ error: "File not found in this task" }, { status: 404 });
+    }
+
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (tags !== undefined) updateData.tags = JSON.stringify(tags);
+    if (description !== undefined) updateData.description = description;
+
+    const updatedFile = await prisma.file.update({
+      where: { id: fileId },
+      data: updateData,
+    });
+
+    await logActivity({
+      projectId: task.phase.projectId,
+      userId,
+      action: "updated",
+      entityType: "file",
+      entityId: fileId,
+      metadata: { taskId: id, fileName: updatedFile.name },
+    });
+
+    return NextResponse.json(updatedFile);
+  } catch (error) {
+    console.error("Error updating file:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+

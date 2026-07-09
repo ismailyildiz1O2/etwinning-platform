@@ -137,6 +137,7 @@ model File {
   url        String
   publicId   String
   fileType   String
+  description String?
   tags       String   @default("[]") // JSON string for Quality Label tags
   isExternal Boolean  @default(false)
   externalUrl String?

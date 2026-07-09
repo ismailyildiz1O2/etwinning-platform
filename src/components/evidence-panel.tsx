@@ -2,7 +2,7 @@
 
 import { QUALITY_LABEL_CRITERIA } from "@/lib/constants";
 import { cn, formatDate } from "@/lib/utils";
-import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2, Upload } from "lucide-react";
+import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2, Upload, Pencil, X } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 
@@ -30,6 +30,12 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
   const [adding, setAdding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+
+  const [editingFile, setEditingFile] = useState<any | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editTags, setEditTags] = useState<string[]>([]);
+  const [savingFile, setSavingFile] = useState(false);
 
   // Collect all files from all tasks
   const allFiles: any[] = [];
@@ -150,6 +156,36 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleEditFile = async () => {
+    if (!editingFile) return;
+    setSavingFile(true);
+    try {
+      const res = await fetch(`/api/tasks/${editingFile.taskId}/files`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileId: editingFile.id,
+          name: editName,
+          description: editDesc,
+          tags: editTags,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Dosya güncellenemedi");
+      }
+
+      toast.success("Dosya bilgileri güncellendi");
+      setEditingFile(null);
+      onUpdate();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Dosya güncellenemedi");
+    } finally {
+      setSavingFile(false);
     }
   };
 
@@ -323,23 +359,52 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                 key={file.id}
                 className="group flex flex-col p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all relative"
               >
-                <a href={file.url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-0 rounded-xl" aria-label={file.name} />
                 <div className="flex items-start gap-3 mb-3 relative z-10 pointer-events-none">
-                  <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800", iconConfig.color)}>
-                    <Icon className="w-5 h-5" />
-                  </div>
+                  {file.fileType === "image" && !isExternal ? (
+                    <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                      <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800", iconConfig.color)}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0 pr-2">
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={file.name}>
                       {file.name}
                     </h3>
-                    <p className="text-xs text-gray-500 truncate mt-0.5" title={file.taskTitle}>
+                    {file.description && (
+                      <p className="text-xs text-gray-500 truncate" title={file.description}>
+                        {file.description}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-gray-400 truncate mt-0.5" title={file.taskTitle}>
                       {file.taskTitle}
                     </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0 pointer-events-auto">
-                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1">
-                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1 text-gray-300 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors" title="Görüntüle/İndir">
+                      <ExternalLink className="w-4 h-4" />
                     </a>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setEditingFile(file);
+                        setEditName(file.name);
+                        setEditDesc(file.description || "");
+                        let tags = [];
+                        try {
+                          const parsed = JSON.parse(file.tags || "[]");
+                          tags = Array.isArray(parsed) ? parsed : [];
+                        } catch {}
+                        setEditTags(tags);
+                      }}
+                      className="p-1 text-gray-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-md transition-colors"
+                      title="Düzenle"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={(e) => handleDeleteFile(e, file.taskId, file.id)}
                       className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
@@ -369,6 +434,87 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingFile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Kanıtı Düzenle</h3>
+              <button
+                onClick={() => setEditingFile(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Dosya/Bağlantı Adı</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Kısa Açıklama (İsteğe Bağlı)</label>
+                <textarea
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
+                  placeholder="Bu kanıt neyi gösteriyor?"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm min-h-[80px]"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-2 block">Kalite Etiketi Kriterleri</label>
+                <div className="flex flex-wrap gap-2">
+                  {QUALITY_LABEL_CRITERIA.map((criteria) => {
+                    const isSelected = editTags.includes(criteria.id);
+                    return (
+                      <button
+                        key={criteria.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            setEditTags(editTags.filter((t) => t !== criteria.id));
+                          } else {
+                            setEditTags([...editTags, criteria.id]);
+                          }
+                        }}
+                        className={cn(
+                          "px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border",
+                          isSelected
+                            ? criteria.color + " border-transparent ring-2 ring-offset-1 ring-current/20"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-500 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+                        )}
+                      >
+                        {criteria.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 rounded-b-2xl">
+              <button
+                onClick={() => setEditingFile(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleEditFile}
+                disabled={savingFile}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+              >
+                {savingFile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                Kaydet
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
