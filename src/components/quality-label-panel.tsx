@@ -20,6 +20,8 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
   const stats = QUALITY_LABEL_CRITERIA.map(criteria => {
     let taskCount = 0;
     let fileCount = 0;
+    const matchedTasks: any[] = [];
+    const matchedFiles: any[] = [];
 
     project.phases.forEach((phase: any) => {
       phase.tasks.forEach((task: any) => {
@@ -30,6 +32,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
           if (tags.includes(criteria.id)) {
             taskCount++;
             taskHasTag = true;
+            matchedTasks.push(task);
           }
         } catch { }
 
@@ -46,6 +49,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
            
            if (fileHasTag || taskHasTag) {
              fileCount++;
+             matchedFiles.push({ ...file, taskTitle: task.title });
            }
         });
       });
@@ -55,6 +59,8 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
       ...criteria,
       taskCount,
       fileCount,
+      matchedTasks,
+      matchedFiles,
       progress: Math.min(100, (taskCount * 15) + (fileCount * 10)), // simple heuristic
     };
   });
@@ -122,6 +128,43 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
                   <ArrowRight className="w-3 h-3" />
                   Bu kriterde daha fazla etkinlik veya kanıt yüklemelisiniz.
                 </p>
+              )}
+              
+              {/* Kanıt Detayları */}
+              {(stat.matchedTasks.length > 0 || stat.matchedFiles.length > 0) && (
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {stat.matchedTasks.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Tamamlanan Görevler</h4>
+                      <ul className="space-y-2">
+                        {stat.matchedTasks.map((t: any) => (
+                          <li key={t.id} className="text-sm">
+                            <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+                              {t.isCompleted ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
+                              {t.title}
+                            </div>
+                            {t.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 ml-5">{t.description}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {stat.matchedFiles.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Kanıt Dosyaları</h4>
+                      <ul className="space-y-2">
+                        {stat.matchedFiles.map((f: any) => (
+                          <li key={f.id} className="text-sm">
+                            <a href={f.url} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                              {f.name}
+                            </a>
+                            <p className="text-[10px] text-gray-400 mt-0.5">{f.taskTitle}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           ))}

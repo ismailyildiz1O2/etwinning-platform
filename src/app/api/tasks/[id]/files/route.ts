@@ -246,6 +246,7 @@ export async function POST(
         url,
         publicId,
         fileType,
+        tags: task.tags || "[]",
       },
     });
 
