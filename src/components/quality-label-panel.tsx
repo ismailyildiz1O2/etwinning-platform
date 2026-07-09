@@ -23,15 +23,31 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
 
     project.phases.forEach((phase: any) => {
       phase.tasks.forEach((task: any) => {
+        let taskHasTag = false;
         try {
           const parsed = JSON.parse(task.tags || "[]");
           const tags = Array.isArray(parsed) ? parsed : [];
           if (tags.includes(criteria.id)) {
             taskCount++;
-            // If the task has the tag, count its files
-            fileCount += task.files?.length || task._count?.files || 0;
+            taskHasTag = true;
           }
         } catch { }
+
+        // Count files if they have the tag themselves, or if their parent task has the tag
+        task.files?.forEach((file: any) => {
+           let fileHasTag = false;
+           try {
+             const parsed = JSON.parse(file.tags || "[]");
+             const tags = Array.isArray(parsed) ? parsed : [];
+             if (tags.includes(criteria.id)) {
+               fileHasTag = true;
+             }
+           } catch { }
+           
+           if (fileHasTag || taskHasTag) {
+             fileCount++;
+           }
+        });
       });
     });
 
