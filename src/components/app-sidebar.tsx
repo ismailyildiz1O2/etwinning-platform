@@ -10,6 +10,7 @@ import {
   Sparkles,
   Archive,
   Wrench,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,6 +28,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(!isOpen);
   const isStudent = session?.user?.role === "student";
+  const isAdmin = session?.user?.role === "admin";
 
   useEffect(() => {
     setCollapsed(!isOpen);
@@ -102,6 +104,22 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
           <Wrench className="w-5 h-5 shrink-0" />
           {!collapsed && <span>Araçlar</span>}
         </Link>
+
+        {/* Admin Panel */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl text-sm font-medium transition-all duration-200",
+              pathname.startsWith("/admin")
+                ? "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 shadow-sm"
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200"
+            )}
+          >
+            <ShieldCheck className="w-5 h-5 shrink-0" />
+            {!collapsed && <span>Admin Paneli</span>}
+          </Link>
+        )}
 
         {/* Projects */}
         {!collapsed && (
