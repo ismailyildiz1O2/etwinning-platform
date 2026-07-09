@@ -86,6 +86,7 @@ export async function GET(
                         name: true,
                       },
                     },
+                    files: true,
                     _count: {
                       select: { notes: true, files: true },
                     },

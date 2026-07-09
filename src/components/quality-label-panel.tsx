@@ -25,33 +25,40 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
 
     project.phases.forEach((phase: any) => {
       phase.tasks.forEach((task: any) => {
-        let taskHasTag = false;
-        try {
-          const parsed = JSON.parse(task.tags || "[]");
-          const tags = Array.isArray(parsed) ? parsed : [];
-          if (tags.includes(criteria.id)) {
-            taskCount++;
-            taskHasTag = true;
-            matchedTasks.push(task);
-          }
-        } catch { }
+        const checkTask = (t: any) => {
+          let taskHasTag = false;
+          try {
+            const parsed = JSON.parse(t.tags || "[]");
+            const tags = Array.isArray(parsed) ? parsed : [];
+            if (tags.includes(criteria.id)) {
+              taskCount++;
+              taskHasTag = true;
+              matchedTasks.push(t);
+            }
+          } catch { }
 
-        // Count files if they have the tag themselves, or if their parent task has the tag
-        task.files?.forEach((file: any) => {
-           let fileHasTag = false;
-           try {
-             const parsed = JSON.parse(file.tags || "[]");
-             const tags = Array.isArray(parsed) ? parsed : [];
-             if (tags.includes(criteria.id)) {
-               fileHasTag = true;
+          // Count files if they have the tag themselves, or if their parent task has the tag
+          t.files?.forEach((file: any) => {
+             let fileHasTag = false;
+             try {
+               const parsed = JSON.parse(file.tags || "[]");
+               const tags = Array.isArray(parsed) ? parsed : [];
+               if (tags.includes(criteria.id)) {
+                 fileHasTag = true;
+               }
+             } catch { }
+             
+             if (fileHasTag || taskHasTag) {
+               fileCount++;
+               matchedFiles.push({ ...file, taskTitle: t.title });
              }
-           } catch { }
-           
-           if (fileHasTag || taskHasTag) {
-             fileCount++;
-             matchedFiles.push({ ...file, taskTitle: task.title });
-           }
-        });
+          });
+        };
+
+        checkTask(task);
+        if (task.subTasks) {
+          task.subTasks.forEach(checkTask);
+        }
       });
     });
 

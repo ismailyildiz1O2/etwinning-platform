@@ -37,10 +37,11 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
   const [editTags, setEditTags] = useState<string[]>([]);
   const [savingFile, setSavingFile] = useState(false);
 
-  // Collect all files from all tasks
+  // Collect all files from all tasks and subtasks
   const allFiles: any[] = [];
   (project?.phases || []).forEach((phase: any) => {
     (phase.tasks || []).forEach((task: any) => {
+      // Parent task files
       if (task.files) {
         task.files.forEach((file: any) => {
           allFiles.push({
@@ -49,6 +50,22 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             phaseTitle: phase.title,
             taskTags: JSON.parse(task.tags || "[]")
           });
+        });
+      }
+      
+      // Subtask files
+      if (task.subTasks) {
+        task.subTasks.forEach((subTask: any) => {
+          if (subTask.files) {
+            subTask.files.forEach((file: any) => {
+              allFiles.push({
+                ...file,
+                taskTitle: subTask.title,
+                phaseTitle: phase.title,
+                taskTags: JSON.parse(subTask.tags || "[]")
+              });
+            });
+          }
         });
       }
     });
