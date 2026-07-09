@@ -16,6 +16,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { NotificationsDropdown } from "./notifications-dropdown";
+import { GlobalSettingsModal } from "./global-settings-modal";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -25,6 +26,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<"profile" | "appearance">("profile");
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -137,14 +140,22 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
               <div className="py-1">
                 <button
-                  onClick={() => setIsDropdownOpen(false)}
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    setSettingsTab("profile");
+                    setIsSettingsOpen(true);
+                  }}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <User className="w-4 h-4" />
                   Profil
                 </button>
                 <button
-                  onClick={() => setIsDropdownOpen(false)}
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    setSettingsTab("appearance");
+                    setIsSettingsOpen(true);
+                  }}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <Settings className="w-4 h-4" />
@@ -165,6 +176,11 @@ export function Header({ onMenuToggle }: HeaderProps) {
           )}
         </div>
       </div>
+      <GlobalSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        defaultTab={settingsTab} 
+      />
     </header>
   );
 }

@@ -201,20 +201,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
       </nav>
 
       {/* Bottom: Settings */}
-      {!isStudent && (
-      <div className="px-3 py-3 border-t border-gray-100 dark:border-gray-800/80">
-        <Link
-          href="/dashboard"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-            "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200"
-          )}
-        >
-          <Settings className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Ayarlar</span>}
-        </Link>
-      </div>
-      )}
+
     </aside>
   );
 }
