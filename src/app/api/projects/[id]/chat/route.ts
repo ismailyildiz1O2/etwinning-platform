@@ -126,16 +126,12 @@ export async function POST(
     }
 
     if (channel === "local_teachers" && !member.user.country) {
-      return NextResponse.json({ error: "Yerel kanala yazmak için profilinizde ülke seçili olmalıdır." }, { status: 403 });
+      // Don't fail, just use 'unknown' fallback
     }
 
-    // Determine if it's a valid local message. Technically "local_teachers" needs more logic to filter 
-    // by country for fetching, but for MVP we will broadcast to "local_teachers_<country>" or just use "local_teachers"
-    // Wait, if it's "local_teachers", how do we separate countries? 
-    // We should probably append the country to the channel name: "local_teachers_TR", "local_teachers_EN"
     let actualChannel = channel;
     if (channel === "local_teachers") {
-      actualChannel = `local_teachers_${member.user.country}`;
+      actualChannel = `local_teachers_${member.user?.country || "unknown"}`;
     }
 
     const message = await prisma.message.create({

@@ -30,7 +30,7 @@ export async function GET(
     }
 
     let teams = [];
-    if (session.user.role === "admin" || session.user.role === "teacher") {
+    if (["owner", "admin", "teacher"].includes(projectMember.role) || session.user.role === "admin") {
       // Teachers/Admins can see all teams
       teams = await prisma.team.findMany({
         where: { projectId },
