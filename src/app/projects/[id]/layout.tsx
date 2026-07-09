@@ -1,7 +1,17 @@
-export default function ProjectLayout({
+import { ChatBot } from "@/components/chat-bot";
+
+export default async function ProjectLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ id: string }>;
 }) {
-  return <>{children}</>;
+  const resolvedParams = await params;
+  return (
+    <>
+      {children}
+      <ChatBot projectId={resolvedParams.id} />
+    </>
+  );
 }
