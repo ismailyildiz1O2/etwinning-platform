@@ -11,6 +11,7 @@ import {
   Archive,
   Wrench,
   ShieldCheck,
+  CheckSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -36,6 +37,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
 
   const navItems = [
     { href: "/dashboard", label: "Ana Sayfa", icon: Home },
+    { href: "/dashboard/my-tasks", label: "Görevlerim", icon: CheckSquare },
     { href: "/dashboard", label: "Ayarlar", icon: Settings, isSetting: true },
   ];
 
@@ -89,6 +91,20 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
         >
           <Home className="w-5 h-5 shrink-0" />
           {!collapsed && <span>Ana Sayfa</span>}
+        </Link>
+
+        {/* My Tasks */}
+        <Link
+          href="/dashboard/my-tasks"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl text-sm font-medium transition-all duration-200",
+            isActive("/dashboard/my-tasks")
+              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 shadow-sm"
+              : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200"
+          )}
+        >
+          <CheckSquare className="w-5 h-5 shrink-0" />
+          {!collapsed && <span>Görevlerim</span>}
         </Link>
 
         {/* Tools */}

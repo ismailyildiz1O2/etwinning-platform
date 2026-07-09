@@ -8,6 +8,8 @@ import { NotesDrawer } from "@/components/notes-drawer";
 import { QualityLabelPanel } from "@/components/quality-label-panel";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { CalendarView } from "@/components/calendar-view";
+import { ChatPanel } from "@/components/chat-panel";
+import { MembersPanel } from "@/components/members-panel";
 import {
   cn,
   getStatusColor,
@@ -82,7 +84,7 @@ export default function ProjectDetailPage() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNotesDrawerOpen, setIsNotesDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"tasks" | "calendar" | "quality-label" | "evidence">("tasks");
+  const [activeTab, setActiveTab] = useState<"tasks" | "calendar" | "quality-label" | "evidence" | "chat" | "members">("tasks");
 
   const fetchProject = useCallback(async () => {
     try {
@@ -347,7 +349,7 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800 overflow-x-auto pb-1 scrollbar-hide whitespace-nowrap">
               <button
                 onClick={() => setActiveTab("tasks")}
                 className={cn(
@@ -393,6 +395,30 @@ export default function ProjectDetailPage() {
               >
                 Kanıtlar
                 {activeTab === "evidence" && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab("chat")}
+                className={cn(
+                  "pb-3 text-sm font-medium transition-colors relative",
+                  activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                )}
+              >
+                Mesajlar
+                {activeTab === "chat" && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab("members")}
+                className={cn(
+                  "pb-3 text-sm font-medium transition-colors relative",
+                  activeTab === "members" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                )}
+              >
+                Kişiler
+                {activeTab === "members" && (
                   <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
                 )}
               </button>
@@ -443,6 +469,14 @@ export default function ProjectDetailPage() {
 
           {activeTab === "evidence" && (
             <EvidencePanel projectId={projectId} project={project} onUpdate={fetchProject} />
+          )}
+
+          {activeTab === "chat" && (
+            <ChatPanel projectId={projectId} />
+          )}
+
+          {activeTab === "members" && (
+            <MembersPanel projectId={projectId} projectMembers={project.members || []} onUpdate={fetchProject} />
           )}
         </div>
       </div>

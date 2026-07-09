@@ -15,6 +15,7 @@ import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { NotificationsDropdown } from "./notifications-dropdown";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -99,6 +100,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </div>
           </button>
         )}
+
+        {/* Notifications */}
+        <NotificationsDropdown />
 
         {/* User dropdown */}
         <div className="relative" ref={dropdownRef}>

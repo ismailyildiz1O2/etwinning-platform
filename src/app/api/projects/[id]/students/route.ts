@@ -38,7 +38,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { name, username, password } = body;
+    const { name, username, password, teamId } = body;
 
     if (!name || !username || !password) {
       return NextResponse.json(
@@ -86,6 +86,17 @@ export async function POST(
           joinedAt: new Date(),
         },
       });
+
+      if (teamId) {
+        await tx.teamMember.create({
+          data: {
+            teamId,
+            userId: user.id,
+            role: "member",
+            joinedAt: new Date(),
+          },
+        });
+      }
 
       return user;
     });

@@ -15,11 +15,15 @@ model User {
   image     String?
   role      String          @default("teacher")
   language  String          @default("en")
+  country   String?
   projects  ProjectMember[]
   tasks     Task[]          @relation("AssignedTasks")
   notes     Note[]
   accounts  Account[]
   sessions  Session[]
+  teams     TeamMember[]
+  messages  Message[]
+  notifications Notification[]
   createdAt DateTime        @default(now())
   deletedAt DateTime?
 }
@@ -72,6 +76,8 @@ model Project {
   members        ProjectMember[]
   phases         Phase[]
   notes          Note[]
+  teams          Team[]
+  messages       Message[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime?
@@ -131,8 +137,10 @@ model Task {
 
 model File {
   id         String   @id @default(cuid())
-  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId     String
+  task       Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId     String?
+  message    Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId  String?
   name       String
   url        String
   publicId   String
@@ -165,4 +173,53 @@ model ActivityLog {
   entityId   String
   metadata   String?
   createdAt  DateTime @default(now())
+}
+
+model Team {
+  id          String       @id @default(cuid())
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  name        String
+  description String?
+  members     TeamMember[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      String   @default("member") // "leader" for teacher, "member" for student
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  channel     String   // "general", "teachers", "local_teachers", "team_<id>"
+  sender      User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    String
+  content     String
+  files       File[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String   // "task_assigned", "task_accepted", "mention"
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
