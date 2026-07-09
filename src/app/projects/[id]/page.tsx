@@ -24,6 +24,7 @@ import {
   Calendar,
   CheckCircle2,
   Loader2,
+  Settings,
   Wrench,
   NotebookText,
   ExternalLink,
@@ -312,6 +313,15 @@ export default function ProjectDetailPage() {
 
               {/* Toolbar */}
               <div className="flex items-center gap-1 shrink-0">
+                {!isStudent && (
+                  <Link
+                    href={`/projects/${project.id}/settings`}
+                    className="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+                    title="Proje Ayarları"
+                  >
+                    <Settings className="w-5 h-5" />
+                  </Link>
+                )}
                 <div className="relative group">
                   <button
                     disabled
