@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Users, UserPlus, Shield, GraduationCap, Building2, X } from "lucide-react";
+import { Users, UserPlus, Shield, GraduationCap, Building2, X, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectId: string; projectMembers: any[]; onUpdate?: () => void }) {
@@ -18,17 +18,15 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
   const [studentName, setStudentName] = useState("");
   const [studentUsername, setStudentUsername] = useState("");
   const [studentPassword, setStudentPassword] = useState("");
-  const [teams, setTeams] = useState<any[]>([]);
-  const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  useEffect(() => {
-    if (isAdmin) {
-      fetch(`/api/projects/${projectId}/teams`)
-        .then(res => res.json())
-        .then(data => setTeams(data))
-        .catch(console.error);
-    }
-  }, [isAdmin, projectId]);
+  // Edit Student fields
+  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
+  const [editingStudentId, setEditingStudentId] = useState("");
+  const [editStudentName, setEditStudentName] = useState("");
+  const [editStudentUsername, setEditStudentUsername] = useState("");
+  const [editStudentPassword, setEditStudentPassword] = useState("");
+
+  // Removed teams fetching since we don't need it for dropdown anymore
 
   const handleAddTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,11 +66,9 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
       const res = await fetch(`/api/projects/${projectId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
           name: studentName, 
           username: studentUsername, 
-          password: studentPassword, 
-          teamId: selectedTeamId || undefined 
+          password: studentPassword
         }),
       });
 
@@ -93,6 +89,49 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
     } finally {
       setLoading(false);
     }
+  const handleEditStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editStudentName || !editStudentUsername) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/projects/${projectId}/students`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          studentId: editingStudentId,
+          name: editStudentName, 
+          username: editStudentUsername, 
+          password: editStudentPassword
+        }),
+      });
+
+      if (res.ok) {
+        alert("Öğrenci bilgileri başarıyla güncellendi.");
+        setIsEditStudentModalOpen(false);
+        setEditingStudentId("");
+        setEditStudentName("");
+        setEditStudentUsername("");
+        setEditStudentPassword("");
+        if (onUpdate) onUpdate();
+      } else {
+        const data = await res.json();
+        alert(`Hata: ${data.error || "Bilinmeyen bir hata oluştu"}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Sunucu ile iletişim kurulamadı.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openEditModal = (member: any) => {
+    setEditingStudentId(member.user.id);
+    setEditStudentName(member.user.name);
+    setEditStudentUsername(member.user.username || "");
+    setEditStudentPassword("");
+    setIsEditStudentModalOpen(true);
   };
 
   return (
@@ -150,6 +189,15 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                 )}
               </div>
             </div>
+            {isAdmin && member.role === "student" && (
+              <button 
+                onClick={() => openEditModal(member)}
+                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                title="Düzenle"
+              >
+                <Edit2 className="w-4 h-4" />
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -241,21 +289,6 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Takım (İsteğe Bağlı)</label>
-                <select
-                  value={selectedTeamId}
-                  onChange={(e) => setSelectedTeamId(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900"
-                >
-                  <option value="">Takım Seçmeyin</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
               <div className="flex justify-end gap-2 pt-4">
                 <button
                   type="button"
@@ -270,6 +303,70 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50"
                 >
                   {loading ? "Oluşturuluyor..." : "Oluştur ve Ekle"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Öğrenci Düzenle Modal */}
+      {isEditStudentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold">Öğrenciyi Düzenle</h3>
+              <button onClick={() => setIsEditStudentModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleEditStudent} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Ad Soyad</label>
+                <input
+                  type="text"
+                  value={editStudentName}
+                  onChange={(e) => setEditStudentName(e.target.value)}
+                  placeholder="Öğrencinin adı ve soyadı"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Kullanıcı Adı</label>
+                <input
+                  type="text"
+                  value={editStudentUsername}
+                  onChange={(e) => setEditStudentUsername(e.target.value)}
+                  placeholder="Örn: ahmet_yilmaz"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Yeni Şifre (İsteğe Bağlı)</label>
+                <input
+                  type="text"
+                  value={editStudentPassword}
+                  onChange={(e) => setEditStudentPassword(e.target.value)}
+                  placeholder="Değiştirmek istemiyorsanız boş bırakın"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsEditStudentModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || !editStudentName || !editStudentUsername}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {loading ? "Güncelleniyor..." : "Kaydet"}
                 </button>
               </div>
             </form>

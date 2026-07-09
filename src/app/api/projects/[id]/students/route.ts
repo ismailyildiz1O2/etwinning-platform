@@ -38,7 +38,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { name, username, password, teamId } = body;
+    const { name, username, password } = body;
 
     if (!name || !username || !password) {
       return NextResponse.json(
@@ -87,21 +87,43 @@ export async function POST(
         },
       });
 
-      if (teamId) {
-        await tx.teamMember.create({
+      // Find or create a team for the teacher
+      let team = await tx.team.findFirst({
+        where: {
+          projectId,
+          members: {
+            some: { userId: session.user.id }
+          }
+        }
+      });
+
+      if (!team) {
+        team = await tx.team.create({
           data: {
-            teamId,
-            userId: user.id,
-            role: "member",
-            joinedAt: new Date(),
-          },
+            projectId,
+            name: `${session.user.name}'in Ekibi`,
+            members: {
+              create: {
+                userId: session.user.id,
+                role: "owner"
+              }
+            }
+          }
         });
       }
+
+      await tx.teamMember.create({
+        data: {
+          teamId: team.id,
+          userId: user.id,
+          role: "member",
+          joinedAt: new Date(),
+        },
+      });
 
       return user;
     });
 
-    // Log the activity
     await logActivity({
       projectId,
       userId: session.user.id,
@@ -111,12 +133,88 @@ export async function POST(
       metadata: { studentName: newStudent.name, username: newStudent.username },
     });
 
-    return NextResponse.json({ success: true, user: { id: newStudent.id, name: newStudent.name, username: newStudent.username } }, { status: 201 });
+    return NextResponse.json(newStudent, { status: 201 });
   } catch (error) {
-    console.error("Add student error:", error);
+    console.error("Öğrenci ekleme hatası:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Sunucu hatası" },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const resolvedParams = await context.params;
+    const projectId = resolvedParams.id;
+
+    // Check permissions
+    const projectMember = await prisma.projectMember.findUnique({
+      where: {
+        projectId_userId: {
+          projectId: projectId,
+          userId: session.user.id,
+        },
+      },
+    });
+
+    if (!projectMember || !["owner", "admin", "teacher", "member"].includes(projectMember.role)) {
+      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { studentId, name, username, password } = body;
+
+    if (!studentId || !name || !username) {
+      return NextResponse.json({ error: "Öğrenci ID, isim ve kullanıcı adı gereklidir" }, { status: 400 });
+    }
+
+    // Verify target user is a student in this project
+    const targetMember = await prisma.projectMember.findUnique({
+      where: {
+        projectId_userId: {
+          projectId: projectId,
+          userId: studentId,
+        },
+      },
+    });
+
+    if (!targetMember || targetMember.role !== "student") {
+      return NextResponse.json({ error: "Öğrenci bulunamadı" }, { status: 404 });
+    }
+
+    const updateData: any = {
+      name,
+      username,
+    };
+
+    if (password && password.trim() !== "") {
+      if (password.length < 6) {
+        return NextResponse.json({ error: "Şifre en az 6 karakter olmalıdır" }, { status: 400 });
+      }
+      updateData.password = await hash(password, 12);
+    }
+
+    const updatedStudent = await prisma.user.update({
+      where: { id: studentId },
+      data: updateData,
+    });
+
+    return NextResponse.json({ success: true, user: { id: updatedStudent.id, name: updatedStudent.name, username: updatedStudent.username } });
+  } catch (error: any) {
+    console.error("Öğrenci güncelleme hatası:", error);
+    if (error.code === 'P2002') {
+      return NextResponse.json({ error: "Bu kullanıcı adı zaten kullanılıyor" }, { status: 409 });
+    }
+    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }
