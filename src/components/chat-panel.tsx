@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Send, FileUp, CheckCircle, MessagesSquare } from "lucide-react";
+import { Send, FileUp, CheckCircle, MessagesSquare, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface User {
@@ -29,7 +29,7 @@ interface Message {
   createdAt: string;
 }
 
-export function ChatPanel({ projectId }: { projectId: string }) {
+export function ChatPanel({ projectId, projectMembers = [] }: { projectId: string; projectMembers?: any[] }) {
   const { data: session } = useSession();
   
   const [channels, setChannels] = useState<{ id: string; name: string; type: string }[]>([]);
@@ -166,6 +166,40 @@ export function ChatPanel({ projectId }: { projectId: string }) {
               <span className="text-gray-400">#</span> {c.name}
             </button>
           ))}
+        </div>
+        
+        {/* Members Sidebar Section */}
+        <div className="p-4 border-b border-t border-gray-200 dark:border-gray-800 mt-auto">
+          <h2 className="font-semibold flex items-center gap-2 mb-2 text-sm text-gray-500">
+            <Users className="w-4 h-4" /> Kişiler
+          </h2>
+          <div className="space-y-1 overflow-y-auto max-h-48">
+            {projectMembers.map((member: any) => (
+              <div key={member.user.id} className="flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg group text-sm">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                    {member.user.image ? (
+                      <img src={member.user.image} alt="" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                      <span className="text-blue-600 text-xs font-semibold">
+                        {member.user.name?.charAt(0) || "U"}
+                      </span>
+                    )}
+                  </div>
+                  <span className="truncate text-gray-700 dark:text-gray-300">{member.user.name}</span>
+                </div>
+                {member.user.id !== session?.user?.id && session?.user?.role !== "student" && (
+                  <button 
+                    onClick={() => setAssignPopoverUser(member.user)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                    title="Bu kişiye görev ata"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

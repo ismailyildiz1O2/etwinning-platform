@@ -472,7 +472,7 @@ export default function ProjectDetailPage() {
           )}
 
           {activeTab === "chat" && (
-            <ChatPanel projectId={projectId} />
+            <ChatPanel projectId={projectId} projectMembers={project.members || []} />
           )}
 
           {activeTab === "members" && (
