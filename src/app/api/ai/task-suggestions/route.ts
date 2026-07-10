@@ -188,7 +188,12 @@ export async function POST(request: NextRequest) {
     // If we have an API key, use Gemini for AI suggestions
     if (apiKey) {
       try {
+        const { web2Tools } = await import("@/lib/web2-tools");
+        const toolNames = web2Tools.map(t => t.name).join(", ");
+
         const systemPrompt = `Sen bir eTwinning proje asistanısın. Öğretmenlere görev bazında pratik, uygulanabilir öneriler sunuyorsun.
+Platformumuzda şu Web 2.0 araçları bulunmaktadır: ${toolNames}.
+Etkinlik ve araç önerilerinde ÖNCELİKLİ OLARAK bu listedeki araçları kullan.
 Yanıtlarını YALNIZCA geçerli JSON formatında döndürürsün, başka hiçbir şey yazmazsın.
 Her öneri Türkçe olmalıdır.`;
 
@@ -200,7 +205,7 @@ ${body.phaseTitle ? `Aşama: ${body.phaseTitle}` : ""}
 ${body.projectName ? `Proje: ${body.projectName}` : ""}
 
 Her öneri şu formatta olmalı:
-- text: Detaylı, uygulanabilir öneri metni (Türkçe)
+- text: Detaylı, uygulanabilir öneri metni (Türkçe). (Eğer bir araç öneriyorsan, öncelikli olarak yukarıdaki listedeki araçlardan birini seç ve adını metin içinde geçir.)
 - type: "tip" | "resource" | "activity" | "tool" (önerinin türü)
 - icon: Uygun bir emoji
 
@@ -209,6 +214,7 @@ Kurallar:
 2. Öneriler somut ve uygulanabilir olsun
 3. eTwinning projeleri bağlamında anlamlı olsun
 4. Farklı türlerde öneriler ver (sadece tip değil, tool, activity, resource da olsun)
+5. 'tool' veya 'activity' önerilerinde, öncelikli olarak size verilen araç listesindeki uygulamaları dahil et.
 
 JSON formatı:
 {
