@@ -31,31 +31,18 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    let teams = [];
-    if (["owner", "admin", "teacher"].includes(projectMember.role) || session.user.role === "admin") {
-      // Teachers/Admins can see all teams
-      teams = await prisma.team.findMany({
-        where: { projectId },
-        include: {
-          members: {
-            include: { user: { select: { id: true, name: true, role: true, image: true } } }
-          }
+    // Everyone (including teachers) should only see the teams they are members of in the chat sidebar
+    const teams = await prisma.team.findMany({
+      where: { 
+        projectId,
+        members: { some: { userId } }
+      },
+      include: {
+        members: {
+          include: { user: { select: { id: true, name: true, role: true, image: true } } }
         }
-      });
-    } else {
-      // Students only see their own teams
-      teams = await prisma.team.findMany({
-        where: { 
-          projectId,
-          members: { some: { userId } }
-        },
-        include: {
-          members: {
-            include: { user: { select: { id: true, name: true, role: true, image: true } } }
-          }
-        }
-      });
-    }
+      }
+    });
 
     return NextResponse.json(teams);
   } catch (error) {
