@@ -81,6 +81,7 @@ export default function AdminLayout({
               projects={projects}
               isOpen={true}
               onToggle={() => setMobileSidebarOpen(false)}
+              isMobile={true}
             />
           </div>
         </>

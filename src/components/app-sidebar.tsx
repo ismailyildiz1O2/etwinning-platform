@@ -22,9 +22,10 @@ interface AppSidebarProps {
   projects?: { id: string; name: string; status: string }[];
   isOpen?: boolean;
   onToggle?: () => void;
+  isMobile?: boolean;
 }
 
-export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSidebarProps) {
+export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = false }: AppSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(!isOpen);
@@ -46,7 +47,8 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
   return (
     <aside
       className={cn(
-        "hidden lg:flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200/80 dark:border-gray-800/80 transition-all duration-300 ease-in-out shrink-0",
+        "flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200/80 dark:border-gray-800/80 transition-all duration-300 ease-in-out shrink-0",
+        !isMobile && "hidden lg:flex",
         collapsed ? "w-[72px]" : "w-64"
       )}
     >

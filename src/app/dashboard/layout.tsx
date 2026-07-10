@@ -57,6 +57,7 @@ export default function DashboardLayout({
                   projects={projects}
                   isOpen={true}
                   onToggle={() => setMobileSidebarOpen(false)}
+                  isMobile={true}
                 />
               </div>
             </>
