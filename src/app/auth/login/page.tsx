@@ -67,7 +67,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-2xl shadow-blue-500/30 mb-4">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 dark:from-blue-400 dark:via-blue-500 dark:to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400">
             eTwin Asistan
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">

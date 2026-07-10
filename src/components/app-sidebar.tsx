@@ -57,7 +57,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           {!collapsed && (
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
               eTwin
             </span>
           )}

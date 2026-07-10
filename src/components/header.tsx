@@ -69,7 +69,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </Link>
 
         <div className="hidden sm:flex items-center gap-2">
-          <span className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+          <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
             eTwin Asistan
           </span>
         </div>
