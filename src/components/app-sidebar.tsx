@@ -46,7 +46,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle }: AppSideba
   return (
     <aside
       className={cn(
-        "hidden lg:flex flex-col h-full bg-white dark:bg-[#121824] border-r border-gray-200/80 dark:border-white/10 transition-all duration-300 ease-in-out shrink-0",
+        "hidden lg:flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200/80 dark:border-gray-800/80 transition-all duration-300 ease-in-out shrink-0",
         collapsed ? "w-[72px]" : "w-64"
       )}
     >

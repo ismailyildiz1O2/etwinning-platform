@@ -22,10 +22,9 @@ interface ProjectCardProps {
     }[];
   };
   onUpdate?: () => void;
-  index?: number;
 }
 
-export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) {
+export function ProjectCard({ project, onUpdate }: ProjectCardProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -116,29 +115,21 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
     router.push(`/projects/${project.id}/settings`);
   };
 
-  const bgColors = [
-    "bg-[var(--card-green)]",
-    "bg-[var(--card-salmon)]",
-    "bg-[var(--card-lilac)]"
-  ];
-  const cardBgClass = bgColors[index % bgColors.length];
-
   return (
     <div
       onClick={() => !isUpdating && router.push(`/projects/${project.id}`)}
       className={cn(
-        "group relative cursor-pointer rounded-2xl border border-gray-200/80 dark:border-white/10 p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[var(--brand-primary)]/50",
-        cardBgClass,
+        "group relative cursor-pointer rounded-2xl border border-gray-200/80 dark:border-gray-700/50 bg-white dark:bg-gray-900/80 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:-translate-y-1 hover:border-blue-200 dark:hover:border-blue-800/50",
         isUpdating && "opacity-60 pointer-events-none"
       )}
     >
       {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
-          <h3 className="font-semibold text-gray-900 dark:text-white text-lg leading-tight transition-colors pr-2">
+          <h3 className="font-semibold text-gray-900 dark:text-white text-lg leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors pr-2">
             {project.name}
           </h3>
           <div className="flex items-center gap-2 shrink-0">

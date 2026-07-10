@@ -1,47 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Core brand colors (Light) */
-  --bg-color: #F8F9FA;
-  --text-color: #2D3748;
-  --brand-primary: #1F3A60;
-  --brand-accent: #FFB703;
-  
-  /* Project Card Colors (Light) */
-  --card-green: #A7F3D0;
-  --card-salmon: #FFD1C1;
-  --card-lilac: #E9D5FF;
-
-  --background: var(--bg-color);
-  --foreground: var(--text-color);
-}
-
-.dark {
-  /* Core brand colors (Dark) */
-  --bg-color: #121824;
-  --text-color: #E2E8F0;
-  --brand-primary: #64D2FF;
-  --brand-accent: #6EE7B7;
-
-  /* Project Card Colors (Dark) */
-  --card-green: #1E293B;
-  --card-salmon: #1E293B;
-  --card-lilac: #1E293B;
-
-  --background: var(--bg-color);
-  --foreground: var(--text-color);
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-accent: var(--brand-accent);
-  --color-card-green: var(--card-green);
-  --color-card-salmon: var(--card-salmon);
-  --color-card-lilac: var(--card-lilac);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 /* Base styles */
