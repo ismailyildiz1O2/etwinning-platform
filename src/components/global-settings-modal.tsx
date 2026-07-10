@@ -177,7 +177,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-[600px] animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-4xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-[600px] animate-in zoom-in-95 duration-200">
         
         {/* Mobile Header (Visible only on small screens) */}
         <div className="flex md:hidden items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
@@ -191,7 +191,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
         </div>
 
         {/* Sidebar Tabs */}
-        <div className="w-full md:w-64 shrink-0 bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-800 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto hide-scrollbar">
+        <div className="w-full md:w-64 shrink-0 bg-[#F8F9FA] dark:bg-[#121824] border-r border-gray-200 dark:border-white/10 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto hide-scrollbar">
           <div className="hidden md:flex items-center justify-between p-6 pb-2">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ayarlar</h2>
           </div>
@@ -220,7 +220,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900 relative">
+        <div className="flex-1 overflow-y-auto bg-white dark:bg-[#1E293B] relative">
           <div className="hidden md:block absolute top-6 right-6 z-10">
             <button 
               onClick={onClose}

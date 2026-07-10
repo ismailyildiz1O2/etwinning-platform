@@ -145,11 +145,12 @@ export default function DashboardPage() {
           </h2>
           {projects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {projects.map((project) => (
+              {projects.map((project, index) => (
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
-                  onUpdate={fetchDashboard} 
+                  onUpdate={fetchDashboard}
+                  index={index}
                 />
               ))}
             </div>
