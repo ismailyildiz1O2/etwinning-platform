@@ -29,11 +29,15 @@ export const authOptions: NextAuthOptions = {
           throw new Error("E-posta/Kullanıcı adı ve şifre gereklidir.");
         }
 
+        const searchIdentifier = credentials.identifier.toLowerCase().trim();
+        
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: credentials.identifier },
-              { username: credentials.identifier },
+              { email: searchIdentifier },
+              { username: searchIdentifier },
+              { email: credentials.identifier.trim() },
+              { username: credentials.identifier.trim() }
             ],
           },
         });
