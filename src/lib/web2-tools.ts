@@ -19,6 +19,7 @@ export const web2Categories = [
   "Avatar & Karakter",
   "Sanal Toplantı",
   "İnteraktif Araçlar",
+  "Özel Uygulamalar",
 ];
 
 export const web2Tools: Web2Tool[] = [
@@ -248,5 +249,79 @@ export const web2Tools: Web2Tool[] = [
     description: "Hazır şablonlarla interaktif öğrenme aktiviteleri (eşleştirme, sıralama, quiz) oluşturmak için kullanılır.",
     category: "İnteraktif Araçlar",
     color: "from-yellow-500 to-orange-500",
+  },
+
+  // 11. Özel Uygulamalar (Self-Hosted)
+  {
+    id: "classquiz",
+    name: "ClassQuiz",
+    url: "https://quiz.etwinasistan.com",
+    description: "Kahoot benzeri sınıf içi test ve interaktif quiz yarışmaları düzenlemek için tamamen bize ait güvenli platform.",
+    category: "Özel Uygulamalar",
+    color: "from-indigo-500 to-purple-600",
+  },
+  {
+    id: "etherpad",
+    name: "Etherpad",
+    url: "https://ortak.etwinasistan.com",
+    description: "Öğrencilerin aynı anda canlı olarak metin, hikaye ve rapor yazabileceği ortak çalışma alanımız.",
+    category: "Özel Uygulamalar",
+    color: "from-emerald-500 to-teal-600",
+  },
+  {
+    id: "answer",
+    name: "Answer",
+    url: "https://soru.etwinasistan.com",
+    description: "Öğretmenlerin ve öğrencilerin soru sorup cevaplayabileceği eTwinning proje soru-cevap platformumuz.",
+    category: "Özel Uygulamalar",
+    color: "from-orange-500 to-red-500",
+  },
+  {
+    id: "stirling-pdf",
+    name: "Stirling PDF",
+    url: "https://pdf.etwinasistan.com",
+    description: "PDF belgelerinizi birleştirin, bölün veya düzenleyin. %100 güvenli ve hiçbir sınır olmadan kendi sunucumuzda.",
+    category: "Özel Uygulamalar",
+    color: "from-rose-500 to-pink-600",
+  },
+  {
+    id: "heyform",
+    name: "HeyForm",
+    url: "https://anket.etwinasistan.com",
+    description: "Proje öncesi, süreci ve sonrası için detaylı anketler, formlar ve veri toplama araçları hazırlayın.",
+    category: "Özel Uygulamalar",
+    color: "from-blue-400 to-indigo-500",
+  },
+  {
+    id: "bookstack",
+    name: "BookStack",
+    url: "https://kutuphane.etwinasistan.com",
+    description: "Proje dökümantasyonu, e-kitaplar ve proje kurallarını tutabileceğiniz düzenli kütüphane sistemimiz.",
+    category: "Özel Uygulamalar",
+    color: "from-amber-500 to-orange-600",
+  },
+  {
+    id: "trilium",
+    name: "Trilium Notes",
+    url: "https://not.etwinasistan.com",
+    description: "Kişisel ve işbirlikçi notlar almak, proje günlükleri tutmak için hiyerarşik not alma uygulaması.",
+    category: "Özel Uygulamalar",
+    color: "from-teal-500 to-emerald-600",
+  },
+  {
+    id: "wbo",
+    name: "WBO (Beyaz Tahta)",
+    url: "https://pano.etwinasistan.com",
+    description: "Gerçek zamanlı ortak çalışma, çizim yapma ve fikir geliştirme için sınırsız beyaz tahta aracımız.",
+    category: "Özel Uygulamalar",
+    color: "from-fuchsia-500 to-purple-600",
+  },
+  {
+    id: "penpot",
+    name: "Penpot",
+    url: "https://tasarim.etwinasistan.com",
+    description: "Açık kaynaklı tasarım, grafik ve prototip oluşturma aracı. Figma benzeri arayüzüyle görsel materyal tasarlayın.",
+    category: "Özel Uygulamalar",
+    color: "from-cyan-500 to-blue-600",
   },
 ];
