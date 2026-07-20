@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Debug/test scripts
+check-roles.ts
+check-yeliz.js
+check.ts
+check_db.js
+fix_db.js
+reset-pass-pg.js
+reset-pass.js
+test-bcrypt.js
+test-out2.css

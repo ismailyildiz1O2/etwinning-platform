@@ -68,7 +68,10 @@ export async function PUT(
       include: {
         tasks: {
           where: { deletedAt: null },
-          orderBy: { createdAt: "asc" },
+          orderBy: [
+            { dueDate: { sort: "asc", nulls: "last" } },
+            { createdAt: "asc" }
+          ],
         },
       },
     });

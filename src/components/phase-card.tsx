@@ -150,7 +150,12 @@ export function PhaseCard({
       >
         <div className="px-6 pb-4 space-y-2">
           {(phase.tasks || []).length > 0 ? (
-            (phase.tasks || []).map((task) => (
+            [...(phase.tasks || [])].sort((a, b) => {
+              if (!a.dueDate && !b.dueDate) return 0;
+              if (!a.dueDate) return 1;
+              if (!b.dueDate) return -1;
+              return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+            }).map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}

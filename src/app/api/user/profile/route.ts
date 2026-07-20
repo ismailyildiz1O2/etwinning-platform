@@ -37,6 +37,9 @@ export async function PATCH(req: Request) {
       }
     });
 
+    // NOTE: Updated profile fields (name, email) won't reflect in the JWT
+    // until the user signs out and back in. Consider implementing token
+    // refresh or using next-auth's update() method for immediate sync.
     return NextResponse.json({ message: "Profil güncellendi", user: updatedUser });
   } catch (error) {
     console.error("Profile update error:", error);

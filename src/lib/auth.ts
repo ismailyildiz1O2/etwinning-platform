@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 /**
  * NextAuth.js configuration.
  *
- * Uses JWT strategy (no DB sessions) for simplicity with SQLite.
+ * Uses JWT strategy (no DB sessions) for simplicity.
  * The Credentials provider authenticates users via email + password.
  */
 export const authOptions: NextAuthOptions = {
@@ -34,10 +34,8 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: searchIdentifier },
-              { username: searchIdentifier },
-              { email: credentials.identifier.trim() },
-              { username: credentials.identifier.trim() }
+              { email: { equals: searchIdentifier, mode: "insensitive" } },
+              { username: { equals: searchIdentifier, mode: "insensitive" } },
             ],
           },
         });

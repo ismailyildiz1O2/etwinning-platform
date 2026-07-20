@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
+import { SALT_ROUNDS } from "@/lib/constants";
 export async function POST(req: Request) {
   try {
     const { token, email, password } = await req.json();
@@ -36,7 +36,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "Şifre en az 6 karakter olmalıdır" },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Şifreyi güncelle
     await prisma.user.update({

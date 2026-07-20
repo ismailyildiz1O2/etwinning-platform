@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { logActivity } from "@/lib/activity-logger";
+import { SALT_ROUNDS } from "@/lib/constants";
 
 export async function POST(
   request: NextRequest,
@@ -65,7 +66,7 @@ export async function POST(
       );
     }
 
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await hash(password, SALT_ROUNDS);
 
     // Run in transaction to ensure both user creation and project member addition succeed
     const newStudent = await prisma.$transaction(async (tx: any) => {
@@ -192,7 +193,7 @@ export async function PUT(
       return NextResponse.json({ error: "Öğrenci bulunamadı" }, { status: 404 });
     }
 
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       name,
       username,
     };
@@ -201,7 +202,7 @@ export async function PUT(
       if (password.length < 6) {
         return NextResponse.json({ error: "Şifre en az 6 karakter olmalıdır" }, { status: 400 });
       }
-      updateData.password = await hash(password, 12);
+      updateData.password = await hash(password, SALT_ROUNDS);
     }
 
     const updatedStudent = await prisma.user.update({
@@ -210,9 +211,9 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, user: { id: updatedStudent.id, name: updatedStudent.name, username: updatedStudent.username } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Öğrenci güncelleme hatası:", error);
-    if (error.code === 'P2002') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: "Bu kullanıcı adı zaten kullanılıyor" }, { status: 409 });
     }
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });

@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const userName = session.user.name;
 
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey.trim() === "" || apiKey.includes("AIzaSy")) {
+    if (!apiKey || apiKey.trim() === "" || apiKey === "AIzaSy...") {
       return NextResponse.json({
         reply: "Merhaba! Benim tam kapasiteyle (gerçek yapay zeka ile) çalışabilmem için proje ayarlarından geçerli bir Google Gemini API Anahtarı eklenmesi gerekiyor. Şu anda sadece bu otomatik mesajı verebiliyorum.",
       });

@@ -29,6 +29,7 @@ export async function GET(
       where: {
         projectId_userId: { projectId, userId: session.user.id },
       },
+      include: { user: { select: { country: true } } },
     });
 
     if (!member) {

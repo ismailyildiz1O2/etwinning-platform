@@ -95,7 +95,10 @@ export async function GET(request: NextRequest) {
           select: { notes: true, files: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [
+        { dueDate: { sort: "asc", nulls: "last" } },
+        { createdAt: "asc" }
+      ],
     });
 
     return NextResponse.json(tasks);

@@ -653,11 +653,11 @@ export default function NewProjectPage() {
               onChange={(e) => setAgeGroup(e.target.value)}
               className={cn(inputClasses, !ageGroup && "text-gray-400 dark:text-gray-500")}
             >
-              <option value="" disabled>
+              <option value="" disabled className="bg-white text-gray-500 dark:bg-gray-900 dark:text-gray-400">
                 Yaş grubu seçin...
               </option>
               {AGE_GROUP_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
+                <option key={opt.value} value={opt.value} className="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                   {opt.label}
                 </option>
               ))}

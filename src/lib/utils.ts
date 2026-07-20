@@ -54,12 +54,27 @@ export function getRelativeDate(date: string | Date | null | undefined): string 
   if (isNaN(d.getTime())) return "";
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
+  const isFuture = diffMs < 0;
+  const absDiffMs = Math.abs(diffMs);
+  const diffSec = Math.floor(absDiffMs / 1000);
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
   const diffWeek = Math.floor(diffDay / 7);
   const diffMonth = Math.floor(diffDay / 30);
+
+  if (isFuture) {
+    if (diffSec < 60) return "birazdan";
+    if (diffMin < 60) return `${diffMin} dakika sonra`;
+    if (diffHour < 24) return `${diffHour} saat sonra`;
+    if (diffDay === 1) return "yarın";
+    if (diffDay < 7) return `${diffDay} gün sonra`;
+    if (diffWeek === 1) return "gelecek hafta";
+    if (diffWeek < 4) return `${diffWeek} hafta sonra`;
+    if (diffMonth === 1) return "gelecek ay";
+    if (diffMonth < 12) return `${diffMonth} ay sonra`;
+    return formatDate(d, { year: "numeric", month: "long", day: "numeric" });
+  }
 
   if (diffSec < 60) return "az önce";
   if (diffMin < 60) return `${diffMin} dakika önce`;
@@ -240,3 +255,17 @@ export const phaseDotColors: Record<number, string> = {
   5: "bg-pink-500",
   6: "bg-teal-500",
 };
+
+/**
+ * Get phase border color class by order, with fallback for orders > 6.
+ */
+export function getPhaseColor(order: number): string {
+  return phaseColors[order] || "border-l-gray-500 bg-gray-50/30 dark:bg-gray-950/20";
+}
+
+/**
+ * Get phase dot color class by order, with fallback for orders > 6.
+ */
+export function getPhaseDotColor(order: number): string {
+  return phaseDotColors[order] || "bg-gray-500";
+}

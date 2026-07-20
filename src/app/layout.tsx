@@ -31,7 +31,7 @@ export default async function RootLayout({
   const locale = (session?.user?.language as Locale) || "en";
   return (
     <html
-      lang="tr"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

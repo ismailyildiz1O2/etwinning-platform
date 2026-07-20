@@ -27,19 +27,14 @@ export async function POST(req: Request) {
     const token = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 saat geçerli
 
-    // Eski token varsa güncelle, yoksa oluştur (upsert)
-    await prisma.passwordResetToken.upsert({
-      where: {
-        email_token: {
-          email: user.email!,
-          token: token,
-        },
-      },
-      update: {
-        token,
-        expires,
-      },
-      create: {
+    // Delete any existing tokens for this email
+    await prisma.passwordResetToken.deleteMany({
+      where: { email: user.email! },
+    });
+
+    // Create a new token
+    await prisma.passwordResetToken.create({
+      data: {
         email: user.email!,
         token,
         expires,

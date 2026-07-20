@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
+import { SALT_ROUNDS } from "@/lib/constants";
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -39,7 +39,7 @@ export async function PATCH(req: Request) {
     }
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
     await prisma.user.update({
       where: { id: session.user.id },

@@ -23,8 +23,14 @@ export async function PATCH(
     const body = await request.json();
     const { role, isSuspended } = body;
 
-    const updateData: any = {};
-    if (role !== undefined) updateData.role = role;
+    const ALLOWED_ROLES = ["admin", "teacher", "student"];
+    const updateData: Record<string, unknown> = {};
+    if (role !== undefined) {
+      if (!ALLOWED_ROLES.includes(role)) {
+        return NextResponse.json({ error: "Geçersiz rol" }, { status: 400 });
+      }
+      updateData.role = role;
+    }
     if (isSuspended !== undefined) updateData.deletedAt = isSuspended ? new Date() : null;
 
     const updatedUser = await prisma.user.update({

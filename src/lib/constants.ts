@@ -1,3 +1,6 @@
+/** Bcrypt salt rounds for password hashing. */
+export const SALT_ROUNDS = 12;
+
 export const QUALITY_LABEL_CRITERIA = [
   { id: "isbirligi", label: "İşbirliği", color: "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30", description: "Ortak okullar arası işbirliği" },
   { id: "teknoloji", label: "Teknoloji", color: "text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30", description: "BİT ve teknoloji kullanımı" },

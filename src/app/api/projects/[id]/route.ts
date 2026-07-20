@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-logger";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/projects/[id] - Get full project details
 export async function GET(
   request: NextRequest,
@@ -53,7 +55,10 @@ export async function GET(
           include: {
             tasks: {
               where: { deletedAt: null, parentId: null },
-              orderBy: { createdAt: "asc" },
+              orderBy: [
+                { dueDate: { sort: "asc", nulls: "last" } },
+                { createdAt: "asc" }
+              ],
               include: {
                 assignee: {
                   select: {
@@ -143,6 +148,14 @@ export async function PUT(
     if (!membership) {
       return NextResponse.json(
         { error: "Forbidden: You are not a member of this project" },
+        { status: 403 }
+      );
+    }
+
+    // Only owner and admin can update project settings
+    if (!["owner", "admin"].includes(membership.role)) {
+      return NextResponse.json(
+        { error: "Forbidden: Only project owners and admins can update project settings" },
         { status: 403 }
       );
     }

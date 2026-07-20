@@ -24,6 +24,7 @@ model User {
   teams     TeamMember[]
   messages  Message[]
   notifications Notification[]
+  activityLogs  ActivityLog[]
   createdAt DateTime        @default(now())
   deletedAt DateTime?
 }
@@ -87,6 +88,7 @@ model Project {
   notes          Note[]
   teams          Team[]
   messages       Message[]
+  activityLogs   ActivityLog[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime?
@@ -142,6 +144,10 @@ model Task {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
+
+  @@index([phaseId])
+  @@index([assigneeId])
+  @@index([dueDate])
 }
 
 model File {
@@ -159,6 +165,9 @@ model File {
   isExternal Boolean  @default(false)
   externalUrl String?
   uploadedAt DateTime @default(now())
+
+  @@index([taskId])
+  @@index([messageId])
 }
 
 model Note {
@@ -171,17 +180,26 @@ model Note {
   userId    String
   content   String
   createdAt DateTime @default(now())
+
+  @@index([taskId])
+  @@index([projectId])
 }
 
 model ActivityLog {
   id         String   @id @default(cuid())
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId  String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   action     String
   entityType String
   entityId   String
   metadata   String?
   createdAt  DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([userId])
+  @@index([entityType, entityId])
 }
 
 model Team {
@@ -219,6 +237,8 @@ model Message {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
+
+  @@index([projectId, channel])
 }
 
 model Notification {
@@ -231,4 +251,6 @@ model Notification {
   link      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
 }

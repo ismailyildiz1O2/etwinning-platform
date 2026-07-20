@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { hash } from "bcryptjs";
-
+import { SALT_ROUNDS } from "@/lib/constants";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -12,6 +12,15 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Name, email, and password are required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Geçerli bir e-posta adresi giriniz" },
         { status: 400 }
       );
     }
@@ -34,7 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await hash(password, SALT_ROUNDS);
 
     const user = await prisma.user.create({
       data: {

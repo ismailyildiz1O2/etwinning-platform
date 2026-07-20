@@ -233,7 +233,7 @@ export async function POST(
         }
       );
       uploadStream.end(buffer);
-    }) as any;
+    }) as { secure_url: string; public_id: string };
 
     const url = uploadResult.secure_url;
     const publicId = uploadResult.public_id;
@@ -433,7 +433,7 @@ export async function PATCH(
       return NextResponse.json({ error: "File not found in this task" }, { status: 404 });
     }
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (tags !== undefined) updateData.tags = JSON.stringify(tags);
     if (description !== undefined) updateData.description = description;
