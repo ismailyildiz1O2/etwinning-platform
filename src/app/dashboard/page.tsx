@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { ProjectCard } from "@/components/project-card";
 import { TodayTasks } from "@/components/today-tasks";
 import { StatsCards } from "@/components/stats-cards";
@@ -29,6 +30,7 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
   const [projects, setProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
@@ -38,6 +40,8 @@ export default function DashboardPage() {
   });
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+
+  const isStudent = session?.user?.role === "student";
 
   const fetchDashboard = async () => {
     try {
@@ -124,13 +128,15 @@ export default function DashboardPage() {
             Projelerinize genel bakış
           </p>
         </div>
-        <button
-          onClick={() => router.push("/projects/new")}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
-        >
-          <Plus className="w-4 h-4" />
-          Yeni Proje Oluştur
-        </button>
+        {!isStudent && (
+          <button
+            onClick={() => router.push("/projects/new")}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
+          >
+            <Plus className="w-4 h-4" />
+            Yeni Proje Oluştur
+          </button>
+        )}
       </div>
 
       {/* Stats */}

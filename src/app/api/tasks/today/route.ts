@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = session.user.id;
+    const isStudent = session.user.role === "student";
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayEnd = new Date(todayStart);
@@ -26,6 +27,7 @@ export async function GET(request: NextRequest) {
         dueDate: {
           lte: todayEnd,
         },
+        ...(isStudent ? { assigneeId: userId } : {}),
         phase: {
           project: {
             deletedAt: null,

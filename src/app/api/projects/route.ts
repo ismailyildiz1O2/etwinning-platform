@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
             tasks: {
               select: {
                 isCompleted: true,
+                assigneeId: true,
               },
             },
           },
@@ -62,14 +63,25 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
+    const isStudent = session.user.role === "student";
+
     const projectsWithCounts = projects.map((project: any) => {
       const totalTasks = project.phases.reduce(
-        (sum: number, phase: any) => sum + phase._count.tasks,
+        (sum: number, phase: any) => {
+          const relevantTasks = isStudent
+            ? phase.tasks.filter((t: any) => t.assigneeId === userId)
+            : phase.tasks;
+          return sum + relevantTasks.length;
+        },
         0
       );
       const completedTasks = project.phases.reduce(
-        (sum: number, phase: any) =>
-          sum + phase.tasks.filter((t: any) => t.isCompleted).length,
+        (sum: number, phase: any) => {
+          const relevantTasks = isStudent
+            ? phase.tasks.filter((t: any) => t.assigneeId === userId)
+            : phase.tasks;
+          return sum + relevantTasks.filter((t: any) => t.isCompleted).length;
+        },
         0
       );
 
