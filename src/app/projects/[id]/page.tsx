@@ -85,7 +85,7 @@ export default function ProjectDetailPage() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNotesDrawerOpen, setIsNotesDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"tasks" | "calendar" | "quality-label" | "evidence" | "chat" | "members">("tasks");
+  const [activeTab, setActiveTab] = useState<"tasks" | "calendar" | "quality-label" | "evidence" | "chat" | "members" | "my-tasks" | "tools">("tasks");
 
   const fetchProject = useCallback(async () => {
     try {
@@ -103,6 +103,14 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     fetchProject();
   }, [fetchProject]);
+
+  const isStudent = session?.user?.role === "student";
+
+  useEffect(() => {
+    if (isStudent && activeTab === "tasks") {
+      setActiveTab("my-tasks");
+    }
+  }, [isStudent, activeTab]);
 
   const handleTaskToggle = () => {
     fetchProject();
@@ -153,7 +161,6 @@ export default function ProjectDetailPage() {
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   const projectMembers = (project.members || []).map((m) => m.user);
-  const isStudent = session?.user?.role === "student";
 
   return (
     <div className="flex h-[calc(100vh-4rem)]">
@@ -266,7 +273,7 @@ export default function ProjectDetailPage() {
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
         >
           <div className="w-6 h-6 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-            <NotebookText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <NotebookText className="w-3.5 h-3.5 text-blue-600 dark:bg-blue-400" />
           </div>
           <span className="text-gray-700 dark:text-gray-300 truncate">
             Proje Notları
@@ -360,78 +367,113 @@ export default function ProjectDetailPage() {
 
             {/* Tabs */}
             <div className="flex items-center gap-6 border-b border-gray-200 dark:border-gray-800 overflow-x-auto pb-1 scrollbar-hide whitespace-nowrap">
-              <button
-                onClick={() => setActiveTab("tasks")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "tasks" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Görevler
-                {activeTab === "tasks" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab("calendar")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "calendar" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Takvim
-                {activeTab === "calendar" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab("quality-label")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "quality-label" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Kalite Etiketi
-                {activeTab === "quality-label" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab("evidence")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "evidence" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Kanıtlar
-                {activeTab === "evidence" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab("chat")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Mesajlar
-                {activeTab === "chat" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveTab("members")}
-                className={cn(
-                  "pb-3 text-sm font-medium transition-colors relative",
-                  activeTab === "members" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                )}
-              >
-                Kişiler
-                {activeTab === "members" && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />
-                )}
-              </button>
+              {isStudent ? (
+                <>
+                  <button
+                    onClick={() => setActiveTab("my-tasks")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "my-tasks" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Görevlerim
+                    {activeTab === "my-tasks" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("evidence")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "evidence" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Kanıt Yükle
+                    {activeTab === "evidence" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("chat")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Mesajlar
+                    {activeTab === "chat" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("tools")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "tools" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Araçlar
+                    {activeTab === "tools" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setActiveTab("tasks")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "tasks" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Görevler
+                    {activeTab === "tasks" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("calendar")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "calendar" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Takvim
+                    {activeTab === "calendar" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("quality-label")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "quality-label" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Kalite Etiketi
+                    {activeTab === "quality-label" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("evidence")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "evidence" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Kanıtlar
+                    {activeTab === "evidence" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("chat")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Mesajlar
+                    {activeTab === "chat" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("members")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "members" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    Kişiler
+                    {activeTab === "members" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Progress bar */}
@@ -444,7 +486,7 @@ export default function ProjectDetailPage() {
           </div>
 
           {/* Main Content Areas */}
-          {activeTab === "tasks" && (
+          {!isStudent && activeTab === "tasks" && (
             <div className="space-y-4">
               {[...(project?.phases || [])]
                 .sort((a, b) => a.order - b.order)
@@ -464,7 +506,142 @@ export default function ProjectDetailPage() {
             </div>
           )}
 
-          {activeTab === "calendar" && (
+          {isStudent && activeTab === "my-tasks" && (
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Bana Atanan Görevler</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Bu projede yapmanız gereken görevler aşağıda listelenmiştir. Görevlere tıklayarak detaylarını görebilir ve kanıt yükleyebilirsiniz.</p>
+              </div>
+              
+              {(() => {
+                const myAssignedPhases = project?.phases?.map(phase => {
+                  const myTasks = phase.tasks?.filter(t => t.assignee?.id === session?.user?.id) || [];
+                  return { ...phase, myTasks };
+                }).filter(phase => phase.myTasks.length > 0) || [];
+
+                if (myAssignedPhases.length === 0) {
+                  return (
+                    <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3">
+                        <CheckCircle2 className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Harika! Şu anlık göreviniz yok</h3>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">Öğretmenleriniz size görev atadığında burada görünecektir.</p>
+                    </div>
+                  );
+                }
+
+                return myAssignedPhases.map((phase) => (
+                  <div key={phase.id} className="mb-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">{phase.title}</h3>
+                    </div>
+                    <div className="space-y-2 pl-5">
+                      {phase.myTasks.map(task => {
+                        return (
+                          <div 
+                            key={task.id} 
+                            onClick={() => handleTaskClick(task.id)}
+                            className={cn(
+                              "group flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer",
+                              task.isCompleted
+                                ? "bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-800"
+                                : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md"
+                            )}
+                          >
+                            <div className="flex items-center gap-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTaskToggle();
+                                }}
+                                className={cn(
+                                  "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                                  task.isCompleted
+                                    ? "bg-green-500 border-green-500 text-white"
+                                    : "border-gray-300 dark:border-gray-600 text-transparent hover:border-green-500 hover:text-green-500/50"
+                                )}
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                              </button>
+                              <div>
+                                <h4 className={cn(
+                                  "font-medium text-sm transition-colors",
+                                  task.isCompleted ? "text-gray-500 dark:text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"
+                                )}>{task.title}</h4>
+                                {task.dueDate && (
+                                  <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" />
+                                    {formatDate(task.dueDate)}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-2 items-end shrink-0">
+                               <span className={cn(
+                                  "px-2.5 py-1 rounded-full text-[10px] font-medium uppercase tracking-wider",
+                                  task.priority === "high" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                                  task.priority === "medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                                  "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                )}>
+                                  {task.priority === "high" ? "Yüksek" : task.priority === "medium" ? "Orta" : "Düşük"}
+                               </span>
+                               <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  Detay & Kanıt <ExternalLink className="w-3 h-3" />
+                               </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+          )}
+
+          {activeTab === "tools" && (
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Araç Kütüphanesi</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Proje görevlerinizi yaparken kullanabileceğiniz Web 2.0 araçları ve eğitim uygulamaları.</p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                 <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-md transition-all group">
+                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">C</div>
+                   <div>
+                     <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-500 transition-colors">Canva</h4>
+                     <p className="text-xs text-gray-500">Afiş, Logo & Tasarım</p>
+                   </div>
+                 </a>
+                 <a href="https://padlet.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-pink-500 hover:shadow-md transition-all group">
+                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">P</div>
+                   <div>
+                     <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-pink-500 transition-colors">Padlet</h4>
+                     <p className="text-xs text-gray-500">Dijital Pano & İşbirliği</p>
+                   </div>
+                 </a>
+                 <a href="https://kahoot.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-md transition-all group">
+                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">K</div>
+                   <div>
+                     <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-purple-500 transition-colors">Kahoot!</h4>
+                     <p className="text-xs text-gray-500">Oyun & Değerlendirme</p>
+                   </div>
+                 </a>
+                 <a href="https://storyjumper.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-orange-500 hover:shadow-md transition-all group">
+                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
+                   <div>
+                     <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-500 transition-colors">StoryJumper</h4>
+                     <p className="text-xs text-gray-500">Dijital Kitap Oluşturma</p>
+                   </div>
+                 </a>
+                 <Link href="/dashboard/tools" className="flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-all sm:col-span-2 lg:col-span-1">
+                    <Wrench className="w-4 h-4" /> Tüm Araçlara Git
+                 </Link>
+               </div>
+            </div>
+          )}
+
+          {!isStudent && activeTab === "calendar" && (
             <div className="space-y-4">
               <CalendarView
                 tasks={(project?.phases || []).flatMap((p: any) => p.tasks || [])}
@@ -473,7 +650,7 @@ export default function ProjectDetailPage() {
             </div>
           )}
 
-          {activeTab === "quality-label" && (
+          {!isStudent && activeTab === "quality-label" && (
             <QualityLabelPanel projectId={projectId} project={project} />
           )}
 
@@ -485,7 +662,7 @@ export default function ProjectDetailPage() {
             <ChatPanel projectId={projectId} projectMembers={project.members || []} />
           )}
 
-          {activeTab === "members" && (
+          {!isStudent && activeTab === "members" && (
             <MembersPanel projectId={projectId} projectMembers={project.members || []} onUpdate={fetchProject} />
           )}
         </div>
