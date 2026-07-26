@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PhaseCard } from "@/components/phase-card";
 import { TaskDrawer } from "@/components/task-drawer";
 import { NotesDrawer } from "@/components/notes-drawer";
@@ -446,14 +446,14 @@ export default function ProjectDetailPage() {
                     {activeTab === "calendar" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
-                    onClick={() => setActiveTab("quality")}
+                    onClick={() => setActiveTab("quality-label")}
                     className={cn(
                       "pb-3 text-sm font-medium transition-colors relative",
-                      activeTab === "quality" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      activeTab === "quality-label" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
                     {t.qualityLabel.title}
-                    {activeTab === "quality" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                    {activeTab === "quality-label" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
                     onClick={() => setActiveTab("members")}
