@@ -20,7 +20,7 @@ export async function sendInviteEmail({
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "eTwin Asistan <onboarding@resend.dev>",
+      from: "eTwin Asistan <noreply@etwinasistan.com>",
       to,
       subject: `${inviterName} sizi ${projectName} projesine davet etti!`,
       html: `
@@ -65,7 +65,7 @@ export async function sendPasswordResetEmail({
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "eTwin Asistan <onboarding@resend.dev>",
+      from: "eTwin Asistan <noreply@etwinasistan.com>",
       to,
       subject: "Şifre Sıfırlama İsteği - eTwin Asistan",
       html: `
