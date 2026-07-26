@@ -123,7 +123,7 @@ export default function ToolsPage() {
           })
         ) : (
           <div className="col-span-full text-center py-12 text-gray-500">
-            {t.common.search}
+            {locale === "en" ? "No tools found matching your criteria." : "Aradığınız kriterlere uygun araç bulunamadı."}
           </div>
         )}
       </div>
