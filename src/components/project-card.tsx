@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { useSession } from "next-auth/react";
+import { useI18n } from "./i18n-provider";
 
 interface ProjectCardProps {
   project: {
@@ -28,6 +29,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) {
   const router = useRouter();
   const { data: session } = useSession();
+  const { locale, t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -43,11 +45,13 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
   );
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  const startDate = new Date(project.startDate).toLocaleDateString("tr-TR", {
+  const dateLocale = locale === "en" ? "en-US" : "tr-TR";
+
+  const startDate = new Date(project.startDate).toLocaleDateString(dateLocale, {
     day: "numeric",
     month: "short",
   });
-  const endDate = new Date(project.endDate).toLocaleDateString("tr-TR", {
+  const endDate = new Date(project.endDate).toLocaleDateString(dateLocale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -246,7 +250,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
           <div className="flex items-center justify-between text-xs mb-1.5">
             <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              {completedTasks}/{totalTasks} görev
+              {completedTasks}/{totalTasks} {t.common.tasks}
             </span>
             <span className="font-medium text-gray-700 dark:text-gray-300">
               %{progress}

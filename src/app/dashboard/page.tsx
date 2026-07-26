@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { ProjectCard } from "@/components/project-card";
 import { TodayTasks } from "@/components/today-tasks";
 import { StatsCards } from "@/components/stats-cards";
-import { EmptyState } from "@/components/empty-state";
+import { useI18n } from "@/components/i18n-provider";
 import { Plus, FolderOpen } from "lucide-react";
 
 interface Project {
@@ -31,6 +31,7 @@ interface DashboardStats {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { t } = useI18n();
   const [projects, setProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
@@ -122,10 +123,10 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Ana Sayfa
+            {t.dashboard.title}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Projelerinize genel bakış
+            {t.dashboard.subtitle}
           </p>
         </div>
         {!isStudent && (
@@ -134,7 +135,7 @@ export default function DashboardPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
           >
             <Plus className="w-4 h-4" />
-            Yeni Proje Oluştur
+            {t.dashboard.newProjectBtn}
           </button>
         )}
       </div>
@@ -147,7 +148,7 @@ export default function DashboardPage() {
         {/* Projects */}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Projeler
+            {t.dashboard.activeProjects}
           </h2>
           {projects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

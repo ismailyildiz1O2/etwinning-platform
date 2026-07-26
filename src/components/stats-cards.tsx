@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { FolderOpen, ListTodo, CheckCircle2, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useI18n } from "./i18n-provider";
 
 interface StatsCardsProps {
   stats: {
@@ -43,9 +44,11 @@ function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: 
 }
 
 export function StatsCards({ stats }: StatsCardsProps) {
+  const { t } = useI18n();
+
   const cards = [
     {
-      label: "Toplam Proje",
+      label: t.dashboard.totalProjects,
       value: stats.totalProjects,
       icon: FolderOpen,
       gradient: "from-blue-500 to-blue-600",
@@ -53,7 +56,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       iconColor: "text-blue-600 dark:text-blue-400",
     },
     {
-      label: "Toplam Görev",
+      label: t.dashboard.totalTasks,
       value: stats.totalTasks,
       icon: ListTodo,
       gradient: "from-amber-500 to-amber-600",
@@ -61,7 +64,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       iconColor: "text-amber-600 dark:text-amber-400",
     },
     {
-      label: "Tamamlanan",
+      label: t.dashboard.completedTasks,
       value: stats.completedTasks,
       icon: CheckCircle2,
       gradient: "from-green-500 to-green-600",
@@ -69,7 +72,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       iconColor: "text-green-600 dark:text-green-400",
     },
     {
-      label: "Tamamlanma Oranı",
+      label: t.dashboard.completionRate,
       value: stats.completionRate,
       icon: TrendingUp,
       gradient: "from-purple-500 to-purple-600",

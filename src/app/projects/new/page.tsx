@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 import {
   PHASE_1_FIXED,
   PHASE_4_FIXED,
@@ -39,13 +40,14 @@ interface EditableTask {
 
 // ── Step Indicator Component ───────────────────────────────────────────
 
-const STEPS = [
-  { number: 1, label: "Proje Bilgileri", icon: BookOpen },
-  { number: 2, label: "Proje Özelleştirme", icon: Sparkles },
-  { number: 3, label: "Görev Onayı", icon: ListTodo },
-] as const;
-
 function StepIndicator({ currentStep }: { currentStep: number }) {
+  const { t } = useI18n();
+  const STEPS = [
+    { number: 1, label: t.newProjectDialog.title, icon: BookOpen },
+    { number: 2, label: "Customize", icon: Sparkles },
+    { number: 3, label: t.project.tasks, icon: ListTodo },
+  ];
+
   return (
     <div className="flex items-center justify-center w-full mb-10">
       {STEPS.map((step, idx) => {
@@ -170,6 +172,7 @@ function uniqueId(): string {
 
 export default function NewProjectPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(1);
 
   // ── Step 1: Project Info ──
@@ -509,10 +512,10 @@ export default function NewProjectPage() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Proje Bilgileri
+              {t.newProjectDialog.title}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Projenizin temel bilgilerini girin
+              {t.newProjectDialog.subtitle}
             </p>
           </div>
         </div>
@@ -521,30 +524,30 @@ export default function NewProjectPage() {
 
         <div className="space-y-5">
           {/* Proje Adı */}
-          <FormField label="Proje Adı" required>
+          <FormField label={t.newProjectDialog.projectName} required>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="ör. Avrupa Kültürleri Projesi"
+              placeholder={t.newProjectDialog.projectNamePlaceholder}
               className={inputClasses}
             />
           </FormField>
 
           {/* Açıklama */}
-          <FormField label="Açıklama">
+          <FormField label={t.newProjectDialog.description}>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="Projenizi kısaca açıklayın..."
+              placeholder={t.newProjectDialog.descriptionPlaceholder}
               className={cn(inputClasses, "resize-none")}
             />
           </FormField>
 
           {/* Tarihler */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Başlangıç Tarihi" required>
+            <FormField label={t.newProjectDialog.startDate} required>
               <input
                 type="date"
                 value={startDate}
@@ -552,7 +555,7 @@ export default function NewProjectPage() {
                 className={inputClasses}
               />
             </FormField>
-            <FormField label="Bitiş Tarihi" required>
+            <FormField label={t.newProjectDialog.endDate} required>
               <input
                 type="date"
                 value={endDate}
@@ -563,29 +566,29 @@ export default function NewProjectPage() {
           </div>
 
           {/* Ülke */}
-          <FormField label="Ülke">
+          <FormField label={t.newProjectDialog.country}>
             <input
               type="text"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              placeholder="ör. Türkiye"
+              placeholder={t.newProjectDialog.countryPlaceholder}
               className={inputClasses}
             />
           </FormField>
 
           {/* Ortak Okullar */}
-          <FormField label="Ortak Okullar">
+          <FormField label={t.newProjectDialog.partnerSchools}>
             <input
               type="text"
               value={partnerSchools}
               onChange={(e) => setPartnerSchools(e.target.value)}
-              placeholder="Virgülle ayırın: Okul A, Okul B, Okul C"
+              placeholder={t.newProjectDialog.partnerSchoolsPlaceholder}
               className={inputClasses}
             />
           </FormField>
 
           {/* TwinSpace URL */}
-          <FormField label="TwinSpace URL">
+          <FormField label={t.newProjectDialog.twinspaceUrl}>
             <input
               type="url"
               value={twinspaceUrl}
@@ -603,7 +606,7 @@ export default function NewProjectPage() {
             onClick={handleNextStep1}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium text-sm transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"
           >
-            Devam Et
+            {t.common.continue}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

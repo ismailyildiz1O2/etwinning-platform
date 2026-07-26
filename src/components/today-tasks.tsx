@@ -6,6 +6,8 @@ import { Check, Calendar, PartyPopper } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
+import { useI18n } from "./i18n-provider";
+
 interface TodayTask {
   id: string;
   title: string;
@@ -20,6 +22,7 @@ interface TodayTask {
 }
 
 export function TodayTasks() {
+  const { t } = useI18n();
   const [tasks, setTasks] = useState<TodayTask[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -81,7 +84,7 @@ export function TodayTasks() {
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-blue-500" />
           <h3 className="font-semibold text-gray-900 dark:text-white">
-            Bugünün Görevleri
+            {t.dashboard.todayTasks}
           </h3>
         </div>
         {todayCount > 0 && (
