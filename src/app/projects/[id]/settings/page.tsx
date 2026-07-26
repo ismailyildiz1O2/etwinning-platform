@@ -13,6 +13,7 @@ import {
   Shield,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ProjectSettings {
   id: string;
@@ -32,6 +33,7 @@ interface ProjectSettings {
 }
 
 export default function ProjectSettingsPage() {
+  const { t } = useI18n();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
@@ -104,9 +106,9 @@ export default function ProjectSettingsPage() {
         }),
       });
       if (!res.ok) throw new Error();
-      toast.success("Proje güncellendi");
+      toast.success(t.common.success);
     } catch {
-      toast.error("Proje güncellenemedi");
+      toast.error(t.common.error);
     } finally {
       setSaving(false);
     }
@@ -123,13 +125,13 @@ export default function ProjectSettingsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Davet gönderilemedi");
+        throw new Error(data.error || "Error sending invite");
       }
-      toast.success("Üye davet edildi");
+      toast.success(t.common.success);
       setInviteEmail("");
       fetchProject();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Davet gönderilemedi");
+      toast.error(error instanceof Error ? error.message : "Error sending invite");
     } finally {
       setInviting(false);
     }
@@ -146,22 +148,22 @@ export default function ProjectSettingsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Öğrenci hesabı oluşturulamadı");
+        throw new Error(data.error || "Failed to create student");
       }
-      toast.success("Öğrenci hesabı oluşturuldu ve projeye eklendi!");
+      toast.success(t.common.success);
       setStudentName("");
       setStudentUsername("");
       setStudentPassword("");
       fetchProject();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Öğrenci hesabı oluşturulamadı");
+      toast.error(error instanceof Error ? error.message : "Failed to create student");
     } finally {
       setCreatingStudent(false);
     }
   };
 
   const handleArchive = async () => {
-    if (!confirm("Bu projeyi arşivlemek istediğinize emin misiniz?")) return;
+    if (!confirm("Are you sure you want to archive this project?")) return;
     try {
       const res = await fetch(`/api/projects/${projectId}`, {
         method: "PATCH",
@@ -169,29 +171,24 @@ export default function ProjectSettingsPage() {
         body: JSON.stringify({ status: "archived" }),
       });
       if (!res.ok) throw new Error();
-      toast.success("Proje arşivlendi");
+      toast.success(t.common.success);
       router.push("/dashboard");
     } catch {
-      toast.error("Proje arşivlenemedi");
+      toast.error(t.common.error);
     }
   };
 
   const handleDelete = async () => {
-    if (
-      !confirm(
-        "Bu projeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz!"
-      )
-    )
-      return;
+    if (!confirm("Are you sure you want to delete this project? This action cannot be undone!")) return;
     try {
       const res = await fetch(`/api/projects/${projectId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error();
-      toast.success("Proje silindi");
+      toast.success(t.common.success);
       router.push("/dashboard");
     } catch {
-      toast.error("Proje silinemedi");
+      toast.error(t.common.error);
     }
   };
 
@@ -206,7 +203,7 @@ export default function ProjectSettingsPage() {
   if (!project) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-500">Proje bulunamadı</p>
+        <p className="text-gray-500">Project not found</p>
       </div>
     );
   }
@@ -215,22 +212,22 @@ export default function ProjectSettingsPage() {
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Proje Ayarları
+          {t.settings.title}
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          Proje bilgilerini ve üyeleri yönetin
+          {t.settings.subtitle}
         </p>
       </div>
 
       {/* Project Info */}
       <div className="rounded-2xl border border-gray-200/80 dark:border-gray-700/50 bg-white dark:bg-gray-900/80 p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Proje Bilgileri
+          {t.settings.projectDetails}
         </h2>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Proje Adı
+            {t.newProjectDialog.projectName}
           </label>
           <input
             type="text"
@@ -242,7 +239,7 @@ export default function ProjectSettingsPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Açıklama
+            {t.newProjectDialog.description}
           </label>
           <textarea
             value={description}
@@ -255,7 +252,7 @@ export default function ProjectSettingsPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Başlangıç
+              {t.newProjectDialog.startDate}
             </label>
             <input
               type="date"
@@ -266,7 +263,7 @@ export default function ProjectSettingsPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Bitiş
+              {t.newProjectDialog.endDate}
             </label>
             <input
               type="date"
@@ -279,7 +276,7 @@ export default function ProjectSettingsPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Ülke
+            {t.newProjectDialog.country}
           </label>
           <input
             type="text"
@@ -291,20 +288,20 @@ export default function ProjectSettingsPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Ortak Okullar
+            {t.newProjectDialog.partnerSchools}
           </label>
           <input
             type="text"
             value={partnerSchools}
             onChange={(e) => setPartnerSchools(e.target.value)}
-            placeholder="Virgülle ayırın"
+            placeholder={t.newProjectDialog.partnerSchoolsPlaceholder}
             className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            TwinSpace URL
+            {t.newProjectDialog.twinspaceUrl}
           </label>
           <input
             type="url"
@@ -320,14 +317,14 @@ export default function ProjectSettingsPage() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 transition-all shadow-lg shadow-blue-500/25"
         >
           <Save className="w-4 h-4" />
-          {saving ? "Kaydediliyor..." : "Kaydet"}
+          {saving ? t.common.loading : t.common.save}
         </button>
       </div>
 
       {/* Members */}
       <div className="rounded-2xl border border-gray-200/80 dark:border-gray-700/50 bg-white dark:bg-gray-900/80 p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Üyeler
+          {t.members.title}
         </h2>
 
         <div className="space-y-2">
@@ -360,7 +357,7 @@ export default function ProjectSettingsPage() {
                 )}
               >
                 <Shield className="w-3 h-3" />
-                {member.role === "owner" ? "Sahip" : member.role === "student" ? "Öğrenci" : "Üye"}
+                {member.role === "owner" ? t.members.owner : member.role === "student" ? t.members.students : t.members.teachers}
               </span>
             </div>
           ))}
@@ -374,7 +371,7 @@ export default function ProjectSettingsPage() {
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder="Email adresi girin"
+              placeholder={t.auth.email}
               className="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
@@ -384,54 +381,56 @@ export default function ProjectSettingsPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 transition-all shadow-lg shadow-blue-500/25"
           >
             <UserPlus className="w-4 h-4" />
-            {inviting ? "Davet ediliyor..." : "Üye Davet Et"}
+            {inviting ? t.common.loading : t.members.inviteTeacher}
           </button>
         </div>
       </div>
 
-      {/* Öğrenci Yönetimi */}
+      {/* Student Management */}
       <div className="rounded-2xl border border-gray-200/80 dark:border-gray-700/50 bg-white dark:bg-gray-900/80 p-6 space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Öğrenci Yönetimi
+            {t.members.studentManagement}
           </h2>
-          <p className="text-sm text-gray-500 mt-1">Öğrencilerin e-posta adresi olmadan projeye erişebilmesi için buradan onlara hesap oluşturun. Şifreyi öğrenciye vermeyi unutmayın.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {t.members.studentManagementDesc}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Öğrenci Adı
+              {t.members.studentName}
             </label>
             <input
               type="text"
               value={studentName}
               onChange={(e) => setStudentName(e.target.value)}
-              placeholder="Örn: Ali Yılmaz"
+              placeholder={t.members.studentNamePlaceholder}
               className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Öğrenci Kodu (Kullanıcı Adı)
+              {t.members.studentCode}
             </label>
             <input
               type="text"
               value={studentUsername}
               onChange={(e) => setStudentUsername(e.target.value)}
-              placeholder="Örn: aliyilmaz_tr"
+              placeholder={t.members.studentCodePlaceholder}
               className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Geçici Şifre
+              {t.members.tempPassword}
             </label>
             <input
               type="text"
               value={studentPassword}
               onChange={(e) => setStudentPassword(e.target.value)}
-              placeholder="En az 6 karakter"
+              placeholder={t.members.tempPasswordPlaceholder}
               className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
@@ -444,7 +443,7 @@ export default function ProjectSettingsPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-medium hover:from-emerald-600 hover:to-emerald-700 disabled:opacity-50 transition-all shadow-lg shadow-emerald-500/25"
           >
             <UserPlus className="w-4 h-4" />
-            {creatingStudent ? "Oluşturuluyor..." : "Öğrenci Hesabı Oluştur"}
+            {creatingStudent ? t.common.loading : t.members.createStudentBtn}
           </button>
         </div>
       </div>
@@ -454,7 +453,7 @@ export default function ProjectSettingsPage() {
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-red-500" />
           <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
-            Tehlikeli Bölge
+            {t.members.dangerZone}
           </h2>
         </div>
 
@@ -463,14 +462,14 @@ export default function ProjectSettingsPage() {
             onClick={handleArchive}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 text-sm font-medium hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
           >
-            Projeyi Arşivle
+            {t.project.archiveProject}
           </button>
           <button
             onClick={handleDelete}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
-            Projeyi Sil
+            {t.project.deleteProject}
           </button>
         </div>
       </div>

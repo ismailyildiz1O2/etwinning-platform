@@ -626,11 +626,10 @@ export default function NewProjectPage() {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Proje Özelleştirme
+              {t.customizeStep.title}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Projenize özel görev listesi oluşturmak için aşağıdaki bilgileri
-              doldurun
+              {t.customizeStep.subtitle}
             </p>
           </div>
         </div>
@@ -639,25 +638,25 @@ export default function NewProjectPage() {
 
         <div className="space-y-6">
           {/* Proje Konusu */}
-          <FormField label="Proje Konusu / Teması" required>
+          <FormField label={t.customizeStep.topicLabel} required>
             <input
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="ör. Kültürel Miras, Çevre Kirliliği, Sağlıklı Yaşam"
+              placeholder={t.customizeStep.topicPlaceholder}
               className={inputClasses}
             />
           </FormField>
 
           {/* Hedef Yaş Grubu */}
-          <FormField label="Hedef Yaş Grubu" required>
+          <FormField label={t.customizeStep.ageGroupLabel} required>
             <select
               value={ageGroup}
               onChange={(e) => setAgeGroup(e.target.value)}
               className={cn(inputClasses, !ageGroup && "text-gray-400 dark:text-gray-500")}
             >
               <option value="" disabled className="bg-white text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-                Yaş grubu seçin...
+                {t.customizeStep.ageGroupPlaceholder}
               </option>
               {AGE_GROUP_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value} className="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
@@ -668,7 +667,7 @@ export default function NewProjectPage() {
           </FormField>
 
           {/* Ortak Ürün Türü - Grid of Cards */}
-          <FormField label="Ortak Ürün Türü" required>
+          <FormField label={t.customizeStep.productTypeLabel} required>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {PRODUCT_TYPE_OPTIONS.map((opt) => {
                 const isSelected = productType === opt.value;
@@ -709,18 +708,18 @@ export default function NewProjectPage() {
           </FormField>
 
           {/* Dijital Araçlar */}
-          <FormField label="Kullanılacak Dijital Araçlar">
+          <FormField label={t.customizeStep.digitalToolsLabel}>
             <input
               type="text"
               value={digitalTools}
               onChange={(e) => setDigitalTools(e.target.value)}
-              placeholder="ör. Canva, Padlet, Book Creator, Google Maps"
+              placeholder={t.customizeStep.digitalToolsPlaceholder}
               className={inputClasses}
             />
           </FormField>
 
           {/* Proje Süresi */}
-          <FormField label="Proje Süresi (Ay)" required>
+          <FormField label={t.customizeStep.durationLabel} required>
             <div className="flex items-center gap-3">
               <input
                 type="number"
@@ -733,7 +732,7 @@ export default function NewProjectPage() {
                 className={cn(inputClasses, "w-28")}
               />
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                ay
+                {t.customizeStep.monthSuffix}
               </span>
             </div>
           </FormField>

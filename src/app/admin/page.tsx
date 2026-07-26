@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Users, FolderGit2, CheckSquare, FileText, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useI18n } from "@/components/i18n-provider";
 
 interface Stats {
   totalUsers: number;
@@ -13,6 +14,7 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
+  const { t, locale } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,16 +39,16 @@ export default function AdminDashboard() {
     <div className="p-6 lg:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Admin Paneli
+          {t.admin.title}
         </h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Sistem istatistiklerini ve platform durumunu görüntüleyin.
+          {t.admin.subtitle}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Toplam Kullanıcı"
+          title={t.admin.totalUsers}
           value={stats?.totalUsers}
           loading={loading}
           icon={Users}
@@ -54,23 +56,23 @@ export default function AdminDashboard() {
           link="/admin/users"
         />
         <StatCard
-          title="Aktif Projeler"
+          title={t.admin.activeProjects}
           value={stats?.activeProjects}
-          subValue={`Toplam ${stats?.totalProjects} proje`}
+          subValue={locale === "en" ? `Total ${stats?.totalProjects || 0} projects` : `Toplam ${stats?.totalProjects || 0} proje`}
           loading={loading}
           icon={FolderGit2}
           color="bg-green-500"
           link="/admin/projects"
         />
         <StatCard
-          title="Oluşturulan Görevler"
+          title={t.admin.createdTasks}
           value={stats?.totalTasks}
           loading={loading}
           icon={CheckSquare}
           color="bg-purple-500"
         />
         <StatCard
-          title="Yüklenen Dosyalar"
+          title={t.admin.uploadedFiles}
           value={stats?.totalFiles}
           loading={loading}
           icon={FileText}
@@ -89,8 +91,8 @@ export default function AdminDashboard() {
             </div>
             <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Kullanıcı Yönetimi</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Kullanıcıları görüntüleyin, rollerini güncelleyin veya hesapları askıya alın.</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{t.admin.userManagement}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t.admin.userManagementDesc}</p>
         </Link>
 
         <Link
@@ -103,8 +105,8 @@ export default function AdminDashboard() {
             </div>
             <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-500 transform group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Proje Yönetimi</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Tüm projeleri listeleyin, detaylarını görün veya sistemden kaldırın.</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{t.admin.projectManagement}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t.admin.projectManagementDesc}</p>
         </Link>
       </div>
     </div>
@@ -129,26 +131,26 @@ function StatCard({
   link?: string;
 }) {
   const content = (
-    <div className={`p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm ${link ? 'hover:border-blue-300 dark:hover:border-blue-700 transition-colors group' : ''}`}>
+    <div className="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl relative overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-700 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
             {title}
           </p>
           {loading ? (
-            <div className="h-8 w-24 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-16 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
           ) : (
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {value?.toLocaleString() || "0"}
-              </h3>
-              {subValue && (
-                <span className="text-sm text-gray-500 dark:text-gray-400">{subValue}</span>
-              )}
-            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
+              {value ?? 0}
+            </h3>
+          )}
+          {subValue && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              {subValue}
+            </p>
           )}
         </div>
-        <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center text-white shadow-lg shadow-black/5`}>
+        <div className={`p-3 rounded-xl ${color} text-white shadow-md`}>
           <Icon className="w-6 h-6" />
         </div>
       </div>
@@ -156,7 +158,7 @@ function StatCard({
   );
 
   if (link) {
-    return <Link href={link} className="block">{content}</Link>;
+    return <Link href={link}>{content}</Link>;
   }
 
   return content;

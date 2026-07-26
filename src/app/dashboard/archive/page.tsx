@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectCard } from "@/components/project-card";
 import { EmptyState } from "@/components/empty-state";
-import { Archive, Plus } from "lucide-react";
+import { Archive } from "lucide-react";
+import { useI18n } from "@/components/i18n-provider";
 
 interface Project {
   id: string;
@@ -20,6 +21,7 @@ interface Project {
 }
 
 export default function ArchivePage() {
+  const { t } = useI18n();
   const [projects, setProjects] = useState<Project[]>([]);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -69,10 +71,10 @@ export default function ArchivePage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Archive className="w-6 h-6 text-gray-500" />
-            Arşivlenmiş Projeler
+            {t.archivePage.title}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Geçmiş projelerinizi buradan görüntüleyebilirsiniz
+            {t.archivePage.subtitle}
           </p>
         </div>
       </div>
@@ -92,10 +94,10 @@ export default function ArchivePage() {
         ) : (
           <EmptyState
             icon={Archive}
-            title="Arşiviniz boş"
-            description="Henüz arşive kaldırdığınız bir proje bulunmuyor."
+            title={t.archivePage.emptyTitle}
+            description={t.archivePage.emptyDescription}
             action={{
-              label: "Yeni Proje Oluştur",
+              label: t.dashboard.newProjectBtn,
               onClick: () => router.push("/projects/new"),
             }}
           />
