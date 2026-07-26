@@ -30,6 +30,9 @@ export async function sendInviteEmail({
           <p>Projeye katılmak ve ortak çalışmaya başlamak için aşağıdaki bağlantıya tıklayın:</p>
           <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px;">Daveti Kabul Et / Giriş Yap</a>
           <br /><br />
+          <p style="font-size: 13px; color: #666;">Not: Butona tıkladığınızda telefonunuzda güvenlik uyarısı alıyorsanız, aşağıdaki linki kopyalayıp tarayıcınızın adres çubuğuna yapıştırabilirsiniz:</p>
+          <p style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; word-break: break-all; color: #333;">${inviteLink}</p>
+          <br />
           <p>Eğer henüz bir hesabınız yoksa, aynı e-posta adresiyle kayıt olabilirsiniz.</p>
           <p>İyi çalışmalar,<br />eTwin Asistan Ekibi</p>
         </div>
@@ -72,6 +75,9 @@ export async function sendPasswordResetEmail({
           <p>eTwin Asistan hesabınız için bir şifre sıfırlama isteği aldık. Aşağıdaki butona tıklayarak yeni şifrenizi belirleyebilirsiniz.</p>
           <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Şifremi Sıfırla</a>
           <br /><br />
+          <p style="font-size: 13px; color: #666;">Not: Butona tıkladığınızda telefonunuzda (awstrack.me kaynaklı) güvenlik uyarısı alıyorsanız, aşağıdaki linki kopyalayıp tarayıcınızın adres çubuğuna yapıştırabilirsiniz:</p>
+          <p style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; word-break: break-all; color: #333;">${resetLink}</p>
+          <br />
           <p>Eğer bu isteği siz yapmadıysanız, bu e-postayı dikkate almayabilirsiniz. Şifreniz değiştirilmeyecektir.</p>
           <p>Bu bağlantı 1 saat boyunca geçerlidir.</p>
           <p>İyi çalışmalar,<br />eTwin Asistan Ekibi</p>
