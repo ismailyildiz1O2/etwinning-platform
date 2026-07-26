@@ -10,6 +10,8 @@ export const en = {
     success: "Success",
     error: "Error",
     loading: "Loading...",
+    language: "Language",
+    search: "Search...",
   },
   sidebar: {
     dashboard: "Dashboard",
@@ -20,6 +22,9 @@ export const en = {
     tools: "TOOLS",
     notes: "NOTES",
     phases: "PHASES",
+    myTasks: "My Assigned Tasks",
+    uploadEvidence: "Upload Evidence",
+    messaging: "Messaging",
   },
   dashboard: {
     totalProjects: "Total Projects",

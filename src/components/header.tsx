@@ -10,6 +10,7 @@ import {
   Settings,
   Sparkles,
   ChevronDown,
+  Globe,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
@@ -18,6 +19,7 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { NotificationsDropdown } from "./notifications-dropdown";
 import { GlobalSettingsModal } from "./global-settings-modal";
+import { useI18n } from "./i18n-provider";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -26,11 +28,14 @@ interface HeaderProps {
 export function Header({ onMenuToggle }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
+  const { locale, setLocale, t } = useI18n();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<"profile" | "appearance">("profile");
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -43,6 +48,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsDropdownOpen(false);
+      }
+      if (
+        langRef.current &&
+        !langRef.current.contains(event.target as Node)
+      ) {
+        setIsLangOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -104,6 +115,53 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </div>
           </button>
         )}
+
+        {/* Language selector */}
+        <div className="relative" ref={langRef}>
+          <button
+            onClick={() => setIsLangOpen(!isLangOpen)}
+            className="flex items-center gap-1.5 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold text-gray-700 dark:text-gray-300"
+            title="Change Language / Dil Değiştir"
+          >
+            <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span className="uppercase">{locale}</span>
+          </button>
+
+          {isLangOpen && (
+            <div className="absolute right-0 top-11 z-50 w-36 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl py-1 animate-in fade-in duration-150">
+              <button
+                onClick={() => {
+                  setLocale("en");
+                  setIsLangOpen(false);
+                }}
+                className={cn(
+                  "flex items-center justify-between w-full px-3 py-2 text-xs font-medium transition-colors",
+                  locale === "en"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                )}
+              >
+                <span>🇬🇧 English</span>
+                {locale === "en" && <span>✓</span>}
+              </button>
+              <button
+                onClick={() => {
+                  setLocale("tr");
+                  setIsLangOpen(false);
+                }}
+                className={cn(
+                  "flex items-center justify-between w-full px-3 py-2 text-xs font-medium transition-colors",
+                  locale === "tr"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                )}
+              >
+                <span>🇹🇷 Türkçe</span>
+                {locale === "tr" && <span>✓</span>}
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Notifications */}
         <NotificationsDropdown />

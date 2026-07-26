@@ -36,7 +36,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200">
-        <Providers locale={locale}>
+        <Providers>
           {children}
         </Providers>
       </body>

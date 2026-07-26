@@ -17,6 +17,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useI18n } from "./i18n-provider";
 
 interface AppSidebarProps {
   projects?: { id: string; name: string; status: string }[];
@@ -28,6 +29,7 @@ interface AppSidebarProps {
 export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = false }: AppSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { t } = useI18n();
   const [collapsed, setCollapsed] = useState(!isOpen);
   const isStudent = session?.user?.role === "student";
   const isAdmin = session?.user?.role === "admin";
@@ -37,9 +39,8 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
   }, [isOpen]);
 
   const navItems = [
-    { href: "/dashboard", label: "Ana Sayfa", icon: Home },
-    { href: "/dashboard/my-tasks", label: "Görevlerim", icon: CheckSquare },
-    { href: "/dashboard", label: "Ayarlar", icon: Settings, isSetting: true },
+    { href: "/dashboard", label: t.sidebar.dashboard, icon: Home },
+    { href: "/dashboard/my-tasks", label: t.sidebar.myTasks, icon: CheckSquare },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -92,7 +93,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
           )}
         >
           <Home className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Ana Sayfa</span>}
+          {!collapsed && <span>{t.sidebar.dashboard}</span>}
         </Link>
 
         {/* My Tasks */}
@@ -106,7 +107,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
           )}
         >
           <CheckSquare className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Görevlerim</span>}
+          {!collapsed && <span>{t.sidebar.myTasks}</span>}
         </Link>
 
         {/* Tools */}
@@ -120,7 +121,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
           )}
         >
           <Wrench className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Araçlar</span>}
+          {!collapsed && <span>{t.sidebar.tools}</span>}
         </Link>
 
         {/* Admin Panel */}
@@ -135,7 +136,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
             )}
           >
             <ShieldCheck className="w-5 h-5 shrink-0" />
-            {!collapsed && <span>Admin Paneli</span>}
+            {!collapsed && <span>Admin Panel</span>}
           </Link>
         )}
 
@@ -143,7 +144,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
         {!collapsed && (
           <div className="pt-4">
             <p className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-              Projeler
+              {t.sidebar.projects}
             </p>
           </div>
         )}
