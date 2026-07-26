@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Sparkles, ArrowRight, Loader2, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "./i18n-provider";
 
 interface QualityLabelPanelProps {
   projectId: string;
@@ -12,6 +13,7 @@ interface QualityLabelPanelProps {
 }
 
 export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -102,9 +104,9 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
     <div className="space-y-8 animate-in fade-in duration-300">
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Kriter İlerlemesi</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t.qualityLabel.title}</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Görevlerinize eklediğiniz etiketlere göre Kalite Etiketi başvurusu için eksiklerinizi görün.
+            {t.qualityLabel.subtitle}
           </p>
         </div>
 
@@ -117,7 +119,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
                     {stat.label}
                   </div>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {stat.taskCount} görev, {stat.fileCount} kanıt
+                    {stat.taskCount} {t.common.tasks}, {stat.fileCount} {t.task.files}
                   </span>
                 </div>
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -133,7 +135,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
               {stat.progress < 50 && (
                 <p className="text-xs text-amber-600 dark:text-amber-500 mt-2 flex items-center gap-1">
                   <ArrowRight className="w-3 h-3" />
-                  Bu kriterde daha fazla etkinlik veya kanıt yüklemelisiniz.
+                  Add more evidence or tasks for this criterion.
                 </p>
               )}
               
@@ -142,7 +144,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {stat.matchedTasks.length > 0 && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Tamamlanan Görevler</h4>
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Completed Tasks</h4>
                       <ul className="space-y-2">
                         {stat.matchedTasks.map((t: any) => (
                           <li key={t.id} className="text-sm">
@@ -158,7 +160,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
                   )}
                   {stat.matchedFiles.length > 0 && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Kanıt Dosyaları</h4>
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Evidence Files</h4>
                       <ul className="space-y-2">
                         {stat.matchedFiles.map((f: any) => (
                           <li key={f.id} className="text-sm">
@@ -183,10 +185,10 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
           <div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-500" />
-              AI Başvuru Taslağı
+              AI Application Draft
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xl">
-              Projenizdeki tüm görevleri, notları ve kanıtları analiz ederek Kalite Etiketi başvurusu için ilk taslağı oluşturur.
+              Analyzes all tasks, notes, and evidences to generate a draft for your Quality Label application.
             </p>
           </div>
           <button
@@ -195,7 +197,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm shadow-purple-500/25"
           >
             {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {isGenerating ? "Oluşturuluyor..." : "Taslak Oluştur"}
+            {isGenerating ? "Generating..." : t.qualityLabel.aiGenerateBtn}
           </button>
         </div>
 

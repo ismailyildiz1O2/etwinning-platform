@@ -16,41 +16,28 @@ function generateFallbackTasks(info: GenerateTasksRequest): {
   phase2Tasks: TemplateTask[];
   phase3Tasks: TemplateTask[];
 } {
-  const productLabels: Record<string, string> = {
-    ebook: "e-kitap",
-    video: "video/kısa film",
-    exhibition: "sergi",
-    map: "dijital harita",
-    game: "dijital oyun/quiz",
-    website: "web sitesi/blog",
-    magazine: "dijital dergi",
-    podcast: "podcast",
-    presentation: "sunum/infografik",
-    other: "ortak ürün",
-  };
-  
-  const product = productLabels[info.productType] || info.productType;
-  const tools = info.digitalTools || "dijital araçlar";
-  const topic = info.topic || "proje konusu";
+  const product = info.productType || "joint product";
+  const tools = info.digitalTools || "digital tools";
+  const topic = info.topic || "project topic";
 
   const phase2Tasks: TemplateTask[] = [
-    { title: `Her okulun "${topic}" konusunda araştırma alt başlığını belirlemesi`, priority: "high", order: 1 },
-    { title: `Öğrencilerin ${topic} ile ilgili yerel veri ve materyal toplaması`, priority: "high", order: 2 },
-    { title: `Toplanan bilgilerin fotoğraf, video veya metin olarak belgelenmesi`, priority: "high", order: 3 },
-    { title: `${tools} kullanarak araştırma sonuçlarının dijital ortama aktarılması`, priority: "medium", order: 4 },
-    { title: `Öğrencilerin diğer ülkelerin çalışmaları hakkında quiz/soru hazırlaması`, priority: "medium", order: 5 },
-    { title: `Uluslararası bilgi paylaşım etkinliğinin düzenlenmesi`, priority: "medium", order: 6 },
-    { title: `Bu aşamanın çalışmalarının TwinSpace'e yüklenmesi`, priority: "low", order: 7 },
+    { title: `Determine research subtopics for each school regarding "${topic}"`, priority: "high", order: 1 },
+    { title: `Collect local data and materials related to ${topic}`, priority: "high", order: 2 },
+    { title: `Document collected information with photos, videos, or text`, priority: "high", order: 3 },
+    { title: `Digitize research findings using ${tools}`, priority: "medium", order: 4 },
+    { title: `Prepare quizzes or questions about partner schools' work`, priority: "medium", order: 5 },
+    { title: `Organize an international knowledge sharing event`, priority: "medium", order: 6 },
+    { title: `Upload Phase 2 materials and research to TwinSpace`, priority: "low", order: 7 },
   ];
 
   const phase3Tasks: TemplateTask[] = [
-    { title: `Farklı ülkelerden öğrencilerin karma çalışma gruplarına ayrılması`, priority: "high", order: 1 },
-    { title: `Her grubun ${topic} kapsamındaki sorumluluk alanının belirlenmesi`, priority: "high", order: 2 },
-    { title: `Grupların ortak ${product} için içerik üretmeye başlaması`, priority: "high", order: 3 },
-    { title: `${tools} kullanarak ortak ${product} üzerinde işbirlikli çalışma`, priority: "medium", order: 4 },
-    { title: `Yapay zeka destekli metin düzenleme ve çeviri süreçlerinin yürütülmesi`, priority: "medium", order: 5 },
-    { title: `Ortak ${product} çalışmasının tamamlanması ve TwinSpace'e yüklenmesi`, priority: "high", order: 6 },
-    { title: `Gruplar arası geri bildirim oturumunun yapılması`, priority: "medium", order: 7 },
+    { title: `Form mixed international student teams from different partner countries`, priority: "high", order: 1 },
+    { title: `Define responsibilities for each team within the scope of ${topic}`, priority: "high", order: 2 },
+    { title: `Start collaborative content creation for the joint ${product}`, priority: "high", order: 3 },
+    { title: `Work collaboratively on the joint ${product} using ${tools}`, priority: "medium", order: 4 },
+    { title: `Conduct AI-assisted text editing and translation processes`, priority: "medium", order: 5 },
+    { title: `Finalize the joint ${product} and upload to TwinSpace`, priority: "high", order: 6 },
+    { title: `Host an inter-team peer feedback session`, priority: "medium", order: 7 },
   ];
 
   return { phase2Tasks, phase3Tasks };
@@ -67,85 +54,74 @@ export async function POST(request: NextRequest) {
 
     if (!body.topic) {
       return NextResponse.json(
-        { error: "Proje konusu/teması zorunludur" },
+        { error: "Project topic is required" },
         { status: 400 }
       );
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
-    // If we have an API key, use Gemini for AI generation
-    if (apiKey) {
-      try {
-        const productLabels: Record<string, string> = {
-          ebook: "e-kitap", video: "video/kısa film", exhibition: "sergi",
-          map: "dijital harita", game: "dijital oyun/quiz", website: "web sitesi/blog",
-          magazine: "dijital dergi", podcast: "podcast", presentation: "sunum/infografik",
-          other: "ortak ürün",
-        };
-        const product = productLabels[body.productType] || body.productType;
-        
-        const systemPrompt = `Sen bir eTwinning proje asistanısın. Görevin, öğretmenlere proje aşamalarında uygulanabilir, somut görev listeleri üretmek.
-Yanıtlarını YALNIZCA geçerli JSON formatında döndürürsün, başka hiçbir şey yazmazsın.`;
+    // Fallback if no Gemini key
+    if (!apiKey) {
+      return NextResponse.json(generateFallbackTasks(body));
+    }
 
-        const userPrompt = `Bir eTwinning projesi için Aşama 2 (Araştırma ve İçerik Üretimi) ve Aşama 3 (Uluslararası İşbirlikli Üretim) görevlerini oluştur.
+    try {
+      const prompt = `You are an expert eTwinning project mentor. Generate actionable, high-quality project tasks in ENGLISH.
+Topic: ${body.topic}
+Target Age Group: ${body.ageGroup}
+Joint Product: ${body.productType}
+Digital Tools: ${body.digitalTools}
+Duration: ${body.durationMonths} months
 
-Proje Bilgileri:
-- Konu/Tema: ${body.topic}
-- Hedef Yaş Grubu: ${body.ageGroup}
-- Ortak Ürün Türü: ${product}
-- Kullanılacak Dijital Araçlar: ${body.digitalTools || "Belirtilmemiş"}
-- Proje Süresi: ${body.durationMonths} ay
+Generate:
+- Phase 2 (Research & Content Creation): 5 to 7 specific tasks in English.
+- Phase 3 (International Collaborative Production): 5 to 7 specific tasks in English focusing on mixed international teams.
 
-Kurallar:
-1. Her aşama için tam olarak 7 görev üret
-2. Her görev somut ve uygulanabilir olsun
-3. Görevler yaş grubuna uygun olsun
-4. Aşama 2 görevleri: konunun araştırılması, veri toplanması, içerik üretilmesi odaklı
-5. Aşama 3 görevleri: uluslararası karma takımlarla ortak ${product} üretimi odaklı
-6. Her görevin priority değeri "high", "medium" veya "low" olsun
-
-JSON formatı:
+Respond ONLY with valid JSON in this exact structure:
 {
   "phase2Tasks": [
-    { "title": "Görev açıklaması", "priority": "high", "order": 1 }
+    { "title": "Task title in English", "priority": "high"|"medium"|"low", "order": 1 }
   ],
   "phase3Tasks": [
-    { "title": "Görev açıklaması", "priority": "high", "order": 1 }
+    { "title": "Task title in English", "priority": "high"|"medium"|"low", "order": 1 }
   ]
 }`;
 
-        const { generateContentWithGemini } = await import("@/lib/ai");
-        const content = await generateContentWithGemini(userPrompt, systemPrompt);
-
-        if (content) {
-          // Try to parse the JSON from AI response
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const parsed = JSON.parse(jsonMatch[0]);
-            return NextResponse.json({
-              phase2Tasks: parsed.phase2Tasks || [],
-              phase3Tasks: parsed.phase3Tasks || [],
-              source: "ai",
-            });
-          }
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" },
+          }),
         }
-        // If AI fails or returns invalid JSON, fall through to fallback
-      } catch (aiError) {
-        console.error("AI generation failed, using fallback:", aiError);
-      }
-    }
+      );
 
-    // Fallback: generate tasks using template logic
-    const result = generateFallbackTasks(body);
-    return NextResponse.json({
-      ...result,
-      source: "template",
-    });
+      if (!response.ok) {
+        return NextResponse.json(generateFallbackTasks(body));
+      }
+
+      const resData = await response.json();
+      const text = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) {
+        return NextResponse.json(generateFallbackTasks(body));
+      }
+
+      const parsed = JSON.parse(text);
+      return NextResponse.json({
+        phase2Tasks: parsed.phase2Tasks || [],
+        phase3Tasks: parsed.phase3Tasks || [],
+      });
+    } catch {
+      return NextResponse.json(generateFallbackTasks(body));
+    }
   } catch (error) {
-    console.error("Error generating tasks:", error);
     return NextResponse.json(
-      { error: "Görev oluşturma sırasında bir hata oluştu" },
+      { error: "Failed to generate tasks" },
       { status: 500 }
     );
   }

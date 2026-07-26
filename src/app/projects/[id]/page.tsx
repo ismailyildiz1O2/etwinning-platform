@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useI18n } from "@/components/i18n-provider";
 import Link from "next/link";
 
 interface Phase {
@@ -78,7 +79,9 @@ interface Project {
 
 export default function ProjectDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const { data: session } = useSession();
+  const { t } = useI18n();
   const projectId = params.id as string;
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -337,7 +340,7 @@ export default function ProjectDetailPage() {
                     <FileDown className="w-4 h-4" />
                   </button>
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    PDF · Yakında
+                    PDF · Coming Soon
                   </div>
                 </div>
                 <div className="relative group">
@@ -348,7 +351,7 @@ export default function ProjectDetailPage() {
                     <Printer className="w-4 h-4" />
                   </button>
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    Yazdır · Yakında
+                    Print · Coming Soon
                   </div>
                 </div>
                 <div className="relative group">
@@ -359,7 +362,7 @@ export default function ProjectDetailPage() {
                     <Share2 className="w-4 h-4" />
                   </button>
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    Paylaş · Yakında
+                    Share · Coming Soon
                   </div>
                 </div>
               </div>
@@ -376,7 +379,7 @@ export default function ProjectDetailPage() {
                       activeTab === "my-tasks" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Görevlerim
+                    {t.sidebar.myTasks}
                     {activeTab === "my-tasks" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
@@ -386,7 +389,7 @@ export default function ProjectDetailPage() {
                       activeTab === "evidence" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Kanıt Yükle
+                    {t.sidebar.uploadEvidence}
                     {activeTab === "evidence" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
@@ -396,7 +399,7 @@ export default function ProjectDetailPage() {
                       activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Mesajlar
+                    {t.sidebar.messaging}
                     {activeTab === "chat" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
@@ -406,7 +409,7 @@ export default function ProjectDetailPage() {
                       activeTab === "tools" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Araçlar
+                    {t.sidebar.tools}
                     {activeTab === "tools" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                 </>
@@ -419,28 +422,8 @@ export default function ProjectDetailPage() {
                       activeTab === "tasks" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Görevler
+                    {t.project.tasks}
                     {activeTab === "tasks" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("calendar")}
-                    className={cn(
-                      "pb-3 text-sm font-medium transition-colors relative",
-                      activeTab === "calendar" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    )}
-                  >
-                    Takvim
-                    {activeTab === "calendar" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("quality-label")}
-                    className={cn(
-                      "pb-3 text-sm font-medium transition-colors relative",
-                      activeTab === "quality-label" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    )}
-                  >
-                    Kalite Etiketi
-                    {activeTab === "quality-label" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
                     onClick={() => setActiveTab("evidence")}
@@ -449,18 +432,28 @@ export default function ProjectDetailPage() {
                       activeTab === "evidence" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Kanıtlar
+                    {t.sidebar.uploadEvidence}
                     {activeTab === "evidence" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
-                    onClick={() => setActiveTab("chat")}
+                    onClick={() => setActiveTab("calendar")}
                     className={cn(
                       "pb-3 text-sm font-medium transition-colors relative",
-                      activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      activeTab === "calendar" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Mesajlar
-                    {activeTab === "chat" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                    {t.common.calendar}
+                    {activeTab === "calendar" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("quality")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "quality" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    {t.qualityLabel.title}
+                    {activeTab === "quality" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                   <button
                     onClick={() => setActiveTab("members")}
@@ -469,8 +462,28 @@ export default function ProjectDetailPage() {
                       activeTab === "members" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                     )}
                   >
-                    Kişiler
+                    {t.members.title}
                     {activeTab === "members" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("chat")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "chat" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    {t.sidebar.messaging}
+                    {activeTab === "chat" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("tools")}
+                    className={cn(
+                      "pb-3 text-sm font-medium transition-colors relative",
+                      activeTab === "tools" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    )}
+                  >
+                    {t.sidebar.tools}
+                    {activeTab === "tools" && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />}
                   </button>
                 </>
               )}

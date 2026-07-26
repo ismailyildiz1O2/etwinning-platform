@@ -22,6 +22,7 @@ const FILE_TYPE_ICONS: Record<string, { icon: any; color: string }> = {
 };
 
 export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelProps) {
+  const { t } = useI18n();
   const [filter, setFilter] = useState<string>("all");
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -238,7 +239,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
               filter === "all" ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             )}
           >
-            Tümü ({allFiles.length})
+            All ({allFiles.length})
           </button>
           {QUALITY_LABEL_CRITERIA.map(c => (
             <button
@@ -268,14 +269,14 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
           >
             {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-            Dosya Yükle
+            {t.evidence.uploadFile}
           </button>
           <button
             onClick={() => setIsAddingLink(!isAddingLink)}
             className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg text-xs font-medium transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
-            Dış Bağlantı Ekle
+            {t.evidence.addLink}
           </button>
         </div>
       </div>

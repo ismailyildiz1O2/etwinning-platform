@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Users, UserPlus, Shield, GraduationCap, Building2, X, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "./i18n-provider";
 
 export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectId: string; projectMembers: any[]; onUpdate?: () => void }) {
+  const { t } = useI18n();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "admin" || projectMembers.some(m => m.user.id === session?.user?.id && m.role !== "student");
 
@@ -141,21 +143,21 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
     <div className="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm mt-4 p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Users className="w-6 h-6 text-blue-600" /> Proje Üyeleri
+          <Users className="w-6 h-6 text-blue-600" /> {t.members.title}
         </h2>
         {isAdmin && (
           <div className="flex flex-col sm:flex-row gap-2">
             <button 
               onClick={() => setIsStudentModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors w-full sm:w-auto text-sm font-medium"
             >
-              <GraduationCap className="w-4 h-4" /> Öğrenci Ekle
+              <GraduationCap className="w-4 h-4" /> {t.members.addStudent}
             </button>
             <button 
               onClick={() => setIsTeacherModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto text-sm font-medium"
             >
-              <UserPlus className="w-4 h-4" /> Öğretmen Davet Et
+              <UserPlus className="w-4 h-4" /> {t.members.inviteTeacher}
             </button>
           </div>
         )}
@@ -177,12 +179,12 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{member.user.name}</h3>
               <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                 {member.role === "student" ? (
-                  <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    <GraduationCap className="w-3 h-3" /> Öğrenci
+                  <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md">
+                    <GraduationCap className="w-3 h-3" /> {t.members.students}
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                    <Shield className="w-3 h-3" /> Öğretmen
+                  <span className="flex items-center gap-1 text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md">
+                    <Shield className="w-3 h-3" /> {t.members.teachers}
                   </span>
                 )}
                 {member.user.country && (
