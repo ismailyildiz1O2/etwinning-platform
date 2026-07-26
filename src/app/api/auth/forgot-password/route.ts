@@ -41,7 +41,8 @@ export async function POST(req: Request) {
       },
     });
 
-    const resetLink = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${token}&email=${encodeURIComponent(user.email!)}`;
+    const baseUrl = process.env.NEXTAUTH_URL || "https://etwinasistan.com";
+    const resetLink = `${baseUrl}/auth/reset-password?token=${token}&email=${encodeURIComponent(user.email!)}`;
 
     await sendPasswordResetEmail({
       to: user.email!,

@@ -117,7 +117,7 @@ export async function POST(
         to: email,
         projectName: project.name,
         inviterName: session.user.name || session.user.email || "Bir kullanıcı",
-        inviteLink: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/auth/register?email=${encodeURIComponent(email)}`,
+        inviteLink: `${process.env.NEXTAUTH_URL || "https://etwinasistan.com"}/auth/register?email=${encodeURIComponent(email)}`,
       });
 
       return NextResponse.json(
@@ -177,7 +177,7 @@ export async function POST(
       to: email,
       projectName: project.name,
       inviterName: session.user.name || session.user.email || "Bir kullanıcı",
-      inviteLink: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/projects/${id}`,
+      inviteLink: `${process.env.NEXTAUTH_URL || "https://etwinasistan.com"}/projects/${id}`,
     });
 
     return NextResponse.json(newMember, { status: 201 });
