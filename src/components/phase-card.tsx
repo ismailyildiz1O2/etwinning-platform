@@ -4,6 +4,7 @@ import { cn, phaseColors } from "@/lib/utils";
 import { TaskItem } from "@/components/task-item";
 import { ChevronDown, ChevronUp, Plus, Bot, Calendar } from "lucide-react";
 import { useState } from "react";
+import { useI18n } from "./i18n-provider";
 
 interface PhaseCardProps {
   phase: {
@@ -55,6 +56,7 @@ export function PhaseCard({
   onAISuggest,
   isStudent,
 }: PhaseCardProps) {
+  const { t, locale } = useI18n();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const completedTasks = (phase.tasks || []).filter((t) => t.isCompleted).length;
@@ -63,14 +65,16 @@ export function PhaseCard({
 
   const phaseColor = phaseColors[phase.order] || phaseColors[1];
 
+  const dateLocale = locale === "tr" ? "tr-TR" : "en-US";
+
   const startDate = phase.startDate
-    ? new Date(phase.startDate).toLocaleDateString("tr-TR", {
+    ? new Date(phase.startDate).toLocaleDateString(dateLocale, {
         day: "numeric",
         month: "short",
       })
     : null;
   const endDate = phase.endDate
-    ? new Date(phase.endDate).toLocaleDateString("tr-TR", {
+    ? new Date(phase.endDate).toLocaleDateString(dateLocale, {
         day: "numeric",
         month: "short",
       })
@@ -92,7 +96,7 @@ export function PhaseCard({
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-              Aşama {phase.order}
+              {locale === "en" ? `PHASE ${phase.order}` : `AŞAMA ${phase.order}`}
             </span>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {phase.title}
@@ -113,7 +117,7 @@ export function PhaseCard({
               </span>
             )}
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {completedTasks}/{totalTasks} görev tamamlandı
+              {completedTasks}/{totalTasks} {locale === "en" ? "tasks completed" : "görev tamamlandı"}
             </span>
           </div>
 
@@ -168,7 +172,7 @@ export function PhaseCard({
             ))
           ) : (
             <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-              Bu aşamada henüz görev yok
+              {locale === "en" ? "No tasks in this phase yet" : "Bu aşamada henüz görev yok"}
             </p>
           )}
 
@@ -180,14 +184,14 @@ export function PhaseCard({
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all"
             >
               <Plus className="w-4 h-4" />
-              Görev Ekle
+              {t.task.addTask}
             </button>
             <button
               onClick={() => onAISuggest?.(phase.id)}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-purple-300 dark:border-purple-700 text-sm text-purple-500 dark:text-purple-400 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all"
             >
               <Bot className="w-4 h-4" />
-              AI Öner
+              {t.task.aiSuggest}
             </button>
           </div>
           )}

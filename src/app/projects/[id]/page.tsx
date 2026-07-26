@@ -177,12 +177,12 @@ export default function ProjectDetailPage() {
             <ArrowLeft className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
           </div>
           <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
-            Ana Sayfaya Dön
+            {t.sidebar.dashboard}
           </span>
         </Link>
 
         <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-2">
-          Aşamalar
+          {t.sidebar.phases}
         </p>
         {[...(project?.phases || [])]
           .sort((a, b) => a.order - b.order)
@@ -216,7 +216,7 @@ export default function ProjectDetailPage() {
           
         <div className="mt-6 mb-2 px-2">
           <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-            ARAÇLAR
+            {t.sidebar.tools}
           </p>
         </div>
         
@@ -228,7 +228,7 @@ export default function ProjectDetailPage() {
             <Wrench className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
           </div>
           <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
-            Araç Kütüphanesi
+            {t.toolsPage.title}
           </span>
         </Link>
         
@@ -268,7 +268,7 @@ export default function ProjectDetailPage() {
 
         <div className="mt-4 mb-2 px-2">
           <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-            NOTLAR
+            {t.sidebar.notes}
           </p>
         </div>
         <button
@@ -279,7 +279,7 @@ export default function ProjectDetailPage() {
             <NotebookText className="w-3.5 h-3.5 text-blue-600 dark:bg-blue-400" />
           </div>
           <span className="text-gray-700 dark:text-gray-300 truncate">
-            Proje Notları
+            {t.task.notes}
           </span>
         </button>
       </div>
@@ -301,7 +301,7 @@ export default function ProjectDetailPage() {
                       getStatusColor(project.status)
                     )}
                   >
-                    {getStatusLabel(project.status)}
+                    {getStatusLabel(project.status, locale)}
                   </span>
                 </div>
                 {project.description && (
@@ -312,11 +312,11 @@ export default function ProjectDetailPage() {
                 <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
-                    {formatDate(project.startDate)} — {formatDate(project.endDate)}
+                    {formatDate(project.startDate, undefined, locale)} — {formatDate(project.endDate, undefined, locale)}
                   </span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    {completedTasks}/{totalTasks} görev tamamlandı
+                    {completedTasks}/{totalTasks} {locale === "en" ? "tasks completed" : "görev tamamlandı"}
                   </span>
                 </div>
               </div>

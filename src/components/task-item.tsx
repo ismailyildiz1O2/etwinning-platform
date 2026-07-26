@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { useI18n } from "./i18n-provider";
 
 interface SubTask {
   id: string;
@@ -55,6 +56,7 @@ interface TaskItemProps {
 }
 
 export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask = false, isStudent = false }: TaskItemProps) {
+  const { locale } = useI18n();
   const [isCompleted, setIsCompleted] = useState(task.isCompleted);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -103,7 +105,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
   const subTaskCount = task.subTasks?.length || task._count?.subTasks || 0;
 
   const dueDateLabel = task.dueDate
-    ? new Date(task.dueDate).toLocaleDateString("tr-TR", {
+    ? new Date(task.dueDate).toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
         day: "numeric",
         month: "short",
       })
@@ -241,7 +243,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
               getPriorityColor(task.priority)
             )}
           >
-            {getPriorityLabel(task.priority)}
+            {getPriorityLabel(task.priority, locale)}
           </span>
 
           {/* Due date */}

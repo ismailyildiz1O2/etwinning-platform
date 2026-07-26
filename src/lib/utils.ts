@@ -10,12 +10,13 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 /**
- * Format a date string or Date object in Turkish locale.
- * Example: "8 Haziran 2026, Pazartesi"
+ * Format a date string or Date object in locale.
+ * Example: "August 8, 2026" or "8 Haziran 2026, Pazartesi"
  */
 export function formatDate(
   date: string | Date | null | undefined,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
+  locale: string = "en"
 ): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
@@ -26,18 +27,20 @@ export function formatDate(
     day: "numeric",
     weekday: "long",
   };
-  return d.toLocaleDateString("tr-TR", options ?? defaultOptions);
+  const loc = locale === "tr" ? "tr-TR" : "en-US";
+  return d.toLocaleDateString(loc, options ?? defaultOptions);
 }
 
 /**
- * Format a date as a short Turkish date string.
- * Example: "08.06.2026"
+ * Format a date as a short date string.
+ * Example: "08.06.2026" or "06/08/2026"
  */
-export function formatShortDate(date: string | Date | null | undefined): string {
+export function formatShortDate(date: string | Date | null | undefined, locale: string = "en"): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
   if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("tr-TR", {
+  const loc = locale === "tr" ? "tr-TR" : "en-US";
+  return d.toLocaleDateString(loc, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -45,10 +48,9 @@ export function formatShortDate(date: string | Date | null | undefined): string 
 }
 
 /**
- * Get a human-readable relative time string in Turkish.
- * Examples: "az önce", "3 dakika önce", "2 saat önce", "dün", "3 gün önce"
+ * Get a human-readable relative time string.
  */
-export function getRelativeDate(date: string | Date | null | undefined): string {
+export function getRelativeDate(date: string | Date | null | undefined, locale: string = "en"): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
   if (isNaN(d.getTime())) return "";
@@ -60,33 +62,40 @@ export function getRelativeDate(date: string | Date | null | undefined): string 
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
-  const diffWeek = Math.floor(diffDay / 7);
-  const diffMonth = Math.floor(diffDay / 30);
 
-  if (isFuture) {
-    if (diffSec < 60) return "birazdan";
-    if (diffMin < 60) return `${diffMin} dakika sonra`;
-    if (diffHour < 24) return `${diffHour} saat sonra`;
-    if (diffDay === 1) return "yarın";
-    if (diffDay < 7) return `${diffDay} gün sonra`;
-    if (diffWeek === 1) return "gelecek hafta";
-    if (diffWeek < 4) return `${diffWeek} hafta sonra`;
-    if (diffMonth === 1) return "gelecek ay";
-    if (diffMonth < 12) return `${diffMonth} ay sonra`;
-    return formatDate(d, { year: "numeric", month: "long", day: "numeric" });
+  if (locale === "tr") {
+    if (isFuture) {
+      if (diffSec < 60) return "birazdan";
+      if (diffMin < 60) return `${diffMin} dakika sonra`;
+      if (diffHour < 24) return `${diffHour} saat sonra`;
+      if (diffDay === 1) return "yarın";
+      if (diffDay < 7) return `${diffDay} gün sonra`;
+      return formatDate(d, { year: "numeric", month: "long", day: "numeric" }, "tr");
+    }
+    if (diffSec < 60) return "az önce";
+    if (diffMin < 60) return `${diffMin} dakika önce`;
+    if (diffHour < 24) return `${diffHour} saat önce`;
+    if (diffDay === 1) return "dün";
+    if (diffDay < 7) return `${diffDay} gün önce`;
+    return formatDate(d, { year: "numeric", month: "long", day: "numeric" }, "tr");
   }
 
-  if (diffSec < 60) return "az önce";
-  if (diffMin < 60) return `${diffMin} dakika önce`;
-  if (diffHour < 24) return `${diffHour} saat önce`;
-  if (diffDay === 1) return "dün";
-  if (diffDay < 7) return `${diffDay} gün önce`;
-  if (diffWeek === 1) return "geçen hafta";
-  if (diffWeek < 4) return `${diffWeek} hafta önce`;
-  if (diffMonth === 1) return "geçen ay";
-  if (diffMonth < 12) return `${diffMonth} ay önce`;
+  // English fallback
+  if (isFuture) {
+    if (diffSec < 60) return "in a moment";
+    if (diffMin < 60) return `in ${diffMin}m`;
+    if (diffHour < 24) return `in ${diffHour}h`;
+    if (diffDay === 1) return "tomorrow";
+    if (diffDay < 7) return `in ${diffDay}d`;
+    return formatDate(d, { year: "numeric", month: "short", day: "numeric" }, "en");
+  }
+  if (diffSec < 60) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHour < 24) return `${diffHour}h ago`;
+  if (diffDay === 1) return "yesterday";
+  if (diffDay < 7) return `${diffDay}d ago`;
 
-  return formatDate(d, { year: "numeric", month: "long", day: "numeric" });
+  return formatDate(d, { year: "numeric", month: "short", day: "numeric" }, "en");
 }
 
 /**
@@ -163,18 +172,22 @@ export function getPriorityColor(priority: string): string {
 }
 
 /**
- * Get Turkish label for a priority level.
+ * Get label for a priority level according to locale.
  */
-export function getPriorityLabel(priority: string): string {
+export function getPriorityLabel(priority: string, locale: string = "en"): string {
+  if (locale === "tr") {
+    switch (priority) {
+      case "high": return "Yüksek";
+      case "medium": return "Orta";
+      case "low": return "Düşük";
+      default: return priority;
+    }
+  }
   switch (priority) {
-    case "high":
-      return "Yüksek";
-    case "medium":
-      return "Orta";
-    case "low":
-      return "Düşük";
-    default:
-      return priority;
+    case "high": return "High";
+    case "medium": return "Medium";
+    case "low": return "Low";
+    default: return priority;
   }
 }
 
@@ -197,20 +210,24 @@ export function getStatusColor(status: string): string {
 }
 
 /**
- * Get Turkish label for a project status.
+ * Get label for a project status according to locale.
  */
-export function getStatusLabel(status: string): string {
+export function getStatusLabel(status: string, locale: string = "en"): string {
+  if (locale === "tr") {
+    switch (status) {
+      case "active": return "Aktif";
+      case "completed": return "Tamamlandı";
+      case "draft": return "Taslak";
+      case "archived": return "Arşivlendi";
+      default: return status;
+    }
+  }
   switch (status) {
-    case "active":
-      return "Aktif";
-    case "completed":
-      return "Tamamlandı";
-    case "draft":
-      return "Taslak";
-    case "archived":
-      return "Arşivlendi";
-    default:
-      return status;
+    case "active": return "Active";
+    case "completed": return "Completed";
+    case "draft": return "Draft";
+    case "archived": return "Archived";
+    default: return status;
   }
 }
 
@@ -227,45 +244,28 @@ export function getDueDateColor(
   const diffDays = Math.ceil(
     (d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
   );
-  if (diffDays < 0) return "text-red-500";
-  if (diffDays <= 3) return "text-amber-500";
-  return "text-green-500";
+
+  if (diffDays < 0) return "text-red-500 font-semibold";
+  if (diffDays <= 2) return "text-amber-500 font-semibold";
+  return "text-gray-500";
 }
 
 /**
- * Phase border-left color classes keyed by phase order (1-based).
+ * Color mappings for eTwinning project phase cards.
  */
 export const phaseColors: Record<number, string> = {
-  1: "border-l-blue-500 bg-blue-50/30 dark:bg-blue-950/20",
-  2: "border-l-green-500 bg-green-50/30 dark:bg-green-950/20",
-  3: "border-l-orange-500 bg-orange-50/30 dark:bg-orange-950/20",
-  4: "border-l-purple-500 bg-purple-50/30 dark:bg-purple-950/20",
-  5: "border-l-pink-500 bg-pink-50/30 dark:bg-pink-950/20",
-  6: "border-l-teal-500 bg-teal-50/30 dark:bg-teal-950/20",
+  1: "border-l-blue-500 bg-blue-50/30 dark:bg-blue-950/10",
+  2: "border-l-green-500 bg-green-50/30 dark:bg-green-950/10",
+  3: "border-l-orange-500 bg-orange-50/30 dark:bg-orange-950/10",
+  4: "border-l-purple-500 bg-purple-50/30 dark:bg-purple-950/10",
 };
 
 /**
- * Phase dot background color classes keyed by phase order (1-based).
+ * Color dot mappings for eTwinning project phases.
  */
 export const phaseDotColors: Record<number, string> = {
   1: "bg-blue-500",
   2: "bg-green-500",
   3: "bg-orange-500",
   4: "bg-purple-500",
-  5: "bg-pink-500",
-  6: "bg-teal-500",
 };
-
-/**
- * Get phase border color class by order, with fallback for orders > 6.
- */
-export function getPhaseColor(order: number): string {
-  return phaseColors[order] || "border-l-gray-500 bg-gray-50/30 dark:bg-gray-950/20";
-}
-
-/**
- * Get phase dot color class by order, with fallback for orders > 6.
- */
-export function getPhaseDotColor(order: number): string {
-  return phaseDotColors[order] || "bg-gray-500";
-}
