@@ -214,7 +214,7 @@ export async function POST(
     // Check if Cloudinary is configured
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       return NextResponse.json(
-        { error: "Dosya yükleme henüz yapılandırılmadı. Lütfen Cloudinary ayarlarınızı kontrol edin." },
+        { error: "File upload is not configured yet. Please check your Cloudinary settings." },
         { status: 501 } // Not Implemented
       );
     }

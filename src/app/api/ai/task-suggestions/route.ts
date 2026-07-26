@@ -260,7 +260,7 @@ JSON formatı:
   } catch (error) {
     console.error("Error generating task suggestions:", error);
     return NextResponse.json(
-      { error: "Öneri oluşturma sırasında bir hata oluştu" },
+      { error: "An error occurred while generating suggestions" },
       { status: 500 }
     );
   }

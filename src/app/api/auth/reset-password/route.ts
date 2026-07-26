@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
     if (!token || !email || !password) {
       return NextResponse.json(
-        { error: "Eksik bilgi gönderildi" },
+        { error: "Missing information provided" },
         { status: 400 }
       );
     }
@@ -24,34 +24,34 @@ export async function POST(req: Request) {
 
     if (!resetToken) {
       return NextResponse.json(
-        { error: "Geçersiz veya süresi dolmuş bağlantı" },
+        { error: "Invalid or expired link" },
         { status: 400 }
       );
     }
 
     if (new Date() > new Date(resetToken.expires)) {
       return NextResponse.json(
-        { error: "Bu bağlantının süresi dolmuş" },
+        { error: "This link has expired" },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { error: "Şifre en az 6 karakter olmalıdır" },
+        { error: "Password must be at least 6 characters" },
         { status: 400 }
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Şifreyi güncelle
+    // Update the password
     await prisma.user.update({
       where: { email },
       data: { password: hashedPassword },
     });
 
-    // Kullanılmış tokeni sil
+    // Delete the used token
     await prisma.passwordResetToken.delete({
       where: {
         id: resetToken.id,
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Reset password error:", error);
     return NextResponse.json(
-      { error: "Bir hata oluştu, lütfen tekrar deneyin." },
+      { error: "An error occurred, please try again." },
       { status: 500 }
     );
   }

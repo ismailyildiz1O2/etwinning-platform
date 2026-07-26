@@ -120,30 +120,30 @@ export function describeActivity(
   metadata?: Record<string, unknown> | null
 ): string {
   const entityLabels: Record<EntityType, string> = {
-    project: "proje",
-    phase: "aşama",
-    task: "görev",
-    note: "not",
-    file: "dosya",
-    member: "üye",
-    user: "kullanıcı",
+    project: "project",
+    phase: "phase",
+    task: "task",
+    note: "note",
+    file: "file",
+    member: "member",
+    user: "user",
   };
 
   const actionLabels: Record<ActionType, string> = {
-    created: "oluşturdu",
-    updated: "güncelledi",
-    deleted: "sildi",
-    completed: "tamamladı",
-    uncompleted: "tamamlanmadı olarak işaretledi",
-    assigned: "atadı",
-    unassigned: "atamasını kaldırdı",
-    invited: "davet etti",
-    joined: "katıldı",
-    left: "ayrıldı",
-    uploaded: "yükledi",
-    removed: "kaldırdı",
-    commented: "yorum yaptı",
-    reordered: "yeniden sıraladı",
+    created: "created",
+    updated: "updated",
+    deleted: "deleted",
+    completed: "completed",
+    uncompleted: "marked as uncompleted",
+    assigned: "assigned",
+    unassigned: "unassigned",
+    invited: "invited",
+    joined: "joined",
+    left: "left",
+    uploaded: "uploaded",
+    removed: "removed",
+    commented: "commented on",
+    reordered: "reordered",
   };
 
   const entity = entityLabels[entityType] || entityType;
@@ -154,5 +154,5 @@ export function describeActivity(
       ? ` "${metadata.name}"`
       : "";
 
-  return `Bir ${entity}${name} ${actionText}`;
+  return `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} ${entity}${name}`;
 }

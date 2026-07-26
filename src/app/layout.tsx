@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "eTwin Asistan - eTwinning Proje Yönetimi",
+  title: "eTwin Assistant - eTwinning Project Management",
   description:
-    "eTwinning projelerinizi kolayca yönetin. AI destekli görev önerileri, takım çalışması ve ilerleme takibi.",
+    "Easily manage your eTwinning projects. AI-supported task suggestions, teamwork and progress tracking.",
 };
 
 export default async function RootLayout({

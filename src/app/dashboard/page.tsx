@@ -164,10 +164,10 @@ export default function DashboardPage() {
           ) : (
             <EmptyState
               icon={FolderOpen}
-              title="Henüz projeniz yok"
-              description="İlk eTwinning projenizi oluşturarak başlayın"
+              title="You don't have any projects yet"
+              description="Start by creating your first eTwinning project"
               action={{
-                label: "Proje Oluştur",
+                label: "Create Project",
                 onClick: () => router.push("/projects/new"),
               }}
             />

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, Send, Bot, User, Loader2, Sparkles, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "./i18n-provider";
 
 interface Message {
   id: string;
@@ -11,12 +12,13 @@ interface Message {
 }
 
 export function ChatBot({ projectId }: { projectId: string }) {
+  const { locale } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      content: "Merhaba! Ben eTwinning proje asistanınızım. Size nasıl yardımcı olabilirim? Öğrencileriniz için yazdıklarınızı diğer dillere çevirebilir veya proje görevlerinizi planlayabilirim.",
+      content: "Hello! I am your eTwinning project assistant. How can I help you? I can translate what you wrote for your students to other languages or plan your project tasks.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -66,7 +68,7 @@ export function ChatBot({ projectId }: { projectId: string }) {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.reply || "Üzgünüm, şu anda yanıt veremiyorum.",
+        content: data.reply || "Sorry, I cannot respond right now.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -75,7 +77,7 @@ export function ChatBot({ projectId }: { projectId: string }) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Üzgünüm, bir hata oluştu. Lütfen bağlantınızı veya API ayarlarınızı kontrol edip tekrar deneyin.",
+        content: "Sorry, an error occurred. Please check your connection or API settings and try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -112,8 +114,8 @@ export function ChatBot({ projectId }: { projectId: string }) {
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-sm">eTwin Asistan</h3>
-              <p className="text-xs text-blue-100">Çeviri & Rehberlik</p>
+              <h3 className="font-semibold text-sm">eTwin Assistant</h3>
+              <p className="text-xs text-blue-100">Translation & Guidance</p>
             </div>
           </div>
           <button
@@ -182,7 +184,7 @@ export function ChatBot({ projectId }: { projectId: string }) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Bir soru sorun veya çeviri isteyin..."
+              placeholder="Ask a question or request a translation..."
               className="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40"
               disabled={isLoading}
             />

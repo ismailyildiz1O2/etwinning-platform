@@ -116,12 +116,12 @@ export async function POST(
       await sendInviteEmail({
         to: email,
         projectName: project.name,
-        inviterName: session.user.name || session.user.email || "Bir kullanıcı",
+        inviterName: session.user.name || session.user.email || "A user",
         inviteLink: `${process.env.NEXTAUTH_URL || "https://etwinasistan.com"}/auth/register?email=${encodeURIComponent(email)}`,
       });
 
       return NextResponse.json(
-        { message: "Kullanıcı bulunamadı. E-posta adresine kayıt daveti gönderildi." },
+        { message: "User not found. A registration invitation has been sent to the email address." },
         { status: 200 }
       );
     }
@@ -176,7 +176,7 @@ export async function POST(
     await sendInviteEmail({
       to: email,
       projectName: project.name,
-      inviterName: session.user.name || session.user.email || "Bir kullanıcı",
+      inviterName: session.user.name || session.user.email || "A user",
       inviteLink: `${process.env.NEXTAUTH_URL || "https://etwinasistan.com"}/projects/${id}`,
     });
 

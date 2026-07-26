@@ -22,19 +22,19 @@ export async function sendInviteEmail({
     const { data, error } = await resend.emails.send({
       from: "eTwin Asistan <noreply@etwinasistan.com>",
       to,
-      subject: `${inviterName} sizi ${projectName} projesine davet etti!`,
+      subject: `${inviterName} invited you to the ${projectName} project!`,
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
-          <h2>eTwin Asistan'a Hoş Geldiniz!</h2>
-          <p><strong>${inviterName}</strong> adlı kullanıcı sizi <strong>${projectName}</strong> adlı eTwinning projesine davet etti.</p>
-          <p>Projeye katılmak ve ortak çalışmaya başlamak için aşağıdaki bağlantıya tıklayın:</p>
-          <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px;">Daveti Kabul Et / Giriş Yap</a>
+          <h2>Welcome to eTwin Assistant!</h2>
+          <p><strong>${inviterName}</strong> has invited you to the <strong>${projectName}</strong> eTwinning project.</p>
+          <p>Click the link below to join the project and start collaborating:</p>
+          <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px;">Accept Invitation / Sign In</a>
           <br /><br />
-          <p style="font-size: 13px; color: #666;">Not: Butona tıkladığınızda telefonunuzda güvenlik uyarısı alıyorsanız, aşağıdaki linki kopyalayıp tarayıcınızın adres çubuğuna yapıştırabilirsiniz:</p>
+          <p style="font-size: 13px; color: #666;">Note: If you receive a security warning on your phone when clicking the button, you can copy and paste the following link into your browser's address bar:</p>
           <p style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; word-break: break-all; color: #333;">${inviteLink}</p>
           <br />
-          <p>Eğer henüz bir hesabınız yoksa, aynı e-posta adresiyle kayıt olabilirsiniz.</p>
-          <p>İyi çalışmalar,<br />eTwin Asistan Ekibi</p>
+          <p>If you don't have an account yet, you can sign up with this email address.</p>
+          <p>Best regards,<br />eTwin Assistant Team</p>
         </div>
       `,
     });
@@ -67,20 +67,20 @@ export async function sendPasswordResetEmail({
     const { data, error } = await resend.emails.send({
       from: "eTwin Asistan <noreply@etwinasistan.com>",
       to,
-      subject: "Şifre Sıfırlama İsteği - eTwin Asistan",
+      subject: "Password Reset Request - eTwin Assistant",
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
-          <h2>Şifre Sıfırlama Talebi</h2>
-          <p>Merhaba,</p>
-          <p>eTwin Asistan hesabınız için bir şifre sıfırlama isteği aldık. Aşağıdaki butona tıklayarak yeni şifrenizi belirleyebilirsiniz.</p>
-          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Şifremi Sıfırla</a>
+          <h2>Password Reset Request</h2>
+          <p>Hello,</p>
+          <p>We received a password reset request for your eTwin Assistant account. You can set a new password by clicking the button below.</p>
+          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #0056b3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset My Password</a>
           <br /><br />
-          <p style="font-size: 13px; color: #666;">Not: Butona tıkladığınızda telefonunuzda (awstrack.me kaynaklı) güvenlik uyarısı alıyorsanız, aşağıdaki linki kopyalayıp tarayıcınızın adres çubuğuna yapıştırabilirsiniz:</p>
+          <p style="font-size: 13px; color: #666;">Note: If you receive a security warning on your phone when clicking the button, you can copy and paste the following link into your browser's address bar:</p>
           <p style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; word-break: break-all; color: #333;">${resetLink}</p>
           <br />
-          <p>Eğer bu isteği siz yapmadıysanız, bu e-postayı dikkate almayabilirsiniz. Şifreniz değiştirilmeyecektir.</p>
-          <p>Bu bağlantı 1 saat boyunca geçerlidir.</p>
-          <p>İyi çalışmalar,<br />eTwin Asistan Ekibi</p>
+          <p>If you did not request this, you can ignore this email. Your password will not be changed.</p>
+          <p>This link is valid for 1 hour.</p>
+          <p>Best regards,<br />eTwin Assistant Team</p>
         </div>
       `,
     });

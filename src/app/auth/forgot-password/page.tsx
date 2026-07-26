@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Bir hata oluştu");
+        throw new Error(data.error || "An error occurred");
       }
 
       setSuccess(true);
@@ -45,18 +45,18 @@ export default function ForgotPasswordPage() {
     <div className="flex h-screen w-full items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Şifremi Unuttum</CardTitle>
+          <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
           <CardDescription>
-            Hesabınıza kayıtlı e-posta adresinizi girin, size bir sıfırlama bağlantısı gönderelim.
+            Enter the email address registered to your account, and we will send you a reset link.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {success ? (
             <Alert className="bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800">
               <CheckCircle2 className="h-4 w-4" />
-              <AlertTitle>Başarılı!</AlertTitle>
+              <AlertTitle>Success!</AlertTitle>
               <AlertDescription>
-                Eğer sistemimizde bu e-posta adresine ait bir hesap varsa, şifre sıfırlama bağlantısı gönderilmiştir. Lütfen e-posta kutunuzu (ve spam klasörünü) kontrol edin.
+                If an account with this email address exists in our system, a password reset link has been sent. Please check your inbox (and spam folder).
               </AlertDescription>
             </Alert>
           ) : (
@@ -64,23 +64,23 @@ export default function ForgotPasswordPage() {
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Hata</AlertTitle>
+                  <AlertTitle>Error</AlertTitle>
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               <div className="space-y-2">
-                <Label htmlFor="email">E-posta Adresi</Label>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="ornek@okul.edu.tr"
+                  placeholder="example@school.edu"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Gönderiliyor..." : "Sıfırlama Linki Gönder"}
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
             </form>
           )}
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
           <div className="text-sm text-center w-full">
             <Link href="/auth/login" className="flex items-center justify-center text-blue-600 hover:text-blue-500 font-medium">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Giriş sayfasına dön
+              Return to login
             </Link>
           </div>
         </CardFooter>

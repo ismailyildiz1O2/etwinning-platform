@@ -30,7 +30,7 @@ export default function AdminProjectsPage() {
         setProjects(data);
       }
     } catch {
-      toast.error("Projeler yüklenemedi");
+      toast.error("Failed to load projects");
     } finally {
       setLoading(false);
     }
@@ -52,17 +52,17 @@ export default function AdminProjectsPage() {
         const data = await res.json();
         throw new Error(data.error || "Durum güncellenemedi");
       }
-      toast.success("Proje durumu güncellendi");
+      toast.success("Project status updated");
       fetchProjects();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Durum güncellenemedi");
+      toast.error(error instanceof Error ? error.message : "Failed to update status");
     } finally {
       setUpdating(null);
     }
   };
 
   const handleToggleDelete = async (projectId: string, isDeleted: boolean) => {
-    if (!confirm(`Bu projeyi ${isDeleted ? 'silmek' : 'geri getirmek'} istediğinize emin misiniz?`)) return;
+    if (!confirm(`Are you sure you want to ${isDeleted ? 'delete' : 'restore'} this project?`)) return;
     setUpdating(projectId);
     try {
       const res = await fetch(`/api/admin/projects/${projectId}`, {
@@ -72,12 +72,12 @@ export default function AdminProjectsPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "İşlem başarısız");
+        throw new Error(data.error || "Operation failed");
       }
-      toast.success(isDeleted ? "Proje silindi (çöp kutusunda)" : "Proje aktif edildi");
+      toast.success(isDeleted ? "Project deleted (in trash)" : "Project activated");
       fetchProjects();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "İşlem başarısız");
+      toast.error(error instanceof Error ? error.message : "Operation failed");
     } finally {
       setUpdating(null);
     }
@@ -93,10 +93,10 @@ export default function AdminProjectsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <FolderGit2 className="w-6 h-6 text-green-500" />
-            Proje Yönetimi
+            Project Management
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Platformdaki tüm projeleri yönetin.
+            Manage all projects on the platform.
           </p>
         </div>
         
@@ -104,7 +104,7 @@ export default function AdminProjectsPage() {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Proje ara..."
+            placeholder="Search projects..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full sm:w-64 pl-9 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -122,18 +122,18 @@ export default function AdminProjectsPage() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Proje Adı</th>
-                  <th className="px-6 py-4 font-medium">Durum</th>
-                  <th className="px-6 py-4 font-medium">Oluşturulma</th>
-                  <th className="px-6 py-4 font-medium">İstatistikler</th>
-                  <th className="px-6 py-4 font-medium text-right">İşlemler</th>
+                  <th className="px-6 py-4 font-medium">Project Name</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Created At</th>
+                  <th className="px-6 py-4 font-medium">Statistics</th>
+                  <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {filteredProjects.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                      Proje bulunamadı.
+                      No projects found.
                     </td>
                   </tr>
                 )}
@@ -161,18 +161,18 @@ export default function AdminProjectsPage() {
                         onChange={(e) => handleUpdateStatus(project.id, e.target.value)}
                         className={cn("bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-2 py-1 focus:ring-2 focus:ring-green-500 disabled:opacity-50", getStatusColor(project.status))}
                       >
-                        <option value="planning">Planlanıyor</option>
-                        <option value="active">Aktif</option>
-                        <option value="completed">Tamamlandı</option>
-                        <option value="on-hold">Beklemede</option>
+                        <option value="planning">Planning</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="on-hold">On Hold</option>
                       </select>
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
                       {formatDate(project.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
-                      <span className="block text-xs">{project._count.members} Üye</span>
-                      <span className="block text-xs">{project._count.phases} Aşama</span>
+                      <span className="block text-xs">{project._count.members} Members</span>
+                      <span className="block text-xs">{project._count.phases} Phases</span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
                       <button
@@ -185,7 +185,7 @@ export default function AdminProjectsPage() {
                             : "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
                         )}
                       >
-                        {updating === project.id ? "İşleniyor..." : (project.deletedAt ? "Geri Getir" : "Sil")}
+                        {updating === project.id ? "Processing..." : (project.deletedAt ? "Restore" : "Delete")}
                       </button>
                     </td>
                   </tr>

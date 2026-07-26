@@ -79,13 +79,13 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!res.ok) throw new Error("Durum güncellenemedi");
+      if (!res.ok) throw new Error("Failed to update status");
       
-      toast.success("Proje durumu güncellendi");
+      toast.success("Project status updated");
       if (onUpdate) onUpdate();
       else router.refresh();
     } catch (error) {
-      toast.error("İşlem sırasında bir hata oluştu");
+      toast.error("An error occurred during the process");
     } finally {
       setIsUpdating(false);
     }
@@ -95,7 +95,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
     e.stopPropagation();
     setIsMenuOpen(false);
     
-    if (!window.confirm("Bu projeyi silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm("Are you sure you want to delete this project?")) return;
 
     setIsUpdating(true);
     try {
@@ -103,13 +103,13 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Proje silinemedi");
+      if (!res.ok) throw new Error("Failed to delete project");
       
-      toast.success("Proje başarıyla silindi");
+      toast.success("Project deleted successfully");
       if (onUpdate) onUpdate();
       else router.refresh();
     } catch (error) {
-      toast.error("İşlem sırasında bir hata oluştu");
+      toast.error("An error occurred during the process");
       setIsUpdating(false);
     }
   };
@@ -175,7 +175,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                     className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <Edit className="w-4 h-4" />
-                    Düzenle
+                    Edit
                   </button>
                   
                   {project.status === "paused" ? (
@@ -184,7 +184,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                       className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <PlayCircle className="w-4 h-4" />
-                      Başlat
+                      Start
                     </button>
                   ) : (
                     <button
@@ -192,7 +192,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                       className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-amber-600 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <PauseCircle className="w-4 h-4" />
-                      Durdur
+                      Pause
                     </button>
                   )}
                   
@@ -202,7 +202,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                       className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <Archive className="w-4 h-4" />
-                      Arşive taşı
+                      Archive
                     </button>
                   ) : (
                     <button
@@ -210,7 +210,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                       className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <Archive className="w-4 h-4" />
-                      Arşivden Çıkar
+                      Unarchive
                     </button>
                   )}
 
@@ -221,7 +221,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                     className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Projeyi sil
+                    Delete project
                   </button>
                 </div>
               )}
@@ -282,7 +282,7 @@ export function ProjectCard({ project, onUpdate, index = 0 }: ProjectCardProps) 
                       phaseDotColors[phase.order] || "bg-gray-400",
                       !phaseCompleted && "opacity-40"
                     )}
-                    title={`Aşama ${phase.order}`}
+                    title={`Phase ${phase.order}`}
                   />
                 );
               })}

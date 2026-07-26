@@ -12,21 +12,21 @@ import prisma from "@/lib/prisma";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "E-posta veya Kullanıcı Adı ile Giriş",
+      name: "Sign in with Email or Username",
       credentials: {
         identifier: {
-          label: "E-posta veya Kullanıcı Adı",
+          label: "Email or Username",
           type: "text",
-          placeholder: "ornek@okul.edu.tr veya ogrenci_1",
+          placeholder: "example@school.edu or student_1",
         },
         password: {
-          label: "Şifre",
+          label: "Password",
           type: "password",
         },
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) {
-          throw new Error("E-posta/Kullanıcı adı ve şifre gereklidir.");
+          throw new Error("Email/Username and password are required.");
         }
 
         const searchIdentifier = credentials.identifier.toLowerCase().trim();
@@ -41,12 +41,12 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error("Bu bilgilere sahip bir kullanıcı bulunamadı.");
+          throw new Error("No user found with these details.");
         }
 
         if (!user.password) {
           throw new Error(
-            "Bu hesap farklı bir yöntemle oluşturulmuş. Lütfen ilgili giriş yöntemini kullanın."
+            "This account was created with a different method. Please use that method to sign in."
           );
         }
 
@@ -56,12 +56,12 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error("Şifre hatalı. Lütfen tekrar deneyin.");
+          throw new Error("Incorrect password. Please try again.");
         }
 
         // Check soft-delete
         if (user.deletedAt) {
-          throw new Error("Bu hesap devre dışı bırakılmış.");
+          throw new Error("This account has been disabled.");
         }
 
         return {

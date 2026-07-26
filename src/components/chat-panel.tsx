@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Send, FileUp, CheckCircle, MessagesSquare, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "./i18n-provider";
 
 interface User {
   id: string;
@@ -30,6 +31,7 @@ interface Message {
 }
 
 export function ChatPanel({ projectId, projectMembers = [] }: { projectId: string; projectMembers?: any[] }) {
+  const { locale } = useI18n();
   const { data: session } = useSession();
   
   const [channels, setChannels] = useState<{ id: string; name: string; type: string }[]>([]);
@@ -53,12 +55,12 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
   useEffect(() => {
     const userRole = session?.user?.role;
     const baseChannels = [
-      { id: "general", name: "Genel", type: "global" }
+      { id: "general", name: "General", type: "global" }
     ];
     
     if (userRole && userRole !== "student") {
-      baseChannels.push({ id: "teachers", name: "Öğretmenler", type: "global" });
-      baseChannels.push({ id: "local_teachers", name: "Yerel Öğretmenler", type: "global" });
+      baseChannels.push({ id: "teachers", name: "Teachers", type: "global" });
+      baseChannels.push({ id: "local_teachers", name: "Local Teachers", type: "global" });
     }
     
     // Fetch teams
@@ -68,7 +70,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
         if (Array.isArray(data)) {
            const teamChannels = data.map((t: any) => ({
              id: `team_${t.id}`,
-             name: `Ekip: ${t.name}`,
+             name: `Team: ${t.name}`,
              type: "team"
            }));
            setChannels([...baseChannels, ...teamChannels]);
@@ -134,7 +136,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
       if (res.ok) {
         setAssignPopoverUser(null);
         setTaskTitle("");
-        alert("Görev başarıyla atandı ve bildirim gönderildi!");
+        alert("Task assigned successfully and notification sent!");
       }
     } catch (error) {
       console.error(error);
@@ -175,7 +177,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
           </h2>
           <div className="space-y-4">
             <div>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase mb-1 px-2">Öğretmenler</h3>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase mb-1 px-2">Teachers</h3>
               <div className="space-y-1">
                 {projectMembers.filter(m => m.role !== "student").map((member: any) => (
                   <div key={member.user.id} className="flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg group text-sm">
@@ -195,7 +197,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                       <button 
                         onClick={() => setAssignPopoverUser(member.user)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                        title="Bu kişiye görev ata"
+                        title="Assign task to this person"
                       >
                         <CheckCircle className="w-3.5 h-3.5" />
                       </button>
@@ -206,7 +208,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
             </div>
             
             <div>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase mb-1 px-2">Öğrenciler</h3>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase mb-1 px-2">Students</h3>
               <div className="space-y-1">
                 {projectMembers.filter(m => m.role === "student").map((member: any) => (
                   <div key={member.user.id} className="flex items-center justify-between px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg group text-sm">
@@ -226,7 +228,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                       <button 
                         onClick={() => setAssignPopoverUser(member.user)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded"
-                        title="Bu kişiye görev ata"
+                        title="Assign task to this person"
                       >
                         <CheckCircle className="w-3.5 h-3.5" />
                       </button>
@@ -253,9 +255,9 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {loading ? (
-            <div className="flex justify-center p-4">Yükleniyor...</div>
+            <div className="flex justify-center p-4">Loading...</div>
           ) : messages.length === 0 ? (
-            <div className="text-center text-gray-500 p-4">Bu kanalda henüz mesaj yok. İlk mesajı siz gönderin!</div>
+            <div className="text-center text-gray-500 p-4">No messages in this channel yet. Be the first to send a message!</div>
           ) : (
             messages.map((msg) => (
               <div key={msg.id} className={cn("flex gap-4 group", msg.senderId === session?.user?.id ? "flex-row-reverse" : "flex-row")}>
@@ -278,7 +280,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                       <button 
                         onClick={() => setAssignPopoverUser(msg.sender)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                        title="Bu kişiye görev ata"
+                        title="Assign task to this person"
                       >
                         <CheckCircle className="w-4 h-4" />
                       </button>
@@ -308,7 +310,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`#${channels.find(c => c.id === activeChannel)?.name || "Kanal"} kanalına mesaj gönder...`}
+              placeholder={`Send message to #${channels.find(c => c.id === activeChannel)?.name || "Channel"}...`}
               className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -325,15 +327,15 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
         {assignPopoverUser && (
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-2xl w-96 max-w-full">
-              <h3 className="font-semibold mb-4 text-lg">Görev Ata: {assignPopoverUser.name}</h3>
+              <h3 className="font-semibold mb-4 text-lg">Assign Task: {assignPopoverUser.name}</h3>
               <form onSubmit={handleAssignTask} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Görev Başlığı</label>
+                  <label className="text-sm font-medium text-gray-700">Task Title</label>
                   <input
                     type="text"
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Örn: Afişi tasarla"
+                    placeholder="e.g. Design the poster"
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />
@@ -351,7 +353,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                     disabled={!taskTitle.trim() || isAssigning}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {isAssigning ? "Atanıyor..." : "Ata"}
+                    {isAssigning ? "Assigning..." : "Ata"}
                   </button>
                 </div>
               </form>

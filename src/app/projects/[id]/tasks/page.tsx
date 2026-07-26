@@ -61,7 +61,7 @@ export default function ProjectTasksPage() {
       const data = await res.json();
       setTasks(data);
     } catch {
-      toast.error("Görevler yüklenemedi");
+      toast.error("Failed to load tasks");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export default function ProjectTasksPage() {
 
     if (newCompleted) {
       triggerCompletionConfetti();
-      toast.success("Görev tamamlandı! 🎉");
+      toast.success("Task completed! 🎉");
     }
 
     try {
@@ -137,11 +137,11 @@ export default function ProjectTasksPage() {
     <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Tüm Görevler
+          All Tasks
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          {tasks.length} görev · {tasks.filter((t) => t.isCompleted).length}{" "}
-          tamamlandı
+          {tasks.length} tasks · {tasks.filter((t) => t.isCompleted).length}{" "}
+          completed
         </p>
       </div>
 
@@ -155,7 +155,7 @@ export default function ProjectTasksPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Görev ara..."
+            placeholder="Search tasks..."
             className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
           />
         </div>
@@ -165,9 +165,9 @@ export default function ProjectTasksPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         >
-          <option value="all">Tüm Durumlar</option>
-          <option value="pending">Bekleyen</option>
-          <option value="completed">Tamamlanan</option>
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
         </select>
 
         <select
@@ -175,9 +175,9 @@ export default function ProjectTasksPage() {
           onChange={(e) => setSourceFilter(e.target.value)}
           className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         >
-          <option value="all">Tüm Kaynaklar</option>
-          <option value="ai">AI Oluşturma</option>
-          <option value="manual">Manuel</option>
+          <option value="all">All Sources</option>
+          <option value="ai">AI Generated</option>
+          <option value="manual">Manual</option>
         </select>
 
         <select
@@ -185,10 +185,10 @@ export default function ProjectTasksPage() {
           onChange={(e) => setPriorityFilter(e.target.value)}
           className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         >
-          <option value="all">Tüm Öncelikler</option>
-          <option value="high">Yüksek</option>
-          <option value="medium">Orta</option>
-          <option value="low">Düşük</option>
+          <option value="all">All Priorities</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
         </select>
 
         <select
@@ -196,10 +196,10 @@ export default function ProjectTasksPage() {
           onChange={(e) => setPhaseFilter(e.target.value)}
           className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         >
-          <option value="all">Tüm Aşamalar</option>
+          <option value="all">All Phases</option>
           {uniquePhases.map((p) => (
             <option key={p.id} value={p.id}>
-              Aşama {p.order}: {p.title}
+              Phase {p.order}: {p.title}
             </option>
           ))}
         </select>
@@ -213,28 +213,28 @@ export default function ProjectTasksPage() {
               <tr className="bg-gray-50/80 dark:bg-gray-800/50 border-b border-gray-200/80 dark:border-gray-700/50">
                 <th className="w-10 px-4 py-3" />
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Görev
+                  Task
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Aşama
+                  Phase
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Öncelik
+                  Priority
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Atanan
+                  Assignee
                 </th>
                 <th className="text-left px-4 py-3">
                   <button
                     onClick={() => setSortAsc(!sortAsc)}
                     className="flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
-                    Son Tarih
+                    Due Date
                     <ArrowUpDown className="w-3 h-3" />
                   </button>
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Durum
+                  Status
                 </th>
               </tr>
             </thead>
@@ -285,7 +285,7 @@ export default function ProjectTasksPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      Aşama {task.phase.order}
+                      Phase {task.phase.order}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -335,7 +335,7 @@ export default function ProjectTasksPage() {
                           : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                       )}
                     >
-                      {task.isCompleted ? "Tamamlandı" : "Bekliyor"}
+                      {task.isCompleted ? "Completed" : "Pending"}
                     </span>
                   </td>
                 </tr>
@@ -346,7 +346,7 @@ export default function ProjectTasksPage() {
           {filteredTasks.length === 0 && (
             <div className="py-12 text-center">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Filtrelere uygun görev bulunamadı
+                No tasks found matching filters
               </p>
             </div>
           )}

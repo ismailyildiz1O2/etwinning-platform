@@ -193,12 +193,12 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
           )}
         >
           <Archive className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Arşiv</span>}
+          {!collapsed && <span>Archive</span>}
         </Link>
 
         {!collapsed && projects.length === 0 && (
           <p className="px-3 py-2 text-xs text-gray-400 dark:text-gray-500">
-            Henüz proje yok
+            No projects yet
           </p>
         )}
       </nav>

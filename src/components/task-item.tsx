@@ -81,7 +81,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
 
     if (newCompleted) {
       triggerCompletionConfetti();
-      toast.success("Görev tamamlandı! 🎉");
+      toast.success("Task completed! 🎉");
     }
 
     setTimeout(() => setIsAnimating(false), 500);
@@ -96,7 +96,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
       onToggle?.(task.id, newCompleted);
     } catch {
       setIsCompleted(!newCompleted);
-      toast.error("Görev durumu güncellenemedi");
+      toast.error("Task status could not be updated");
     }
   };
 
@@ -311,10 +311,10 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
                         body: JSON.stringify({ priority: newPriority }),
                       });
                       if (!res.ok) throw new Error();
-                      toast.success(`Öncelik "${getPriorityLabel(newPriority)}" olarak değiştirildi`);
+                      toast.success(`Priority changed to "${getPriorityLabel(newPriority, locale)}"`);
                       onToggle?.(task.id, task.isCompleted);
                     } catch {
-                      toast.error("Öncelik değiştirilemedi");
+                      toast.error("Priority could not be changed");
                     }
                   }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"

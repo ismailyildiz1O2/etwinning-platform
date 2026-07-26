@@ -80,7 +80,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("Dosya boyutu 2MB'dan küçük olmalıdır.");
+      toast.error("File size must be less than 2MB.");
       return;
     }
 
@@ -104,13 +104,13 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Profil güncellenemedi");
+        throw new Error(data.error || "Profile update failed");
       }
 
       await updateSession();
-      toast.success("Profiliniz başarıyla güncellendi");
+      toast.success("Profile updated successfully");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bir hata oluştu");
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsSavingProfile(false);
     }
@@ -118,15 +118,15 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
 
   const handleSaveSecurity = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error("Lütfen tüm şifre alanlarını doldurun");
+      toast.error("Please fill all password fields");
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast.error("Yeni şifreler eşleşmiyor");
+      toast.error("New passwords do not match");
       return;
     }
     if (newPassword.length < 6) {
-      toast.error("Yeni şifre en az 6 karakter olmalıdır");
+      toast.error("New password must be at least 6 characters");
       return;
     }
 
@@ -140,15 +140,15 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Şifre güncellenemedi");
+        throw new Error(data.error || "Password update failed");
       }
 
-      toast.success("Şifreniz başarıyla değiştirildi");
+      toast.success("Password changed successfully");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bir hata oluştu");
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsSavingSecurity(false);
     }
@@ -158,16 +158,16 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
     setIsSavingNotifs(true);
     setTimeout(() => {
       localStorage.setItem("etwin_notifs", JSON.stringify({ email: emailNotifs, push: pushNotifs }));
-      toast.success("Bildirim tercihleriniz kaydedildi");
+      toast.success("Notification preferences saved");
       setIsSavingNotifs(false);
     }, 500);
   };
 
   const tabs = [
-    { id: "profile", label: "Profil", icon: User },
-    { id: "security", label: "Güvenlik", icon: Shield },
-    { id: "appearance", label: "Görünüm", icon: Palette },
-    { id: "notifications", label: "Bildirimler", icon: Bell },
+    { id: "profile", label: "Profile", icon: User },
+    { id: "security", label: "Security", icon: Shield },
+    { id: "appearance", label: "Appearance", icon: Palette },
+    { id: "notifications", label: "Notifications", icon: Bell },
   ];
 
   return (
@@ -181,7 +181,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
         
         {/* Mobile Header (Visible only on small screens) */}
         <div className="flex md:hidden items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Hesap Ayarları</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Account Settings</h2>
           <button 
             onClick={onClose}
             className="p-2 bg-white dark:bg-gray-800 rounded-full text-gray-500 hover:text-gray-900 dark:hover:text-white shadow-sm transition-colors"
@@ -193,7 +193,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
         {/* Sidebar Tabs */}
         <div className="w-full md:w-64 shrink-0 bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-800 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto hide-scrollbar">
           <div className="hidden md:flex items-center justify-between p-6 pb-2">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ayarlar</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Settings</h2>
           </div>
           
           <div className="flex md:flex-col p-2 md:p-4 gap-1 min-w-max md:min-w-0">
@@ -235,8 +235,8 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
             {activeTab === "profile" && (
               <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Profil</h3>
-                  <p className="text-sm text-gray-500 mt-1">Kişisel bilgilerinizi ve profil fotoğrafınızı yönetin.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h3>
+                  <p className="text-sm text-gray-500 mt-1">Manage your personal information and profile picture.</p>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -263,11 +263,11 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-white">Profil Fotoğrafı</h4>
-                    <p className="text-xs text-gray-500 mt-1 max-w-xs">JPG, GIF veya PNG. Maksimum 2MB.</p>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white">Profile Picture</h4>
+                    <p className="text-xs text-gray-500 mt-1 max-w-xs">JPG, GIF or PNG. Max 2MB.</p>
                     {image && (
                       <button onClick={() => setImage(null)} className="text-xs text-red-500 font-medium mt-2 hover:underline">
-                        Fotoğrafı Kaldır
+                        Remove Photo
                       </button>
                     )}
                   </div>
@@ -275,7 +275,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Ad Soyad</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Full Name</label>
                     <input 
                       type="text" 
                       value={name}
@@ -284,7 +284,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">E-posta Adresi</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email Address</label>
                     <input 
                       type="email" 
                       value={email}
@@ -301,7 +301,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-lg shadow-blue-500/25"
                   >
                     {isSavingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                    Değişiklikleri Kaydet
+                    Save Changes
                   </button>
                 </div>
               </div>
@@ -311,13 +311,13 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
             {activeTab === "security" && (
               <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Güvenlik</h3>
-                  <p className="text-sm text-gray-500 mt-1">Hesabınızın güvenliğini sağlamak için şifrenizi güncelleyin.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Security</h3>
+                  <p className="text-sm text-gray-500 mt-1">Update your password to secure your account.</p>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Mevcut Şifre</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Current Password</label>
                     <input 
                       type="password" 
                       value={currentPassword}
@@ -326,7 +326,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Yeni Şifre</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">New Password</label>
                     <input 
                       type="password" 
                       value={newPassword}
@@ -335,7 +335,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Yeni Şifre (Tekrar)</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">New Password (Confirm)</label>
                     <input 
                       type="password" 
                       value={confirmPassword}
@@ -352,7 +352,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-lg shadow-blue-500/25"
                   >
                     {isSavingSecurity ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                    Şifreyi Güncelle
+                    Update Password
                   </button>
                 </div>
               </div>
@@ -362,13 +362,13 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
             {activeTab === "appearance" && (
               <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Görünüm</h3>
-                  <p className="text-sm text-gray-500 mt-1">Platformun nasıl görüneceğini özelleştirin.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Appearance</h3>
+                  <p className="text-sm text-gray-500 mt-1">Customize how the platform looks.</p>
                 </div>
 
                 {mounted && (
                   <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tema Tercihi</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Theme Preference</label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       
                       {/* Light Theme */}
@@ -382,7 +382,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                         )}
                       >
                         <Sun className={cn("w-8 h-8", theme === "light" && "fill-blue-600/20")} />
-                        <span className="font-medium">Aydınlık</span>
+                        <span className="font-medium">Light</span>
                       </button>
 
                       {/* Dark Theme */}
@@ -396,7 +396,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                         )}
                       >
                         <Moon className={cn("w-8 h-8", theme === "dark" && "fill-blue-600/20")} />
-                        <span className="font-medium">Karanlık</span>
+                        <span className="font-medium">Dark</span>
                       </button>
 
                       {/* System Theme */}
@@ -410,11 +410,11 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                         )}
                       >
                         <Monitor className={cn("w-8 h-8", theme === "system" && "fill-blue-600/20")} />
-                        <span className="font-medium">Sistem</span>
+                        <span className="font-medium">System</span>
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 mt-2">
-                      Sistem seçeneği, işletim sisteminizin mevcut karanlık/aydınlık ayarlarına uyum sağlar.
+                      System option adapts to your OS dark/light settings.
                     </p>
                   </div>
                 )}
@@ -425,15 +425,15 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
             {activeTab === "notifications" && (
               <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Bildirimler</h3>
-                  <p className="text-sm text-gray-500 mt-1">Hangi durumlarda haber almak istediğinizi seçin.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h3>
+                  <p className="text-sm text-gray-500 mt-1">Choose when you want to be notified.</p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">E-posta Bildirimleri</h4>
-                      <p className="text-xs text-gray-500 mt-1">Yeni görev atandığında veya önemli projelerde mesaj geldiğinde e-posta alın.</p>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">Email Notifications</h4>
+                      <p className="text-xs text-gray-500 mt-1">Receive emails for new tasks or important project messages.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
                       <input type="checkbox" className="sr-only peer" checked={emailNotifs} onChange={(e) => setEmailNotifs(e.target.checked)} />
@@ -443,8 +443,8 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
 
                   <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">Anlık Bildirimler (Push)</h4>
-                      <p className="text-xs text-gray-500 mt-1">Tarayıcı üzerinden uygulamanın size anlık bildirim göndermesine izin verin.</p>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">Push Notifications</h4>
+                      <p className="text-xs text-gray-500 mt-1">Allow the app to send push notifications via browser.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
                       <input type="checkbox" className="sr-only peer" checked={pushNotifs} onChange={(e) => setPushNotifs(e.target.checked)} />
@@ -460,7 +460,7 @@ export function GlobalSettingsModal({ isOpen, onClose, defaultTab = "profile" }:
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-lg shadow-blue-500/25"
                   >
                     {isSavingNotifs ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                    Tercihleri Kaydet
+                    Save Preferences
                   </button>
                 </div>
               </div>

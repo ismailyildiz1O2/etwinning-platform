@@ -5,6 +5,7 @@ import { cn, formatDate } from "@/lib/utils";
 import { FileText, Image as ImageIcon, Video, Gamepad2, File as FileIcon, ExternalLink, Link as LinkIcon, Plus, Loader2, Check, Trash2, Upload, Pencil, X } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
+import { useI18n } from "./i18n-provider";
 
 interface EvidencePanelProps {
   projectId: string;
@@ -22,6 +23,7 @@ const FILE_TYPE_ICONS: Record<string, { icon: any; color: string }> = {
 };
 
 export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelProps) {
+  const { locale } = useI18n();
   const { t } = useI18n();
   const [filter, setFilter] = useState<string>("all");
   const [isAddingLink, setIsAddingLink] = useState(false);
@@ -88,7 +90,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
   const handleAddLink = async () => {
     if (!linkUrl || !linkName) {
-      toast.error("Lütfen bağlantı adı ve URL'sini girin");
+      toast.error("Please enter link name and URL");
       return;
     }
     
@@ -98,7 +100,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
     // or tell the user to add it from a task.
     const firstTask = project.phases[0]?.tasks[0];
     if (!firstTask) {
-      toast.error("Lütfen önce bir görev oluşturun.");
+      toast.error("Please create a task first.");
       return;
     }
 
@@ -116,14 +118,14 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
       });
 
       if (!res.ok) throw new Error();
-      toast.success("Dış bağlantı kanıt olarak eklendi!");
+      toast.success("External link added as evidence!");
       setLinkUrl("");
       setLinkName("");
       setLinkTags([]);
       setIsAddingLink(false);
       onUpdate();
     } catch {
-      toast.error("Bağlantı eklenemedi.");
+      toast.error("Link could not be added.");
     } finally {
       setAdding(false);
     }
@@ -135,7 +137,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
     const firstTask = project.phases[0]?.tasks[0];
     if (!firstTask) {
-      toast.error("Lütfen önce bir görev oluşturun.");
+      toast.error("Please create a task first.");
       return;
     }
 
@@ -144,7 +146,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
     for (const file of filesToUpload) {
       if (file.size > maxSize) {
-        toast.error(`"${file.name}" dosyası 10MB'dan büyük`);
+        toast.error(`"${file.name}" is larger than 10MB`);
         continue;
       }
 
@@ -160,13 +162,13 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || "Dosya yüklenemedi");
+          throw new Error(data.error || "File could not be uploaded");
         }
 
-        toast.success(`"${file.name}" yüklendi`);
+        toast.success(`"${file.name}" uploaded`);
         onUpdate();
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Dosya yüklenemedi");
+        toast.error(error instanceof Error ? error.message : "File could not be uploaded");
       } finally {
         setUploading(false);
       }
@@ -194,14 +196,14 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Dosya güncellenemedi");
+        throw new Error(data.error || "File could not be updated");
       }
 
-      toast.success("Dosya bilgileri güncellendi");
+      toast.success("File information updated");
       setEditingFile(null);
       onUpdate();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Dosya güncellenemedi");
+      toast.error(error instanceof Error ? error.message : "File could not be updated");
     } finally {
       setSavingFile(false);
     }
@@ -211,7 +213,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
     e.preventDefault();
     e.stopPropagation();
 
-    if (!confirm("Bu kanıtı silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Are you sure you want to delete this evidence?")) return;
 
     try {
       const res = await fetch(`/api/tasks/${taskId}/files`, {
@@ -221,10 +223,10 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
       });
 
       if (!res.ok) throw new Error();
-      toast.success("Kanıt başarıyla silindi");
+      toast.success("Evidence successfully deleted");
       onUpdate();
     } catch {
-      toast.error("Kanıt silinemedi");
+      toast.error("Evidence could not be deleted");
     }
   };
 
@@ -285,12 +287,12 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
         <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-medium text-gray-500 mb-1 block">Bağlantı Adı</label>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">Link Name</label>
               <input
                 type="text"
                 value={linkName}
                 onChange={e => setLinkName(e.target.value)}
-                placeholder="Örn: Padlet Etkinlik Duvarı"
+                placeholder="e.g. Padlet Activity Wall"
                 className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm"
               />
             </div>
@@ -306,7 +308,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-2 block">Etiketler (İsteğe Bağlı)</label>
+            <label className="text-xs font-medium text-gray-500 mb-2 block">Tags (Optional)</label>
             <div className="flex flex-wrap gap-2">
               {QUALITY_LABEL_CRITERIA.map((criteria) => {
                 const isSelected = linkTags.includes(criteria.id);
@@ -352,7 +354,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
       {filteredFiles.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
           <FileIcon className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">Bu kritere uygun kanıt bulunamadı.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No evidence found for this criteria.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -401,7 +403,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                     </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0 pointer-events-auto">
-                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1 text-gray-300 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors" title="Görüntüle/İndir">
+                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1 text-gray-300 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors" title="View/Download">
                       <ExternalLink className="w-4 h-4" />
                     </a>
                     <button
@@ -419,14 +421,14 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                         setEditTags(tags);
                       }}
                       className="p-1 text-gray-300 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-md transition-colors"
-                      title="Düzenle"
+                      title="Edit"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={(e) => handleDeleteFile(e, file.taskId, file.id)}
                       className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                      title="Sil"
+                      title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -460,7 +462,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Kanıtı Düzenle</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Edit Evidence</h3>
               <button
                 onClick={() => setEditingFile(null)}
                 className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors"
@@ -470,7 +472,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Dosya/Bağlantı Adı</label>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">File/Link Name</label>
                 <input
                   type="text"
                   value={editName}
@@ -479,16 +481,16 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Kısa Açıklama (İsteğe Bağlı)</label>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Short Description (Optional)</label>
                 <textarea
                   value={editDesc}
                   onChange={(e) => setEditDesc(e.target.value)}
-                  placeholder="Bu kanıt neyi gösteriyor?"
+                  placeholder="What does this evidence show?"
                   className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm min-h-[80px]"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-2 block">Kalite Etiketi Kriterleri</label>
+                <label className="text-xs font-medium text-gray-500 mb-2 block">Quality Label Criteria</label>
                 <div className="flex flex-wrap gap-2">
                   {QUALITY_LABEL_CRITERIA.map((criteria) => {
                     const isSelected = editTags.includes(criteria.id);

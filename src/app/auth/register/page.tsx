@@ -11,13 +11,13 @@ import Link from "next/link";
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
-    email: z.string().email("Geçerli bir email girin"),
-    password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
-    confirmPassword: z.string().min(1, "Şifre tekrarı gereklidir"),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Enter a valid email"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Confirm password is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Şifreler eşleşmiyor",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -60,7 +60,7 @@ export default function RegisterPage() {
       const body = await res.json();
 
       if (!res.ok) {
-        throw new Error(body.error || "Kayıt başarısız");
+        throw new Error(body.error || "Registration failed");
       }
 
       // Auto-login
@@ -71,15 +71,15 @@ export default function RegisterPage() {
       });
 
       if (result?.error) {
-        toast.error("Kayıt başarılı ancak giriş yapılamadı. Lütfen giriş yapın.");
+        toast.error("Registration successful but login failed. Please sign in.");
         router.push("/auth/login");
       } else {
-        toast.success("Hesap oluşturuldu! Hoş geldiniz! 🎉");
+        toast.success("Account created! Welcome! 🎉");
         router.push("/dashboard");
       }
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Kayıt sırasında bir hata oluştu"
+        error instanceof Error ? error.message : "An error occurred during registration"
       );
     } finally {
       setLoading(false);
@@ -95,10 +95,10 @@ export default function RegisterPage() {
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-            eTwin Asistan
+            eTwin Assistant
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Yeni hesap oluşturun
+            Create a new account
           </p>
         </div>
 
@@ -107,27 +107,27 @@ export default function RegisterPage() {
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-xl" />
           <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-gray-700/50 shadow-2xl p-8">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-              Kayıt Ol
+              Sign Up
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Ad Soyad
+                  Full Name
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     {...register("name", {
-                      required: "Ad soyad gereklidir",
+                      required: "Full name is required",
                       minLength: {
                         value: 2,
-                        message: "İsim en az 2 karakter olmalıdır",
+                        message: "Name must be at least 2 characters",
                       },
                     })}
-                    placeholder="Adınız Soyadınız"
+                    placeholder="John Doe"
                     className="w-full pl-10 pr-3 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   />
                 </div>
@@ -146,13 +146,13 @@ export default function RegisterPage() {
                   <input
                     type="email"
                     {...register("email", {
-                      required: "Email gereklidir",
+                      required: "Email is required",
                       pattern: {
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Geçerli bir email girin",
+                        message: "Enter a valid email",
                       },
                     })}
-                    placeholder="ornek@email.com"
+                    placeholder="example@email.com"
                     className="w-full pl-10 pr-3 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   />
                 </div>
@@ -164,17 +164,17 @@ export default function RegisterPage() {
               {/* Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Şifre
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type={showPassword ? "text" : "password"}
                     {...register("password", {
-                      required: "Şifre gereklidir",
+                      required: "Password is required",
                       minLength: {
                         value: 6,
-                        message: "Şifre en az 6 karakter olmalıdır",
+                        message: "Password must be at least 6 characters",
                       },
                     })}
                     placeholder="••••••••"
@@ -200,14 +200,14 @@ export default function RegisterPage() {
               {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Şifre Tekrarı
+                  Confirm Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword", {
-                      required: "Şifre tekrarı gereklidir",
+                      required: "Confirm password is required",
                     })}
                     placeholder="••••••••"
                     className="w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
@@ -240,12 +240,12 @@ export default function RegisterPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Kayıt yapılıyor...
+                    Signing up...
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
-                    Kayıt Ol
+                    Sign Up
                   </>
                 )}
               </button>
@@ -253,12 +253,12 @@ export default function RegisterPage() {
 
             {/* Login link */}
             <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-              Zaten hesabınız var mı?{" "}
+              Already have an account?{" "}
               <Link
                 href="/auth/login"
                 className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
               >
-                Giriş Yap
+                Sign In
               </Link>
             </p>
           </div>

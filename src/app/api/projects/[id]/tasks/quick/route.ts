@@ -21,7 +21,7 @@ export async function POST(
     const { title, assigneeId, dueDate, description } = await request.json();
 
     if (!title || !assigneeId) {
-      return NextResponse.json({ error: "Başlık ve atanan kişi zorunludur" }, { status: 400 });
+      return NextResponse.json({ error: "Title and assignee are required" }, { status: 400 });
     }
 
     // Verify access
@@ -32,12 +32,12 @@ export async function POST(
     });
 
     if (!member) {
-      return NextResponse.json({ error: "Erişim reddedildi" }, { status: 403 });
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    // Find or create "Sohbet Görevleri" phase
+    // Find or create "Chat Tasks" phase
     let phase = await prisma.phase.findFirst({
-      where: { projectId, title: "Sohbet Görevleri" },
+      where: { projectId, title: "Chat Tasks" },
     });
 
     if (!phase) {
@@ -48,7 +48,7 @@ export async function POST(
       phase = await prisma.phase.create({
         data: {
           projectId,
-          title: "Sohbet Görevleri",
+          title: "Chat Tasks",
           order: (highestOrderPhase?.order || 0) + 1,
           color: "orange",
         },
@@ -77,8 +77,8 @@ export async function POST(
       data: {
         userId: assigneeId,
         type: "task_assigned",
-        title: "Yeni Görev Atandı",
-        message: `${assigner?.name || "Biri"} sana "${title}" görevini atadı.`,
+        title: "New Task Assigned",
+        message: `${assigner?.name || "Someone"} assigned you the task "${title}".`,
         link: `/dashboard/my-tasks`,
       },
     });
@@ -86,6 +86,6 @@ export async function POST(
     return NextResponse.json(task);
   } catch (error) {
     console.error("POST Quick Task Error:", error);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

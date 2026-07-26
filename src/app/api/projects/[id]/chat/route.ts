@@ -18,7 +18,7 @@ export async function GET(
     const channel = searchParams.get("channel");
 
     if (!channel) {
-      return NextResponse.json({ error: "Kanal belirtilmedi" }, { status: 400 });
+      return NextResponse.json({ error: "Channel not specified" }, { status: 400 });
     }
 
     const resolvedParams = await context.params;
@@ -33,17 +33,17 @@ export async function GET(
     });
 
     if (!member) {
-      return NextResponse.json({ error: "Bu projeye erişim yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to access this project" }, { status: 403 });
     }
 
     // Access control based on channel
     const userRole = member.role; // "owner", "admin", "member", "student"
     if (channel === "teachers" && userRole === "student") {
-      return NextResponse.json({ error: "Bu kanala erişim yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to access this channel" }, { status: 403 });
     }
 
     if (channel === "local_teachers" && userRole === "student") {
-      return NextResponse.json({ error: "Bu kanala erişim yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to access this channel" }, { status: 403 });
     }
 
     // If channel is team_<id>, verify user is in that team
@@ -53,7 +53,7 @@ export async function GET(
         where: { teamId_userId: { teamId, userId: session.user.id } },
       });
       if (!teamMember && !["owner", "admin"].includes(userRole)) {
-        return NextResponse.json({ error: "Bu ekibe erişim yetkiniz yok" }, { status: 403 });
+        return NextResponse.json({ error: "You do not have permission to access this team" }, { status: 403 });
       }
     }
 
@@ -80,7 +80,7 @@ export async function GET(
     return NextResponse.json(messages);
   } catch (error) {
     console.error("GET Chat Error:", error);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
@@ -102,7 +102,7 @@ export async function POST(
     const { channel, content, fileIds } = body;
 
     if (!channel || !content) {
-      return NextResponse.json({ error: "Kanal ve içerik gereklidir" }, { status: 400 });
+      return NextResponse.json({ error: "Channel and content are required" }, { status: 400 });
     }
 
     // Verify access
@@ -114,16 +114,16 @@ export async function POST(
     });
 
     if (!member) {
-      return NextResponse.json({ error: "Bu projeye erişim yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to access this project" }, { status: 403 });
     }
 
     const userRole = member.role;
     if (channel === "teachers" && userRole === "student") {
-      return NextResponse.json({ error: "Bu kanala yazma yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to write in this channel" }, { status: 403 });
     }
 
     if (channel === "local_teachers" && userRole === "student") {
-      return NextResponse.json({ error: "Bu kanala yazma yetkiniz yok" }, { status: 403 });
+      return NextResponse.json({ error: "You do not have permission to write in this channel" }, { status: 403 });
     }
 
     if (channel === "local_teachers" && !member.user.country) {
@@ -161,6 +161,6 @@ export async function POST(
     return NextResponse.json(message);
   } catch (error) {
     console.error("POST Chat Error:", error);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

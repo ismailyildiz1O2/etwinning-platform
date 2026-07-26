@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
     if (!email) {
       return NextResponse.json(
-        { error: "E-posta adresi gereklidir" },
+        { error: "Email address is required" },
         { status: 400 }
       );
     }
@@ -19,8 +19,8 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      // Güvenlik: Kullanıcı bulunamasa bile bulunamadı hatası vermiyoruz,
-      // başarılı dönüyoruz ki e-posta taraması yapılamasın.
+      // Security: Even if the user is not found, we don't return a not found error,
+      // we return success so that email enumeration cannot be performed.
       return NextResponse.json({ success: true });
     }
 
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Forgot password error:", error);
     return NextResponse.json(
-      { error: "Bir hata oluştu, lütfen tekrar deneyin." },
+      { error: "An error occurred, please try again." },
       { status: 500 }
     );
   }

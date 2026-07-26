@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     if (!projectId || !messages || !Array.isArray(messages)) {
       return NextResponse.json(
-        { error: "Geçersiz istek. projectId ve messages gerekli." },
+        { error: "Invalid request. projectId and messages are required." },
         { status: 400 }
       );
     }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     if (!membership) {
       return NextResponse.json(
-        { error: "Bu projeye erişim yetkiniz yok." },
+        { error: "You do not have permission to access this project." },
         { status: 403 }
       );
     }
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey || apiKey.trim() === "" || apiKey === "AIzaSy...") {
       return NextResponse.json({
-        reply: "Merhaba! Benim tam kapasiteyle (gerçek yapay zeka ile) çalışabilmem için proje ayarlarından geçerli bir Google Gemini API Anahtarı eklenmesi gerekiyor. Şu anda sadece bu otomatik mesajı verebiliyorum.",
+        reply: "Hello! For me to work at full capacity (with real AI), a valid Google Gemini API Key needs to be added from the project settings. Currently I can only give this automated message.",
       });
     }
 
@@ -101,7 +101,7 @@ Görevlerin:
   } catch (error) {
     console.error("Chat API Error:", error);
     return NextResponse.json(
-      { error: "Yapay zeka ile iletişim kurulurken bir hata oluştu." },
+      { error: "An error occurred while communicating with the AI." },
       { status: 500 }
     );
   }

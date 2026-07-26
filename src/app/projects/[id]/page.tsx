@@ -97,7 +97,7 @@ export default function ProjectDetailPage() {
       const data = await res.json();
       setProject(data);
     } catch {
-      toast.error("Proje yüklenemedi");
+      toast.error("Failed to load project");
     } finally {
       setLoading(false);
     }
@@ -125,14 +125,14 @@ export default function ProjectDetailPage() {
   };
 
   const handleTaskDelete = async (taskId: string) => {
-    if (!confirm("Bu görevi silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Are you sure you want to delete this task?")) return;
     try {
       const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      toast.success("Görev silindi");
+      toast.success("Task deleted");
       fetchProject();
     } catch {
-      toast.error("Görev silinemedi");
+      toast.error("Failed to delete task");
     }
   };
 
@@ -147,7 +147,7 @@ export default function ProjectDetailPage() {
   if (!project) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-500">Proje bulunamadı</p>
+        <p className="text-gray-500">Project not found</p>
       </div>
     );
   }
@@ -316,7 +316,7 @@ export default function ProjectDetailPage() {
                   </span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    {completedTasks}/{totalTasks} {locale === "en" ? "tasks completed" : "görev tamamlandı"}
+                    {completedTasks}/{totalTasks} {locale === "en" ? "tasks completed" : "tasks completed"}
                   </span>
                 </div>
               </div>
@@ -327,7 +327,7 @@ export default function ProjectDetailPage() {
                   <Link
                     href={`/projects/${project.id}/settings`}
                     className="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-                    title="Proje Ayarları"
+                    title="Project Settings"
                   >
                     <Settings className="w-5 h-5" />
                   </Link>
@@ -512,8 +512,8 @@ export default function ProjectDetailPage() {
                     onTaskClick={handleTaskClick}
                     onTaskEdit={handleTaskClick}
                     onTaskDelete={handleTaskDelete}
-                    onAddTask={() => toast.info("Görev ekleme özelliği yakında eklenecek")}
-                    onAISuggest={() => toast.info("AI öneri özelliği yakında eklenecek")}
+                    onAddTask={() => toast.info("Task addition feature will be added soon")}
+                    onAISuggest={() => toast.info("AI suggestion feature will be added soon")}
                   />
                 ))}
             </div>
@@ -522,8 +522,8 @@ export default function ProjectDetailPage() {
           {isStudent && activeTab === "my-tasks" && (
             <div className="space-y-4">
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Bana Atanan Görevler</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Bu projede yapmanız gereken görevler aşağıda listelenmiştir. Görevlere tıklayarak detaylarını görebilir ve kanıt yükleyebilirsiniz.</p>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">My Assigned Tasks</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">The tasks you need to do in this project are listed below. You can click on the tasks to see their details and upload evidence.</p>
               </div>
               
               {(() => {
@@ -538,8 +538,8 @@ export default function ProjectDetailPage() {
                       <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3">
                         <CheckCircle2 className="w-6 h-6" />
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Harika! Şu anlık göreviniz yok</h3>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm">Öğretmenleriniz size görev atadığında burada görünecektir.</p>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Great! You currently have no tasks</h3>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">When your teachers assign you tasks, they will appear here.</p>
                     </div>
                   );
                 }
@@ -598,10 +598,10 @@ export default function ProjectDetailPage() {
                                   task.priority === "medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
                                   "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                                 )}>
-                                  {task.priority === "high" ? "Yüksek" : task.priority === "medium" ? "Orta" : "Düşük"}
+                                  {task.priority === "high" ? "High" : task.priority === "medium" ? "Medium" : "Low"}
                                </span>
                                <span className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  Detay & Kanıt <ExternalLink className="w-3 h-3" />
+                                  Details & Evidence <ExternalLink className="w-3 h-3" />
                                </span>
                             </div>
                           </div>
@@ -616,39 +616,39 @@ export default function ProjectDetailPage() {
 
           {activeTab === "tools" && (
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Araç Kütüphanesi</h3>
-               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Proje görevlerinizi yaparken kullanabileceğiniz Web 2.0 araçları ve eğitim uygulamaları.</p>
+               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Tool Library</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Web 2.0 tools and educational apps you can use while doing your project tasks.</p>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                  <a href="https://www.canva.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-md transition-all group">
                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">C</div>
                    <div>
                      <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-500 transition-colors">Canva</h4>
-                     <p className="text-xs text-gray-500">Afiş, Logo & Tasarım</p>
+                     <p className="text-xs text-gray-500">Poster, Logo & Design</p>
                    </div>
                  </a>
                  <a href="https://padlet.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-pink-500 hover:shadow-md transition-all group">
                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">P</div>
                    <div>
                      <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-pink-500 transition-colors">Padlet</h4>
-                     <p className="text-xs text-gray-500">Dijital Pano & İşbirliği</p>
+                     <p className="text-xs text-gray-500">Digital Board & Collaboration</p>
                    </div>
                  </a>
                  <a href="https://kahoot.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-md transition-all group">
                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">K</div>
                    <div>
                      <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-purple-500 transition-colors">Kahoot!</h4>
-                     <p className="text-xs text-gray-500">Oyun & Değerlendirme</p>
+                     <p className="text-xs text-gray-500">Game & Evaluation</p>
                    </div>
                  </a>
                  <a href="https://storyjumper.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-orange-500 hover:shadow-md transition-all group">
                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">S</div>
                    <div>
                      <h4 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-orange-500 transition-colors">StoryJumper</h4>
-                     <p className="text-xs text-gray-500">Dijital Kitap Oluşturma</p>
+                     <p className="text-xs text-gray-500">Digital Book Creation</p>
                    </div>
                  </a>
                  <Link href="/dashboard/tools" className="flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-all sm:col-span-2 lg:col-span-1">
-                    <Wrench className="w-4 h-4" /> Tüm Araçlara Git
+                    <Wrench className="w-4 h-4" /> Go to All Tools
                  </Link>
                </div>
             </div>

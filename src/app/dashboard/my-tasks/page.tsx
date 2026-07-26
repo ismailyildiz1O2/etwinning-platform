@@ -50,7 +50,7 @@ export default function MyTasksPage() {
   };
 
   if (loading) {
-    return <div className="p-8">Yükleniyor...</div>;
+    return <div className="p-8">Loading...</div>;
   }
 
   const pendingTasks = tasks.filter(t => !t.isCompleted);
@@ -63,19 +63,19 @@ export default function MyTasksPage() {
           <CheckSquare className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Görevlerim</h1>
-          <p className="text-gray-500">Bana atanan tüm görevler</p>
+          <h1 className="text-2xl font-bold">My Tasks</h1>
+          <p className="text-gray-500">All tasks assigned to me</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <div>
           <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-orange-500" /> Bekleyen Görevler
+            <Clock className="w-5 h-5 text-orange-500" /> Pending Tasks
           </h2>
           <div className="space-y-3">
             {pendingTasks.length === 0 ? (
-              <p className="text-gray-500 text-sm">Bekleyen göreviniz bulunmuyor. Harika!</p>
+              <p className="text-gray-500 text-sm">You have no pending tasks. Great!</p>
             ) : (
               pendingTasks.map(task => (
                 <div key={task.id} className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm flex items-start gap-3">
@@ -88,7 +88,7 @@ export default function MyTasksPage() {
                     {task.description && <p className="text-xs text-gray-400 mt-1 line-clamp-2">{task.description}</p>}
                     {task.dueDate && (
                       <span className="inline-block mt-2 text-xs px-2 py-1 bg-red-50 text-red-600 rounded-md border border-red-100">
-                        Son Tarih: {new Date(task.dueDate).toLocaleDateString()}
+                        Due Date: {new Date(task.dueDate).toLocaleDateString()}
                       </span>
                     )}
                   </div>
@@ -100,11 +100,11 @@ export default function MyTasksPage() {
 
         <div>
           <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-green-500" /> Tamamlanan Görevler
+            <CheckCircle2 className="w-5 h-5 text-green-500" /> Completed Tasks
           </h2>
           <div className="space-y-3 opacity-75">
             {completedTasks.length === 0 ? (
-              <p className="text-gray-500 text-sm">Henüz tamamlanan bir göreviniz yok.</p>
+              <p className="text-gray-500 text-sm">You haven't completed any tasks yet.</p>
             ) : (
               completedTasks.map(task => (
                 <div key={task.id} className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 shadow-sm flex items-start gap-3">

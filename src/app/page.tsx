@@ -48,13 +48,13 @@ export default async function HomePage() {
               href="/auth/login"
               className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              Giriş Yap
+              Login
             </Link>
             <Link
               href="/auth/register"
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all"
             >
-              Kayıt Ol
+              Register
             </Link>
           </div>
         </header>
@@ -64,7 +64,7 @@ export default async function HomePage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-900/30 border border-blue-200/50 dark:border-blue-800/30 mb-6">
             <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span className="text-xs font-medium text-blue-700 dark:text-blue-400">
-              eTwinning proje yönetiminde yeni dönem
+              A new era in eTwinning project management
             </span>
           </div>
 
@@ -74,14 +74,13 @@ export default async function HomePage() {
             </span>
           </h1>
           <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto leading-relaxed">
-            eTwinning Projelerinizi{" "}
+            Manage your{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              Kolayca Yönetin
+              eTwinning Projects Easily
             </span>
           </p>
           <p className="text-base text-gray-500 dark:text-gray-400 mt-3 max-w-xl mx-auto">
-            AI destekli görev önerileri, takım çalışması araçları ve ilerleme
-            takibi ile eTwinning projelerinizi başarıya taşıyın.
+            Carry your eTwinning projects to success with AI-supported task suggestions, teamwork tools, and progress tracking.
           </p>
 
           <div className="flex items-center justify-center gap-4 mt-10">
@@ -89,14 +88,14 @@ export default async function HomePage() {
               href="/auth/register"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-base shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
             >
-              Hemen Başla
+              Start Now
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/auth/login"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-base hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
             >
-              Giriş Yap
+              Login
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -108,36 +107,36 @@ export default async function HomePage() {
             {[
               {
                 icon: FolderKanban,
-                title: "Proje Yönetimi",
+                title: "Project Management",
                 description:
-                  "4 aşamalı eTwinning proje yapısıyla projelerinizi düzenli tutun",
+                  "Keep your projects organized with a 4-phase eTwinning project structure",
                 gradient: "from-blue-500 to-blue-600",
                 iconBg: "bg-blue-100 dark:bg-blue-900/30",
                 iconColor: "text-blue-600 dark:text-blue-400",
               },
               {
                 icon: Bot,
-                title: "AI Asistan",
+                title: "AI Assistant",
                 description:
-                  "Yapay zeka destekli görev önerileri ve akıllı planlama",
+                  "AI-supported task suggestions and smart planning",
                 gradient: "from-purple-500 to-purple-600",
                 iconBg: "bg-purple-100 dark:bg-purple-900/30",
                 iconColor: "text-purple-600 dark:text-purple-400",
               },
               {
                 icon: Users,
-                title: "Takım Çalışması",
+                title: "Teamwork",
                 description:
-                  "Ortak okullarla kolay iletişim ve görev dağılımı",
+                  "Easy communication and task distribution with partner schools",
                 gradient: "from-green-500 to-green-600",
                 iconBg: "bg-green-100 dark:bg-green-900/30",
                 iconColor: "text-green-600 dark:text-green-400",
               },
               {
                 icon: BarChart3,
-                title: "İlerleme Takibi",
+                title: "Progress Tracking",
                 description:
-                  "Gerçek zamanlı ilerleme raporları ve tamamlanma oranları",
+                  "Real-time progress reports and completion rates",
                 gradient: "from-amber-500 to-amber-600",
                 iconBg: "bg-amber-100 dark:bg-amber-900/30",
                 iconColor: "text-amber-600 dark:text-amber-400",
@@ -182,7 +181,7 @@ export default async function HomePage() {
               </span>
             </div>
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              © 2026 eTwin Asistan. Tüm hakları saklıdır.
+              © 2026 eTwin Assistant. All rights reserved.
             </p>
           </div>
         </footer>

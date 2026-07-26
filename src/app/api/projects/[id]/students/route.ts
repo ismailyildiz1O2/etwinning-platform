@@ -21,7 +21,7 @@ export async function POST(
     const resolvedParams = await context.params;
     const projectId = resolvedParams.id;
 
-    // Sadece proje üyeleri (tercihen admin/owner) öğrenci ekleyebilir
+    // Only project members (preferably admin/owner) can add students
     const projectMember = await prisma.projectMember.findUnique({
       where: {
         projectId_userId: {
@@ -33,7 +33,7 @@ export async function POST(
 
     if (!projectMember || !["owner", "admin", "member"].includes(projectMember.role)) {
       return NextResponse.json(
-        { error: "Bu projeye öğrenci ekleme yetkiniz yok" },
+        { error: "You do not have permission to add students to this project" },
         { status: 403 }
       );
     }
@@ -43,14 +43,14 @@ export async function POST(
 
     if (!name || !username || !password) {
       return NextResponse.json(
-        { error: "İsim, kullanıcı adı ve şifre gereklidir" },
+        { error: "Name, username and password are required" },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { error: "Şifre en az 6 karakter olmalıdır" },
+        { error: "Password must be at least 6 characters" },
         { status: 400 }
       );
     }
@@ -61,7 +61,7 @@ export async function POST(
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Bu kullanıcı adı zaten alınmış" },
+        { error: "This username is already taken" },
         { status: 409 }
       );
     }
@@ -102,7 +102,7 @@ export async function POST(
         team = await tx.team.create({
           data: {
             projectId,
-            name: `${session.user.name}'in Ekibi`,
+            name: `${session.user.name}'s Team`,
             members: {
               create: {
                 userId: session.user.id,
@@ -136,9 +136,9 @@ export async function POST(
 
     return NextResponse.json(newStudent, { status: 201 });
   } catch (error) {
-    console.error("Öğrenci ekleme hatası:", error);
+    console.error("Student addition error:", error);
     return NextResponse.json(
-      { error: "Sunucu hatası" },
+      { error: "Server error" },
       { status: 500 }
     );
   }
@@ -169,14 +169,14 @@ export async function PUT(
     });
 
     if (!projectMember || !["owner", "admin", "teacher", "member"].includes(projectMember.role)) {
-      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 403 });
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
     }
 
     const body = await request.json();
     const { studentId, name, username, password } = body;
 
     if (!studentId || !name || !username) {
-      return NextResponse.json({ error: "Öğrenci ID, isim ve kullanıcı adı gereklidir" }, { status: 400 });
+      return NextResponse.json({ error: "Student ID, name and username are required" }, { status: 400 });
     }
 
     // Verify target user is a student in this project
@@ -190,7 +190,7 @@ export async function PUT(
     });
 
     if (!targetMember || targetMember.role !== "student") {
-      return NextResponse.json({ error: "Öğrenci bulunamadı" }, { status: 404 });
+      return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
     const updateData: Record<string, unknown> = {
@@ -200,7 +200,7 @@ export async function PUT(
 
     if (password && password.trim() !== "") {
       if (password.length < 6) {
-        return NextResponse.json({ error: "Şifre en az 6 karakter olmalıdır" }, { status: 400 });
+        return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
       }
       updateData.password = await hash(password, SALT_ROUNDS);
     }
@@ -212,10 +212,10 @@ export async function PUT(
 
     return NextResponse.json({ success: true, user: { id: updatedStudent.id, name: updatedStudent.name, username: updatedStudent.username } });
   } catch (error: unknown) {
-    console.error("Öğrenci güncelleme hatası:", error);
+    console.error("Student update error:", error);
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-      return NextResponse.json({ error: "Bu kullanıcı adı zaten kullanılıyor" }, { status: 409 });
+      return NextResponse.json({ error: "This username is already in use" }, { status: 409 });
     }
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

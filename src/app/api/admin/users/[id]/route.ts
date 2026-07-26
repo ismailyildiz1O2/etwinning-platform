@@ -17,7 +17,7 @@ export async function PATCH(
     
     // Prevent self-modification
     if (id === session.user.id) {
-      return NextResponse.json({ error: "Kendi hesabınızı değiştiremezsiniz" }, { status: 400 });
+      return NextResponse.json({ error: "You cannot modify your own account" }, { status: 400 });
     }
 
     const body = await request.json();
@@ -27,7 +27,7 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (role !== undefined) {
       if (!ALLOWED_ROLES.includes(role)) {
-        return NextResponse.json({ error: "Geçersiz rol" }, { status: 400 });
+        return NextResponse.json({ error: "Invalid role" }, { status: 400 });
       }
       updateData.role = role;
     }

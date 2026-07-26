@@ -45,7 +45,7 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
     e.preventDefault();
 
     if (!name.trim() || !startDate || !endDate) {
-      toast.error("Proje adı ve tarihler zorunludur");
+      toast.error("Project name and dates are required");
       return;
     }
 
@@ -71,16 +71,16 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Proje oluşturulamadı");
+        throw new Error(data.error || "Failed to create project");
       }
 
       const project = await res.json();
-      toast.success("Proje başarıyla oluşturuldu! 🎉");
+      toast.success("Project created successfully! 🎉");
       onClose();
       router.push(`/projects/${project.id}`);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Proje oluşturulamadı"
+        error instanceof Error ? error.message : "Failed to create project"
       );
     } finally {
       setLoading(false);
@@ -103,7 +103,7 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Yeni Proje Oluştur
+              Create New Project
             </h2>
             <button
               onClick={onClose}
@@ -118,14 +118,14 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Proje Adı *
+                Project Name *
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                placeholder="ör. Avrupa Kültürleri Projesi"
+                placeholder="e.g. European Cultures Project"
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               />
             </div>
@@ -133,13 +133,13 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Açıklama
+                Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                placeholder="Projenizi kısaca açıklayın..."
+                placeholder="Briefly describe your project..."
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none"
               />
             </div>
@@ -148,7 +148,7 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Başlangıç *
+                  Start *
                 </label>
                 <input
                   type="date"
@@ -160,7 +160,7 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Bitiş *
+                  End *
                 </label>
                 <input
                   type="date"
@@ -175,13 +175,13 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
             {/* Country */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Ülke
+                Country
               </label>
               <input
                 type="text"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                placeholder="ör. Türkiye"
+                placeholder="e.g. Turkey"
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               />
             </div>
@@ -189,13 +189,13 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
             {/* Partner Schools */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Ortak Okullar
+                Partner Schools
               </label>
               <input
                 type="text"
                 value={partnerSchools}
                 onChange={(e) => setPartnerSchools(e.target.value)}
-                placeholder="Virgülle ayırın: Okul A, Okul B"
+                placeholder="Separate with commas: School A, School B"
                 className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               />
             </div>
@@ -224,10 +224,10 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
               />
               <div>
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  eTwinning şablonunu yükle
+                  Load eTwinning template
                 </span>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                  4 aşama ve 29 hazır görevle başlayın
+                  Start with 4 phases and 29 ready tasks
                 </p>
               </div>
             </label>
@@ -239,7 +239,7 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
               onClick={onClose}
               className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
-              İptal
+              Cancel
             </button>
             <button
               onClick={handleSubmit}
@@ -249,10 +249,10 @@ export function NewProjectDialog({ isOpen, onClose }: NewProjectDialogProps) {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Oluşturuluyor...
+                  Creating...
                 </>
               ) : (
-                "Oluştur"
+                "Create"
               )}
             </button>
           </div>

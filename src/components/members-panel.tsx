@@ -43,17 +43,17 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
       });
 
       if (res.ok) {
-        alert("Öğretmen başarıyla eklendi / Davet gönderildi.");
+        alert("Teacher added successfully / Invite sent.");
         setIsTeacherModalOpen(false);
         setEmail("");
         if (onUpdate) onUpdate();
       } else {
         const data = await res.json();
-        alert(`Hata: ${data.error || "Bilinmeyen bir hata oluştu"}`);
+        alert(`Error: ${data.error || "An unknown error occurred"}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Sunucu ile iletişim kurulamadı.");
+      alert("Failed to communicate with server.");
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
       });
 
       if (res.ok) {
-        alert("Öğrenci başarıyla oluşturuldu ve projeye eklendi.");
+        alert("Student created and added to project successfully.");
         setIsStudentModalOpen(false);
         setStudentName("");
         setStudentUsername("");
@@ -84,11 +84,11 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
         if (onUpdate) onUpdate();
       } else {
         const data = await res.json();
-        alert(`Hata: ${data.error || "Bilinmeyen bir hata oluştu"}`);
+        alert(`Error: ${data.error || "An unknown error occurred"}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Sunucu ile iletişim kurulamadı.");
+      alert("Failed to communicate with server.");
     } finally {
       setLoading(false);
     }
@@ -112,7 +112,7 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
       });
 
       if (res.ok) {
-        alert("Öğrenci bilgileri başarıyla güncellendi.");
+        alert("Student information updated successfully.");
         setIsEditStudentModalOpen(false);
         setEditingStudentId("");
         setEditStudentName("");
@@ -121,11 +121,11 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
         if (onUpdate) onUpdate();
       } else {
         const data = await res.json();
-        alert(`Hata: ${data.error || "Bilinmeyen bir hata oluştu"}`);
+        alert(`Error: ${data.error || "An unknown error occurred"}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Sunucu ile iletişim kurulamadı.");
+      alert("Failed to communicate with server.");
     } finally {
       setLoading(false);
     }
@@ -198,7 +198,7 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
               <button 
                 onClick={() => openEditModal(member)}
                 className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                title="Düzenle"
+                title="Edit"
               >
                 <Edit2 className="w-4 h-4" />
               </button>
@@ -212,19 +212,19 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Öğretmen Davet Et</h3>
+              <h3 className="text-lg font-bold">Invite Teacher</h3>
               <button onClick={() => setIsTeacherModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleAddTeacher} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">E-posta Adresi</label>
+                <label className="block text-sm font-medium mb-1">Email Address</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Öğretmenin e-posta adresi"
+                  placeholder="Teacher's email address"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -235,14 +235,14 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                   onClick={() => setIsTeacherModalOpen(false)}
                   className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg"
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !email}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {loading ? "Ekleniyor..." : "Davet Et"}
+                  {loading ? "Adding..." : "Invite"}
                 </button>
               </div>
             </form>
@@ -255,41 +255,41 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Öğrenci Ekle</h3>
+              <h3 className="text-lg font-bold">Add Student</h3>
               <button onClick={() => setIsStudentModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleAddStudent} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Ad Soyad</label>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
                 <input
                   type="text"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
-                  placeholder="Öğrencinin adı ve soyadı"
+                  placeholder="Student's full name"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Kullanıcı Adı</label>
+                <label className="block text-sm font-medium mb-1">Username</label>
                 <input
                   type="text"
                   value={studentUsername}
                   onChange={(e) => setStudentUsername(e.target.value)}
-                  placeholder="Örn: ahmet_yilmaz"
+                  placeholder="e.g. john_doe"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Şifre</label>
+                <label className="block text-sm font-medium mb-1">Password</label>
                 <input
                   type="text"
                   value={studentPassword}
                   onChange={(e) => setStudentPassword(e.target.value)}
-                  placeholder="En az 6 karakter"
+                  placeholder="At least 6 characters"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                   required
                 />
@@ -300,14 +300,14 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                   onClick={() => setIsStudentModalOpen(false)}
                   className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg"
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !studentName || !studentUsername || !studentPassword}
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50"
                 >
-                  {loading ? "Oluşturuluyor..." : "Oluştur ve Ekle"}
+                  {loading ? "Creating..." : "Create and Add"}
                 </button>
               </div>
             </form>
@@ -320,41 +320,41 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Öğrenciyi Düzenle</h3>
+              <h3 className="text-lg font-bold">Edit Student</h3>
               <button onClick={() => setIsEditStudentModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleEditStudent} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Ad Soyad</label>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
                 <input
                   type="text"
                   value={editStudentName}
                   onChange={(e) => setEditStudentName(e.target.value)}
-                  placeholder="Öğrencinin adı ve soyadı"
+                  placeholder="Student's full name"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Kullanıcı Adı</label>
+                <label className="block text-sm font-medium mb-1">Username</label>
                 <input
                   type="text"
                   value={editStudentUsername}
                   onChange={(e) => setEditStudentUsername(e.target.value)}
-                  placeholder="Örn: ahmet_yilmaz"
+                  placeholder="e.g. john_doe"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Yeni Şifre (İsteğe Bağlı)</label>
+                <label className="block text-sm font-medium mb-1">New Password (Optional)</label>
                 <input
                   type="text"
                   value={editStudentPassword}
                   onChange={(e) => setEditStudentPassword(e.target.value)}
-                  placeholder="Değiştirmek istemiyorsanız boş bırakın"
+                  placeholder="Leave empty to keep current password"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -364,14 +364,14 @@ export function MembersPanel({ projectId, projectMembers, onUpdate }: { projectI
                   onClick={() => setIsEditStudentModalOpen(false)}
                   className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg"
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !editStudentName || !editStudentUsername}
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50"
                 >
-                  {loading ? "Güncelleniyor..." : "Kaydet"}
+                  {loading ? "Updating..." : "Save"}
                 </button>
               </div>
             </form>

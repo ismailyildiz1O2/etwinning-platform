@@ -56,12 +56,12 @@ export default function ProjectChatPage() {
     // Determine available channels based on user role
     const userRole = session?.user?.role;
     const baseChannels = [
-      { id: "general", name: "Genel", type: "global" }
+      { id: "general", name: "General", type: "global" }
     ];
     
     if (userRole && userRole !== "student") {
-      baseChannels.push({ id: "teachers", name: "Öğretmenler", type: "global" });
-      baseChannels.push({ id: "local_teachers", name: "Yerel Öğretmenler", type: "global" });
+      baseChannels.push({ id: "teachers", name: "Teachers", type: "global" });
+      baseChannels.push({ id: "local_teachers", name: "Local Teachers", type: "global" });
     }
     
     // We would fetch teams here to add team channels
@@ -71,7 +71,7 @@ export default function ProjectChatPage() {
         if (Array.isArray(data)) {
            const teamChannels = data.map((t: any) => ({
              id: `team_${t.id}`,
-             name: `Ekip: ${t.name}`,
+             name: `Team: ${t.name}`,
              type: "team"
            }));
            setChannels([...baseChannels, ...teamChannels]);
@@ -137,7 +137,7 @@ export default function ProjectChatPage() {
       if (res.ok) {
         setAssignPopoverUser(null);
         setTaskTitle("");
-        alert("Görev başarıyla atandı ve bildirim gönderildi!");
+        alert("Task assigned successfully and notification sent!");
       }
     } catch (error) {
       console.error(error);
@@ -151,7 +151,7 @@ export default function ProjectChatPage() {
       <div className="w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex flex-col">
         <div className="p-4 border-b border-gray-200 dark:border-gray-800">
           <h2 className="font-semibold flex items-center gap-2">
-            <MessagesSquare className="w-5 h-5" /> Kanallar
+            <MessagesSquare className="w-5 h-5" /> Channels
           </h2>
         </div>
         <div className="p-2 space-y-1 overflow-y-auto flex-1">
@@ -177,16 +177,16 @@ export default function ProjectChatPage() {
         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-950">
           <h2 className="font-semibold flex items-center gap-2">
             <span className="text-gray-400">#</span>
-            {channels.find(c => c.id === activeChannel)?.name || "Kanal"}
+            {channels.find(c => c.id === activeChannel)?.name || "Channel"}
           </h2>
         </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {loading ? (
-            <div className="flex justify-center p-4">Yükleniyor...</div>
+            <div className="flex justify-center p-4">Loading...</div>
           ) : messages.length === 0 ? (
-            <div className="text-center text-gray-500 p-4">Bu kanalda henüz mesaj yok. İlk mesajı siz gönderin!</div>
+            <div className="text-center text-gray-500 p-4">No messages in this channel yet. Send the first message!</div>
           ) : (
             messages.map((msg) => (
               <div key={msg.id} className={cn("flex gap-4 group", msg.senderId === session?.user?.id ? "flex-row-reverse" : "flex-row")}>
@@ -210,7 +210,7 @@ export default function ProjectChatPage() {
                       <button 
                         onClick={() => setAssignPopoverUser(msg.sender)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                        title="Bu kişiye görev ata"
+                        title="Assign task to this person"
                       >
                         <CheckCircle className="w-4 h-4" />
                       </button>
@@ -240,7 +240,7 @@ export default function ProjectChatPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`#${channels.find(c => c.id === activeChannel)?.name || "Kanal"} kanalına mesaj gönder...`}
+              placeholder={`Send message to #${channels.find(c => c.id === activeChannel)?.name || "Channel"}...`}
               className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -257,15 +257,15 @@ export default function ProjectChatPage() {
         {assignPopoverUser && (
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-2xl w-96 max-w-full">
-              <h3 className="font-semibold mb-4 text-lg">Görev Ata: {assignPopoverUser.name}</h3>
+              <h3 className="font-semibold mb-4 text-lg">Assign Task: {assignPopoverUser.name}</h3>
               <form onSubmit={handleAssignTask} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Görev Başlığı</label>
+                  <label className="text-sm font-medium text-gray-700">Task Title</label>
                   <input
                     type="text"
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Örn: Afişi tasarla"
+                    placeholder="Ex: Design the poster"
                     className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />
@@ -276,14 +276,14 @@ export default function ProjectChatPage() {
                     onClick={() => setAssignPopoverUser(null)}
                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                   >
-                    İptal
+                    Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={!taskTitle.trim() || isAssigning}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {isAssigning ? "Atanıyor..." : "Ata"}
+                    {isAssigning ? "Assigning..." : "Assign"}
                   </button>
                 </div>
               </form>

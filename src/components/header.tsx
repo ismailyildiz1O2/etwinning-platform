@@ -60,7 +60,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const userName = session?.user?.name || "Kullanıcı";
+  const userName = session?.user?.name || "User";
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 lg:px-6 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/80 dark:border-gray-800/80">
@@ -81,7 +81,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
         <div className="hidden sm:flex items-center gap-2">
           <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-            eTwin Asistan
+            eTwin Assistant
           </span>
         </div>
       </div>
@@ -93,7 +93,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="relative p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 group"
-            aria-label="Tema değiştir"
+            aria-label="Change theme"
           >
             <div className="relative w-5 h-5">
               <Sun
@@ -121,7 +121,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
             className="flex items-center gap-1.5 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold text-gray-700 dark:text-gray-300"
-            title="Change Language / Dil Değiştir"
+            title="Change Language"
           >
             <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span className="uppercase">{locale}</span>
@@ -207,7 +207,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <User className="w-4 h-4" />
-                  Profil
+                  Profile
                 </button>
                 <button
                   onClick={() => {
@@ -218,7 +218,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <Settings className="w-4 h-4" />
-                  Ayarlar
+                  Settings
                 </button>
               </div>
 
@@ -228,7 +228,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Çıkış Yap
+                  Sign Out
                 </button>
               </div>
             </div>

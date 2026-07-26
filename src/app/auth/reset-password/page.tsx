@@ -26,9 +26,9 @@ function ResetPasswordForm() {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Geçersiz İstek</AlertTitle>
+        <AlertTitle>Invalid Request</AlertTitle>
         <AlertDescription>
-          Şifre sıfırlama bağlantısı eksik veya hatalı. Lütfen e-postanızdaki bağlantıya tekrar tıklayın veya yeni bir sıfırlama isteği gönderin.
+          The password reset link is missing or invalid. Please click the link in your email again or request a new reset link.
         </AlertDescription>
       </Alert>
     );
@@ -40,13 +40,13 @@ function ResetPasswordForm() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Şifreler eşleşmiyor.");
+      setError("Passwords do not match.");
       setIsLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Şifreniz en az 6 karakter olmalıdır.");
+      setError("Your password must be at least 6 characters long.");
       setIsLoading(false);
       return;
     }
@@ -61,7 +61,7 @@ function ResetPasswordForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Bir hata oluştu");
+        throw new Error(data.error || "An error occurred");
       }
 
       setSuccess(true);
@@ -77,11 +77,11 @@ function ResetPasswordForm() {
       <div className="space-y-4">
         <Alert className="bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800">
           <CheckCircle2 className="h-4 w-4" />
-          <AlertTitle>Tebrikler!</AlertTitle>
-          <AlertDescription>Şifreniz başarıyla güncellendi.</AlertDescription>
+          <AlertTitle>Congratulations!</AlertTitle>
+          <AlertDescription>Your password has been updated successfully.</AlertDescription>
         </Alert>
         <Button className="w-full" onClick={() => router.push("/auth/login")}>
-          Giriş Yap <ArrowRight className="ml-2 h-4 w-4" />
+          Sign In <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     );
@@ -92,12 +92,12 @@ function ResetPasswordForm() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Hata</AlertTitle>
+          <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       <div className="space-y-2">
-        <Label htmlFor="password">Yeni Şifre</Label>
+        <Label htmlFor="password">New Password</Label>
         <Input
           id="password"
           type="password"
@@ -108,7 +108,7 @@ function ResetPasswordForm() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Yeni Şifre (Tekrar)</Label>
+        <Label htmlFor="confirmPassword">Confirm New Password</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -119,7 +119,7 @@ function ResetPasswordForm() {
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
+        {isLoading ? "Updating..." : "Update Password"}
       </Button>
     </form>
   );
@@ -130,11 +130,11 @@ export default function ResetPasswordPage() {
     <div className="flex h-screen w-full items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Yeni Şifre Belirle</CardTitle>
-          <CardDescription>Hesabınız için yeni ve güvenli bir şifre oluşturun.</CardDescription>
+          <CardTitle className="text-2xl font-bold">Set New Password</CardTitle>
+          <CardDescription>Create a new and secure password for your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<div className="flex justify-center p-4">Yükleniyor...</div>}>
+          <Suspense fallback={<div className="flex justify-center p-4">Loading...</div>}>
             <ResetPasswordForm />
           </Suspense>
         </CardContent>

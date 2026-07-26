@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Loader2, Trash2, Edit3, Send, NotebookText } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "./i18n-provider";
 import { cn } from "@/lib/utils";
 
 interface NotesDrawerProps {
@@ -18,6 +19,7 @@ interface Note {
 }
 
 export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
+  const { locale } = useI18n();
   const [activeTab, setActiveTab] = useState<"list" | "add">("add");
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
         setNotes(data);
       }
     } catch (error) {
-      toast.error("Notlar yüklenirken bir hata oluştu");
+      toast.error("An error occurred while loading notes");
     } finally {
       setLoading(false);
     }
@@ -56,7 +58,7 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
 
   const handleSaveNote = async () => {
     if (!newNoteContent.trim()) {
-      toast.error("Lütfen bir not yazın");
+      toast.error("Please write a note");
       return;
     }
     
@@ -70,29 +72,29 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
       
       if (!res.ok) throw new Error();
       
-      toast.success("Not kaydedildi");
+      toast.success("Note saved");
       setNewNoteContent("");
       setActiveTab("list");
       fetchNotes();
     } catch (error) {
-      toast.error("Not kaydedilirken bir hata oluştu");
+      toast.error("An error occurred while saving the note");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!confirm("Bu notu silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Are you sure you want to delete this note?")) return;
     
     try {
       const res = await fetch(`/api/projects/${projectId}/notes/${noteId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error();
-      toast.success("Not silindi");
+      toast.success("Note deleted");
       setNotes((prev) => prev.filter((n) => n.id !== noteId));
     } catch (error) {
-      toast.error("Not silinirken bir hata oluştu");
+      toast.error("An error occurred while deleting the note");
     }
   };
 
@@ -178,7 +180,7 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
               <textarea
                 value={newNoteContent}
                 onChange={(e) => setNewNoteContent(e.target.value)}
-                placeholder="Notunuzu buraya yazın..."
+                placeholder="Write your note here..."
                 className="flex-1 w-full p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
               />
               <div className="flex justify-end pt-2">
@@ -215,7 +217,7 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
                     <button
                       onClick={() => handleDeleteNote(note.id)}
                       className="absolute top-4 right-4 p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-all"
-                      title="Notu sil"
+                      title="Delete note"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -226,9 +228,9 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
                   <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-3">
                     <NotebookText className="w-6 h-6 text-gray-400" />
                   </div>
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Henüz not yok</h3>
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">No notes yet</h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    Eklediğiniz notlar burada listelenecek.
+                    Notes you add will be listed here.
                   </p>
                 </div>
               )}

@@ -57,7 +57,7 @@ export function TodayTasks() {
 
     if (newCompleted) {
       triggerCompletionConfetti();
-      toast.success("Görev tamamlandı! 🎉");
+      toast.success("Task completed! 🎉");
     }
 
     try {
@@ -109,10 +109,10 @@ export function TodayTasks() {
           <div className="py-8 text-center">
             <PartyPopper className="w-10 h-10 text-amber-400 mx-auto mb-2" />
             <p className="text-sm font-medium text-gray-900 dark:text-white">
-              Bugün göreviniz yok! 🎉
+              No tasks for today! 🎉
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              Harika iş çıkardınız
+              Great job
             </p>
           </div>
         ) : (

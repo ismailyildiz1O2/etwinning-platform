@@ -95,13 +95,13 @@ export function NotificationsDropdown() {
       {isOpen && (
         <div className="absolute right-0 top-12 z-50 w-80 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl py-2 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
-            <h3 className="font-semibold">Bildirimler</h3>
+            <h3 className="font-semibold">Notifications</h3>
             {unreadCount > 0 && (
               <button 
                 onClick={markAllAsRead}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Tümünü okundu işaretle
+                Mark all as read
               </button>
             )}
           </div>
@@ -109,7 +109,7 @@ export function NotificationsDropdown() {
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="p-4 text-center text-sm text-gray-500">
-                Hiç bildiriminiz yok
+                You have no notifications
               </div>
             ) : (
               notifications.map((notification) => (
@@ -125,7 +125,7 @@ export function NotificationsDropdown() {
                       <button 
                         onClick={() => markAsRead(notification.id)}
                         className="opacity-0 group-hover:opacity-100 p-1 text-blue-600 hover:bg-blue-100 rounded transition-all"
-                        title="Okundu işaretle"
+                        title="Mark as read"
                       >
                         <Check className="w-3 h-3" />
                       </button>
@@ -147,7 +147,7 @@ export function NotificationsDropdown() {
                         }}
                         className="text-xs text-blue-600 font-medium hover:underline"
                       >
-                        Görüntüle
+                        View
                       </Link>
                     )}
                   </div>

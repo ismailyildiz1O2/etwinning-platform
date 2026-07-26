@@ -8,7 +8,7 @@ export async function PATCH(req: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -18,7 +18,7 @@ export async function PATCH(req: Request) {
     if (email && email !== session.user.email) {
       const existing = await prisma.user.findUnique({ where: { email } });
       if (existing) {
-        return NextResponse.json({ error: "Bu e-posta adresi zaten kullanılıyor" }, { status: 400 });
+        return NextResponse.json({ error: "This email address is already in use" }, { status: 400 });
       }
     }
 
@@ -40,11 +40,11 @@ export async function PATCH(req: Request) {
     // NOTE: Updated profile fields (name, email) won't reflect in the JWT
     // until the user signs out and back in. Consider implementing token
     // refresh or using next-auth's update() method for immediate sync.
-    return NextResponse.json({ message: "Profil güncellendi", user: updatedUser });
+    return NextResponse.json({ message: "Profile updated", user: updatedUser });
   } catch (error) {
     console.error("Profile update error:", error);
     return NextResponse.json(
-      { error: "Profil güncellenirken bir hata oluştu" },
+      { error: "An error occurred while updating the profile" },
       { status: 500 }
     );
   }

@@ -222,19 +222,19 @@ export default function NewProjectPage() {
 
   const validateStep1 = (): boolean => {
     if (!name.trim()) {
-      toast.error("Proje adı zorunludur");
+      toast.error("Project name is required");
       return false;
     }
     if (!startDate) {
-      toast.error("Başlangıç tarihi zorunludur");
+      toast.error("Start date is required");
       return false;
     }
     if (!endDate) {
-      toast.error("Bitiş tarihi zorunludur");
+      toast.error("End date is required");
       return false;
     }
     if (new Date(endDate) <= new Date(startDate)) {
-      toast.error("Bitiş tarihi başlangıç tarihinden sonra olmalıdır");
+      toast.error("End date must be after start date");
       return false;
     }
     return true;
@@ -242,19 +242,19 @@ export default function NewProjectPage() {
 
   const validateStep2 = (): boolean => {
     if (!topic.trim()) {
-      toast.error("Proje konusu / teması zorunludur");
+      toast.error("Project topic / theme is required");
       return false;
     }
     if (!ageGroup) {
-      toast.error("Hedef yaş grubu seçilmelidir");
+      toast.error("Target age group must be selected");
       return false;
     }
     if (!productType) {
-      toast.error("Ortak ürün türü seçilmelidir");
+      toast.error("Common product type must be selected");
       return false;
     }
     if (durationMonths < 1 || durationMonths > 24) {
-      toast.error("Proje süresi 1-24 ay arasında olmalıdır");
+      toast.error("Project duration must be between 1 and 24 months");
       return false;
     }
     return true;
@@ -288,7 +288,7 @@ export default function NewProjectPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Görevler oluşturulamadı");
+        throw new Error(data.error || "Failed to generate tasks");
       }
 
       const data = await res.json();
@@ -314,10 +314,10 @@ export default function NewProjectPage() {
       setPhase3Tasks(p3Tasks);
       setTasksGenerated(true);
       goToStep(3);
-      toast.success("Görevler başarıyla oluşturuldu! 🎉");
+      toast.success("Tasks generated successfully! 🎉");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Görevler oluşturulamadı"
+        error instanceof Error ? error.message : "Failed to generate tasks"
       );
     } finally {
       setGeneratingTasks(false);
@@ -352,7 +352,7 @@ export default function NewProjectPage() {
   const deleteTask = (phaseNum: 2 | 3, taskId: string) => {
     const setter = phaseNum === 2 ? setPhase2Tasks : setPhase3Tasks;
     setter((prev) => prev.filter((t) => t.id !== taskId));
-    toast.success("Görev silindi");
+    toast.success("Task deleted");
   };
 
   const addTask = (phaseNum: 2 | 3) => {
@@ -385,7 +385,7 @@ export default function NewProjectPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Görevler yeniden oluşturulamadı");
+        throw new Error(data.error || "Failed to regenerate tasks");
       }
 
       const data = await res.json();
@@ -407,12 +407,12 @@ export default function NewProjectPage() {
 
       setPhase2Tasks(p2Tasks);
       setPhase3Tasks(p3Tasks);
-      toast.success("Görevler yeniden oluşturuldu! 🔄");
+      toast.success("Tasks regenerated successfully! 🔄");
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Görevler yeniden oluşturulamadı"
+          : "Failed to regenerate tasks"
       );
     } finally {
       setGeneratingTasks(false);
@@ -427,12 +427,12 @@ export default function NewProjectPage() {
     const allPhase3Valid = phase3Tasks.every((t) => t.title.trim());
 
     if (!allPhase2Valid || !allPhase3Valid) {
-      toast.error("Tüm görevlerin başlığı doldurulmalıdır");
+      toast.error("All task titles must be filled");
       return;
     }
 
     if (phase2Tasks.length === 0 && phase3Tasks.length === 0) {
-      toast.error("En az bir dinamik görev eklenmelidir");
+      toast.error("At least one dynamic task must be added");
       return;
     }
 
@@ -477,15 +477,15 @@ export default function NewProjectPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Proje oluşturulamadı");
+        throw new Error(data.error || "Failed to create project");
       }
 
       const project = await res.json();
-      toast.success("Proje başarıyla oluşturuldu! 🎉");
+      toast.success("Project created successfully! 🎉");
       router.push(`/projects/${project.id}`);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Proje oluşturulamadı"
+        error instanceof Error ? error.message : "Failed to create project"
       );
     } finally {
       setSubmitting(false);
@@ -746,7 +746,7 @@ export default function NewProjectPage() {
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200/80 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:scale-[1.02] active:scale-[0.98]"
           >
             <ArrowLeft className="w-4 h-4" />
-            Geri
+            Back
           </button>
           <button
             type="button"
@@ -757,12 +757,12 @@ export default function NewProjectPage() {
             {generatingTasks ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Görevler Oluşturuluyor...
+                Generating Tasks...
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                Görevleri Oluştur
+                Generate Tasks
               </>
             )}
           </button>
@@ -796,7 +796,7 @@ export default function NewProjectPage() {
               </h3>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-gray-200/60 dark:bg-gray-700/40 text-xs font-medium text-gray-500 dark:text-gray-400">
-              Sabit
+              Fixed
             </span>
           </div>
         </div>
@@ -815,7 +815,7 @@ export default function NewProjectPage() {
             ))}
           </ul>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 ml-6">
-            {phase.tasks.length} görev
+            {phase.tasks.length} tasks
           </p>
         </div>
       </div>
@@ -847,7 +847,7 @@ export default function NewProjectPage() {
               </h3>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-blue-100/60 dark:bg-blue-900/30 text-xs font-medium text-blue-600 dark:text-blue-400">
-              🤖 AI Oluşturdu
+              🤖 AI Generated
             </span>
           </div>
         </div>
@@ -874,14 +874,14 @@ export default function NewProjectPage() {
                     }}
                     onBlur={() => toggleEditTask(phaseNum, task.id)}
                     autoFocus
-                    placeholder="Görev başlığı yazın..."
+                    placeholder="Type task title..."
                     className="flex-1 px-2 py-1 text-sm bg-blue-50/80 dark:bg-blue-950/30 border border-blue-300/50 dark:border-blue-700/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
                   />
                 ) : (
                   <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">
                     {task.title || (
                       <span className="text-gray-400 italic">
-                        Boş görev...
+                        Empty task...
                       </span>
                     )}
                   </span>
@@ -893,7 +893,7 @@ export default function NewProjectPage() {
                     type="button"
                     onClick={() => toggleEditTask(phaseNum, task.id)}
                     className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 text-gray-400 hover:text-blue-500 transition-colors"
-                    title="Düzenle"
+                    title="Edit"
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
@@ -901,7 +901,7 @@ export default function NewProjectPage() {
                     type="button"
                     onClick={() => deleteTask(phaseNum, task.id)}
                     className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 text-gray-400 hover:text-red-500 transition-colors"
-                    title="Sil"
+                    title="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -917,11 +917,11 @@ export default function NewProjectPage() {
             className="mt-3 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-xs font-medium text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500 dark:hover:border-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:bg-blue-50/30 dark:hover:bg-blue-950/20"
           >
             <Plus className="w-3.5 h-3.5" />
-            Görev Ekle
+            Add Task
           </button>
 
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 ml-5">
-            {tasks.length} görev
+            {tasks.length} tasks
           </p>
         </div>
       </div>
@@ -969,10 +969,10 @@ export default function NewProjectPage() {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Görev Onayı
+                  Task Review
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Görevleri inceleyin, düzenleyin ve projenizi oluşturun
+                  Review and edit tasks, then create your project
                 </p>
               </div>
             </div>
@@ -985,7 +985,7 @@ export default function NewProjectPage() {
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     {totalTasks}
                   </span>
-                  <span className="text-xs text-gray-500">toplam görev</span>
+                  <span className="text-xs text-gray-500">total tasks</span>
                 </div>
               </div>
 
@@ -1001,7 +1001,7 @@ export default function NewProjectPage() {
                 ) : (
                   <RefreshCw className="w-4 h-4" />
                 )}
-                Yeniden Oluştur
+                Regenerate
               </button>
             </div>
           </div>
@@ -1021,10 +1021,10 @@ export default function NewProjectPage() {
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              AI görevlerinizi oluşturuyor...
+              AI is generating your tasks...
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Bu birkaç saniye sürebilir
+              This may take a few seconds
             </p>
           </div>
         </div>
@@ -1066,7 +1066,7 @@ export default function NewProjectPage() {
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200/80 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300 font-medium text-sm transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:scale-[1.02] active:scale-[0.98]"
           >
             <ArrowLeft className="w-4 h-4" />
-            Geri
+            Back
           </button>
           <button
             type="button"
@@ -1077,12 +1077,12 @@ export default function NewProjectPage() {
             {submitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Oluşturuluyor...
+                Creating...
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                Projeyi Oluştur
+                Create Project
               </>
             )}
           </button>
@@ -1113,10 +1113,10 @@ export default function NewProjectPage() {
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Yeni Proje Oluştur
+              Create New Project
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-              eTwinning projenizi adım adım oluşturun
+              Create your eTwinning project step by step
             </p>
           </div>
         </div>

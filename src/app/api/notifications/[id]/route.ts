@@ -22,11 +22,11 @@ export async function PATCH(
     });
 
     if (!notification) {
-      return NextResponse.json({ error: "Bildirim bulunamadı" }, { status: 404 });
+      return NextResponse.json({ error: "Notification not found" }, { status: 404 });
     }
 
     if (notification.userId !== session.user.id) {
-      return NextResponse.json({ error: "Erişim reddedildi" }, { status: 403 });
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const updated = await prisma.notification.update({
@@ -37,6 +37,6 @@ export async function PATCH(
     return NextResponse.json(updated);
   } catch (error) {
     console.error("PATCH Notification Error:", error);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

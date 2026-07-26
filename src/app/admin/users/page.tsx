@@ -30,7 +30,7 @@ export default function AdminUsersPage() {
         setUsers(data);
       }
     } catch {
-      toast.error("Kullanıcılar yüklenemedi");
+      toast.error("Failed to load users");
     } finally {
       setLoading(false);
     }
@@ -52,17 +52,17 @@ export default function AdminUsersPage() {
         const data = await res.json();
         throw new Error(data.error || "Rol güncellenemedi");
       }
-      toast.success("Kullanıcı rolü güncellendi");
+      toast.success("User role updated");
       fetchUsers();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Rol güncellenemedi");
+      toast.error(error instanceof Error ? error.message : "Failed to update role");
     } finally {
       setUpdating(null);
     }
   };
 
   const handleToggleSuspend = async (userId: string, isSuspended: boolean) => {
-    if (!confirm(`Bu kullanıcıyı ${isSuspended ? 'askıya almak' : 'aktif etmek'} istediğinize emin misiniz?`)) return;
+    if (!confirm(`Are you sure you want to ${isSuspended ? 'suspend' : 'activate'} this user?`)) return;
     setUpdating(userId);
     try {
       const res = await fetch(`/api/admin/users/${userId}`, {
@@ -72,12 +72,12 @@ export default function AdminUsersPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "İşlem başarısız");
+        throw new Error(data.error || "Operation failed");
       }
-      toast.success(isSuspended ? "Kullanıcı askıya alındı" : "Kullanıcı aktif edildi");
+      toast.success(isSuspended ? "User suspended" : "User activated");
       fetchUsers();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "İşlem başarısız");
+      toast.error(error instanceof Error ? error.message : "Operation failed");
     } finally {
       setUpdating(null);
     }
@@ -94,10 +94,10 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Users className="w-6 h-6 text-blue-500" />
-            Kullanıcı Yönetimi
+            User Management
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Platformdaki tüm kullanıcıları yönetin.
+            Manage all users on the platform.
           </p>
         </div>
         
@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="İsim veya e-posta ara..."
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full sm:w-64 pl-9 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -123,19 +123,19 @@ export default function AdminUsersPage() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Kullanıcı</th>
-                  <th className="px-6 py-4 font-medium">Rol</th>
-                  <th className="px-6 py-4 font-medium">Durum</th>
-                  <th className="px-6 py-4 font-medium">Kayıt Tarihi</th>
-                  <th className="px-6 py-4 font-medium">İstatistikler</th>
-                  <th className="px-6 py-4 font-medium text-right">İşlemler</th>
+                  <th className="px-6 py-4 font-medium">User</th>
+                  <th className="px-6 py-4 font-medium">Role</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Registered At</th>
+                  <th className="px-6 py-4 font-medium">Statistics</th>
+                  <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {filteredUsers.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                      Kullanıcı bulunamadı.
+                      No users found.
                     </td>
                   </tr>
                 )}
@@ -152,7 +152,7 @@ export default function AdminUsersPage() {
                         )}
                         <div>
                           <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
-                          <p className="text-xs text-gray-500">{user.email || "E-posta yok"}</p>
+                          <p className="text-xs text-gray-500">{user.email || "No email"}</p>
                         </div>
                       </div>
                     </td>
@@ -163,19 +163,19 @@ export default function AdminUsersPage() {
                         onChange={(e) => handleUpdateRole(user.id, e.target.value)}
                         className="bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg text-sm px-2 py-1 focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                       >
-                        <option value="student">Öğrenci</option>
-                        <option value="teacher">Öğretmen</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
                         <option value="admin">Admin</option>
                       </select>
                     </td>
                     <td className="px-6 py-4">
                       {user.deletedAt ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                          <Ban className="w-3.5 h-3.5" /> Askıda
+                          <Ban className="w-3.5 h-3.5" /> Suspended
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Aktif
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Active
                         </span>
                       )}
                     </td>
@@ -183,8 +183,8 @@ export default function AdminUsersPage() {
                       {formatDate(user.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
-                      <span className="block text-xs">{user._count.projects} Proje</span>
-                      <span className="block text-xs">{user._count.tasks} Görev</span>
+                      <span className="block text-xs">{user._count.projects} Projects</span>
+                      <span className="block text-xs">{user._count.tasks} Tasks</span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
                       <button
@@ -197,7 +197,7 @@ export default function AdminUsersPage() {
                             : "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
                         )}
                       >
-                        {updating === user.id ? "İşleniyor..." : (user.deletedAt ? "Aktif Et" : "Askıya Al")}
+                        {updating === user.id ? "Processing..." : (user.deletedAt ? "Activate" : "Suspend")}
                       </button>
                     </td>
                   </tr>

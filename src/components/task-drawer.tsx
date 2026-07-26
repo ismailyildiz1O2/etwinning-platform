@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
+import { useI18n } from "./i18n-provider";
 
 interface TaskDrawerProps {
   taskId: string | null;
@@ -84,10 +85,10 @@ interface Suggestion {
 }
 
 const SUGGESTION_TYPE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  tip: { bg: "bg-amber-100/80 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400", label: "İpucu" },
-  resource: { bg: "bg-blue-100/80 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400", label: "Kaynak" },
-  activity: { bg: "bg-green-100/80 dark:bg-green-900/30", text: "text-green-700 dark:text-green-400", label: "Aktivite" },
-  tool: { bg: "bg-purple-100/80 dark:bg-purple-900/30", text: "text-purple-700 dark:text-purple-400", label: "Araç" },
+  tip: { bg: "bg-amber-100/80 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400", label: "Tip" },
+  resource: { bg: "bg-blue-100/80 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400", label: "Resource" },
+  activity: { bg: "bg-green-100/80 dark:bg-green-900/30", text: "text-green-700 dark:text-green-400", label: "Activity" },
+  tool: { bg: "bg-purple-100/80 dark:bg-purple-900/30", text: "text-purple-700 dark:text-purple-400", label: "Tool" },
 };
 
 const FILE_TYPE_ICONS: Record<string, { icon: typeof FileIcon; color: string }> = {
@@ -104,6 +105,7 @@ export function TaskDrawer({
   onClose,
   projectMembers = [],
 }: TaskDrawerProps) {
+  const { locale } = useI18n();
   const [task, setTask] = useState<TaskData | null>(null);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
@@ -154,7 +156,7 @@ export function TaskDrawer({
         })()
       );
     } catch {
-      toast.error("Görev bilgileri yüklenemedi");
+      toast.error("Task details could not be loaded");
     } finally {
       setLoading(false);
     }
@@ -209,7 +211,7 @@ export function TaskDrawer({
 
     for (const file of filesToUpload) {
       if (file.size > maxSize) {
-        toast.error(`"${file.name}" dosyası 10MB'dan büyük`);
+        toast.error(`"${file.name}" is larger than 10MB`);
         continue;
       }
 
@@ -225,14 +227,14 @@ export function TaskDrawer({
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || "Dosya yüklenemedi");
+          throw new Error(data.error || "File could not be uploaded");
         }
 
-        toast.success(`"${file.name}" yüklendi`);
+        toast.success(`"${file.name}" uploaded`);
         fetchFiles();
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Dosya yüklenemedi"
+          error instanceof Error ? error.message : "File could not be uploaded"
         );
       } finally {
         setUploading(false);
@@ -254,10 +256,10 @@ export function TaskDrawer({
         body: JSON.stringify({ fileId }),
       });
       if (!res.ok) throw new Error();
-      toast.success(`"${fileName}" silindi`);
+      toast.success(`"${fileName}" deleted`);
       fetchFiles();
     } catch {
-      toast.error("Dosya silinemedi");
+      toast.error("File could not be deleted");
     }
   };
 
@@ -301,7 +303,7 @@ export function TaskDrawer({
       setSuggestionsLoaded(true);
       setAddedSuggestions(new Set());
     } catch {
-      toast.error("AI önerileri alınamadı");
+      toast.error("AI suggestions could not be fetched");
     } finally {
       setLoadingSuggestions(false);
     }
@@ -309,7 +311,7 @@ export function TaskDrawer({
 
   const handleAddSuggestionAsTask = async (suggestion: Suggestion) => {
     if (!task?.phase?.id) {
-      toast.error("Görevin aşama bilgisi bulunamadı");
+      toast.error("Task phase information not found");
       return;
     }
 
@@ -329,14 +331,14 @@ export function TaskDrawer({
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Görev eklenemedi");
+        throw new Error(data.error || "Task could not be added");
       }
 
       setAddedSuggestions((prev) => new Set(prev).add(suggestion.id));
-      toast.success("Öneri görev olarak eklendi! ✅");
+      toast.success("Suggestion added as task! ✅");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Görev eklenemedi"
+        error instanceof Error ? error.message : "Task could not be added"
       );
     } finally {
       setAddingSuggestionId(null);
@@ -367,10 +369,10 @@ export function TaskDrawer({
         }),
       });
       if (!res.ok) throw new Error();
-      toast.success("Görev güncellendi");
+      toast.success("Task updated");
       fetchTask();
     } catch {
-      toast.error("Görev güncellenemedi");
+      toast.error("Task could not be updated");
     } finally {
       setSaving(false);
     }
@@ -386,10 +388,10 @@ export function TaskDrawer({
       });
       if (!res.ok) throw new Error();
       setNewNote("");
-      toast.success("Not eklendi");
+      toast.success("Note added");
       fetchTask();
     } catch {
-      toast.error("Not eklenemedi");
+      toast.error("Note could not be added");
     }
   };
 
@@ -399,10 +401,10 @@ export function TaskDrawer({
         method: "DELETE",
       });
       if (!res.ok) throw new Error();
-      toast.success("Not silindi");
+      toast.success("Note deleted");
       fetchTask();
     } catch {
-      toast.error("Not silinemedi");
+      toast.error("Note could not be deleted");
     }
   };
 
@@ -527,7 +529,7 @@ export function TaskDrawer({
                 onChange={(e) => setAssigneeId(e.target.value)}
                 className="mt-1 w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               >
-                <option value="">Atanmadı</option>
+                <option value="">Unassigned</option>
                 {projectMembers.map((m) => (
                   <option key={m.id} value={m.id}>
                     {m.name}
@@ -612,7 +614,7 @@ export function TaskDrawer({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-400 hover:text-blue-500 transition-colors"
-                              title="Görüntüle"
+                              title="View"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                             </a>
@@ -621,14 +623,14 @@ export function TaskDrawer({
                             href={file.url}
                             download={file.name}
                             className="p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 text-gray-400 hover:text-green-500 transition-colors"
-                            title="İndir"
+                            title="Download"
                           >
                             <Download className="w-3.5 h-3.5" />
                           </a>
                           <button
                             onClick={() => handleDeleteFile(file.id, file.name)}
                             className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors"
-                            title="Sil"
+                            title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -686,7 +688,7 @@ export function TaskDrawer({
                 {uploading ? (
                   <div className="flex flex-col items-center gap-2 py-1">
                     <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-                    <p className="text-xs text-blue-500 font-medium">Yükleniyor...</p>
+                    <p className="text-xs text-blue-500 font-medium">Loading...</p>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-1.5 py-1">
@@ -694,11 +696,11 @@ export function TaskDrawer({
                       <Upload className="w-5 h-5 text-blue-500" />
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      <span className="font-medium text-blue-500">Dosya seçin</span>{" "}
-                      veya sürükleyip bırakın
+                      <span className="font-medium text-blue-500">Choose file</span>{" "}
+                      or drag and drop
                     </p>
                     <p className="text-[10px] text-gray-400 dark:text-gray-500">
-                      Fotoğraf, video, PDF, belge (max 10MB)
+                      Photo, video, PDF, document (max 10MB)
                     </p>
                   </div>
                 )}
@@ -797,7 +799,7 @@ export function TaskDrawer({
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                        {loadingSuggestions ? "Öneriler oluşturuluyor..." : "AI ile Öneriler Al"}
+                        {loadingSuggestions ? "Generating suggestions..." : "Get AI Suggestions"}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         Bu görev için yapılabilecekleri, araçları ve aktiviteleri öner
