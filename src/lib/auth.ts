@@ -1,16 +1,21 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 
 /**
  * NextAuth.js configuration.
  *
- * Uses JWT strategy (no DB sessions) for simplicity.
- * The Credentials provider authenticates users via email + password.
+ * Uses JWT strategy for simplicity.
+ * Includes Google OAuth and Credentials providers.
  */
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
     CredentialsProvider({
       name: "Sign in with Email or Username",
       credentials: {
@@ -46,7 +51,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!user.password) {
           throw new Error(
-            "This account was created with a different method. Please use that method to sign in."
+            "This account was created with Google or another provider. Please sign in with Google."
           );
         }
 
@@ -87,7 +92,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       // On initial sign-in, persist user data into the JWT
       if (user) {
         token.id = user.id;
@@ -107,10 +112,40 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async signIn({ user }) {
-      // Block deleted users from signing in
-      if (!user?.id) return false;
+    async signIn({ user, account }) {
+      if (!user) return false;
 
+      // Handle OAuth (Google) user provisioning
+      if (account?.provider === "google") {
+        if (!user.email) return false;
+
+        let dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!dbUser) {
+          // Create new teacher user for Google Sign-In
+          dbUser = await prisma.user.create({
+            data: {
+              name: user.name || "Google User",
+              email: user.email,
+              image: user.image,
+              role: "teacher",
+              language: "en",
+            },
+          });
+        }
+
+        if (dbUser.deletedAt) return false;
+
+        user.id = dbUser.id;
+        (user as any).role = dbUser.role;
+        (user as any).language = dbUser.language;
+        return true;
+      }
+
+      // Check soft-delete for Credentials provider
+      if (!user.id) return false;
       const dbUser = await prisma.user.findUnique({
         where: { id: user.id },
         select: { deletedAt: true },
