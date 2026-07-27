@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { ProjectCard } from "@/components/project-card";
 import { TodayTasks } from "@/components/today-tasks";
 import { StatsCards } from "@/components/stats-cards";
+import { EmptyState } from "@/components/empty-state";
 import { useI18n } from "@/components/i18n-provider";
 import { Plus, FolderOpen } from "lucide-react";
 
