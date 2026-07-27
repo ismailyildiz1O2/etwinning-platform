@@ -81,7 +81,7 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { data: session } = useSession();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const projectId = params.id as string;
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
