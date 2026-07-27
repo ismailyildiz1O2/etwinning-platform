@@ -19,16 +19,20 @@ export function formatDate(
   locale: string = "en"
 ): string {
   if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  if (isNaN(d.getTime())) return "";
-  const defaultOptions: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
-  };
-  const loc = locale === "tr" ? "tr-TR" : "en-US";
-  return d.toLocaleDateString(loc, options ?? defaultOptions);
+  try {
+    const d = typeof date === "string" ? new Date(date) : date;
+    if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+    const defaultOptions: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
+    };
+    const loc = locale === "tr" ? "tr-TR" : "en-US";
+    return d.toLocaleDateString(loc, options ?? defaultOptions);
+  } catch {
+    return "";
+  }
 }
 
 /**
@@ -37,14 +41,18 @@ export function formatDate(
  */
 export function formatShortDate(date: string | Date | null | undefined, locale: string = "en"): string {
   if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  if (isNaN(d.getTime())) return "";
-  const loc = locale === "tr" ? "tr-TR" : "en-US";
-  return d.toLocaleDateString(loc, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  try {
+    const d = typeof date === "string" ? new Date(date) : date;
+    if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+    const loc = locale === "tr" ? "tr-TR" : "en-US";
+    return d.toLocaleDateString(loc, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  } catch {
+    return "";
+  }
 }
 
 /**
@@ -52,50 +60,54 @@ export function formatShortDate(date: string | Date | null | undefined, locale: 
  */
 export function getRelativeDate(date: string | Date | null | undefined, locale: string = "en"): string {
   if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  if (isNaN(d.getTime())) return "";
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const isFuture = diffMs < 0;
-  const absDiffMs = Math.abs(diffMs);
-  const diffSec = Math.floor(absDiffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHour / 24);
+  try {
+    const d = typeof date === "string" ? new Date(date) : date;
+    if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const isFuture = diffMs < 0;
+    const absDiffMs = Math.abs(diffMs);
+    const diffSec = Math.floor(absDiffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
 
-  if (locale === "tr") {
-    if (isFuture) {
-      if (diffSec < 60) return "birazdan";
-      if (diffMin < 60) return `${diffMin} dakika sonra`;
-      if (diffHour < 24) return `${diffHour} saat sonra`;
-      if (diffDay === 1) return "yarın";
-      if (diffDay < 7) return `${diffDay} gün sonra`;
+    if (locale === "tr") {
+      if (isFuture) {
+        if (diffSec < 60) return "birazdan";
+        if (diffMin < 60) return `${diffMin} dakika sonra`;
+        if (diffHour < 24) return `${diffHour} saat sonra`;
+        if (diffDay === 1) return "yarın";
+        if (diffDay < 7) return `${diffDay} gün sonra`;
+        return formatDate(d, { year: "numeric", month: "long", day: "numeric" }, "tr");
+      }
+      if (diffSec < 60) return "az önce";
+      if (diffMin < 60) return `${diffMin} dakika önce`;
+      if (diffHour < 24) return `${diffHour} saat önce`;
+      if (diffDay === 1) return "dün";
+      if (diffDay < 7) return `${diffDay} gün önce`;
       return formatDate(d, { year: "numeric", month: "long", day: "numeric" }, "tr");
     }
-    if (diffSec < 60) return "az önce";
-    if (diffMin < 60) return `${diffMin} dakika önce`;
-    if (diffHour < 24) return `${diffHour} saat önce`;
-    if (diffDay === 1) return "dün";
-    if (diffDay < 7) return `${diffDay} gün önce`;
-    return formatDate(d, { year: "numeric", month: "long", day: "numeric" }, "tr");
-  }
 
-  // English fallback
-  if (isFuture) {
-    if (diffSec < 60) return "in a moment";
-    if (diffMin < 60) return `in ${diffMin}m`;
-    if (diffHour < 24) return `in ${diffHour}h`;
-    if (diffDay === 1) return "tomorrow";
-    if (diffDay < 7) return `in ${diffDay}d`;
+    // English fallback
+    if (isFuture) {
+      if (diffSec < 60) return "in a moment";
+      if (diffMin < 60) return `in ${diffMin}m`;
+      if (diffHour < 24) return `in ${diffHour}h`;
+      if (diffDay === 1) return "tomorrow";
+      if (diffDay < 7) return `in ${diffDay}d`;
+      return formatDate(d, { year: "numeric", month: "short", day: "numeric" }, "en");
+    }
+    if (diffSec < 60) return "just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHour < 24) return `${diffHour}h ago`;
+    if (diffDay === 1) return "yesterday";
+    if (diffDay < 7) return `${diffDay}d ago`;
+
     return formatDate(d, { year: "numeric", month: "short", day: "numeric" }, "en");
+  } catch {
+    return "";
   }
-  if (diffSec < 60) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHour < 24) return `${diffHour}h ago`;
-  if (diffDay === 1) return "yesterday";
-  if (diffDay < 7) return `${diffDay}d ago`;
-
-  return formatDate(d, { year: "numeric", month: "short", day: "numeric" }, "en");
 }
 
 /**
@@ -113,7 +125,8 @@ export function generateToken(length: number = 32): string {
 /**
  * Truncate a string to a maximum length, adding ellipsis if needed.
  */
-export function truncate(str: string, maxLength: number = 100): string {
+export function truncate(str?: string | null, maxLength: number = 100): string {
+  if (!str || typeof str !== "string") return "";
   if (str.length <= maxLength) return str;
   return str.slice(0, maxLength - 1) + "…";
 }
@@ -121,7 +134,8 @@ export function truncate(str: string, maxLength: number = 100): string {
 /**
  * Slugify a string for URL-safe usage.
  */
-export function slugify(text: string): string {
+export function slugify(text?: string | null): string {
+  if (!text || typeof text !== "string") return "";
   return text
     .toLowerCase()
     .replace(/ğ/g, "g")
@@ -139,26 +153,26 @@ export function slugify(text: string): string {
  * Calculate completion percentage from completed/total counts.
  */
 export function calculateProgress(completed: number, total: number): number {
-  if (total === 0) return 0;
+  if (!total || total === 0) return 0;
   return Math.round((completed / total) * 100);
 }
 
 /**
- * Get initials from a full name (max 2 characters).
+ * Get initials from a full name (max 2 characters). Safely handles null/undefined/empty inputs.
  */
-export function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+export function getInitials(name?: string | null): string {
+  if (!name || typeof name !== "string") return "?";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + (parts[parts.length - 1][0] || "")).toUpperCase();
 }
 
 /**
  * Get Tailwind color classes for a priority level.
  */
-export function getPriorityColor(priority: string): string {
+export function getPriorityColor(priority?: string | null): string {
+  if (!priority) return "text-gray-500 bg-gray-50 dark:bg-gray-950";
   switch (priority) {
     case "high":
       return "text-red-500 bg-red-50 dark:bg-red-950";
@@ -174,7 +188,8 @@ export function getPriorityColor(priority: string): string {
 /**
  * Get label for a priority level according to locale.
  */
-export function getPriorityLabel(priority: string, locale: string = "en"): string {
+export function getPriorityLabel(priority?: string | null, locale: string = "en"): string {
+  if (!priority) return "";
   if (locale === "tr") {
     switch (priority) {
       case "high": return "Yüksek";
@@ -194,7 +209,8 @@ export function getPriorityLabel(priority: string, locale: string = "en"): strin
 /**
  * Get Tailwind color classes for a project status.
  */
-export function getStatusColor(status: string): string {
+export function getStatusColor(status?: string | null): string {
+  if (!status) return "text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800";
   switch (status) {
     case "active":
       return "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950";
@@ -212,7 +228,8 @@ export function getStatusColor(status: string): string {
 /**
  * Get label for a project status according to locale.
  */
-export function getStatusLabel(status: string, locale: string = "en"): string {
+export function getStatusLabel(status?: string | null, locale: string = "en"): string {
+  if (!status) return "";
   if (locale === "tr") {
     switch (status) {
       case "active": return "Aktif";
@@ -238,16 +255,20 @@ export function getDueDateColor(
   dueDate: string | Date | null | undefined
 ): string {
   if (!dueDate) return "text-gray-400";
-  const d = typeof dueDate === "string" ? new Date(dueDate) : dueDate;
-  if (isNaN(d.getTime())) return "text-gray-400";
-  const now = new Date();
-  const diffDays = Math.ceil(
-    (d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  try {
+    const d = typeof dueDate === "string" ? new Date(dueDate) : dueDate;
+    if (!(d instanceof Date) || isNaN(d.getTime())) return "text-gray-400";
+    const now = new Date();
+    const diffDays = Math.ceil(
+      (d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
-  if (diffDays < 0) return "text-red-500 font-semibold";
-  if (diffDays <= 2) return "text-amber-500 font-semibold";
-  return "text-gray-500";
+    if (diffDays < 0) return "text-red-500 font-semibold";
+    if (diffDays <= 2) return "text-amber-500 font-semibold";
+    return "text-gray-500";
+  } catch {
+    return "text-gray-400";
+  }
 }
 
 /**
