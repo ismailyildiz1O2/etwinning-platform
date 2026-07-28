@@ -132,17 +132,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Safe date parsing
+    const parsedStart = new Date(startDate);
+    const parsedEnd = new Date(endDate);
+    const validStart = isNaN(parsedStart.getTime()) ? new Date() : parsedStart;
+    const validEnd = isNaN(parsedEnd.getTime())
+      ? new Date(validStart.getTime() + 90 * 24 * 60 * 60 * 1000)
+      : parsedEnd;
+
+    // Safe partner schools JSON formatting
+    let partnerSchoolsJson = "[]";
+    if (Array.isArray(partnerSchools)) {
+      partnerSchoolsJson = JSON.stringify(partnerSchools);
+    } else if (typeof partnerSchools === "string" && partnerSchools.trim()) {
+      partnerSchoolsJson = JSON.stringify(
+        partnerSchools.split(",").map((s) => s.trim()).filter(Boolean)
+      );
+    }
+
     const project = await prisma.project.create({
       data: {
-        name,
-        description: description || null,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        country: country || null,
-        partnerSchools: partnerSchools
-          ? JSON.stringify(partnerSchools)
-          : "[]",
-        twinspaceUrl: twinspaceUrl || null,
+        name: name.trim(),
+        description: description?.trim() || null,
+        startDate: validStart,
+        endDate: validEnd,
+        country: country?.trim() || null,
+        partnerSchools: partnerSchoolsJson,
+        twinspaceUrl: twinspaceUrl?.trim() || null,
         members: {
           create: {
             userId,
@@ -165,44 +181,48 @@ export async function POST(request: NextRequest) {
         { ...PHASE_4_FIXED },
       ];
 
-      const startDateMs = new Date(startDate).getTime();
-      const endDateMs = new Date(endDate).getTime();
-      const totalDurationMs = Math.max(0, endDateMs - startDateMs);
+      const startDateMs = validStart.getTime();
+      const endDateMs = validEnd.getTime();
+      const totalDurationMs = Math.max(86400000, endDateMs - startDateMs);
       const phaseDurationMs = totalDurationMs / 4;
 
-      await Promise.all(
-        allPhases.map(async (phaseTemplate) => {
-          const phase = await prisma.phase.create({
-            data: {
-              projectId: project.id,
-              title: phaseTemplate.title,
-              description: phaseTemplate.description,
-              order: phaseTemplate.order,
-              color: phaseTemplate.color,
-            },
+      for (const phaseTemplate of allPhases) {
+        const phase = await prisma.phase.create({
+          data: {
+            projectId: project.id,
+            title: phaseTemplate.title,
+            description: phaseTemplate.description,
+            order: phaseTemplate.order,
+            color: phaseTemplate.color,
+          },
+        });
+
+        const tasks = phaseTemplate.tasks || [];
+        if (tasks.length > 0) {
+          const isAiPhase = phaseTemplate.order === 2 || phaseTemplate.order === 3;
+          const phaseStartMs = startDateMs + (phaseTemplate.order - 1) * phaseDurationMs;
+          const taskDurationMs = phaseDurationMs / tasks.length;
+
+          const taskData = tasks.map((taskTemplate, index) => {
+            const taskDueMs = phaseStartMs + (index + 1) * taskDurationMs;
+            const dueDateObj = isNaN(taskDueMs) ? new Date(startDateMs) : new Date(taskDueMs);
+            const taskTitle = typeof taskTemplate === "string" ? taskTemplate : taskTemplate.title;
+            const taskPriority = typeof taskTemplate === "string" ? "medium" : (taskTemplate.priority || "medium");
+
+            return {
+              phaseId: phase.id,
+              title: taskTitle || "Untitled Task",
+              priority: taskPriority,
+              aiGenerated: isAiPhase,
+              dueDate: isNaN(dueDateObj.getTime()) ? null : dueDateObj,
+            };
           });
 
-          const tasks = phaseTemplate.tasks || [];
-          if (tasks.length > 0) {
-            const isAiPhase = phaseTemplate.order === 2 || phaseTemplate.order === 3;
-            const phaseStartMs = startDateMs + (phaseTemplate.order - 1) * phaseDurationMs;
-            const taskDurationMs = phaseDurationMs / tasks.length;
-
-            await prisma.task.createMany({
-              data: tasks.map((taskTemplate, index) => {
-                const taskDueMs = phaseStartMs + (index + 1) * taskDurationMs;
-                return {
-                  phaseId: phase.id,
-                  title: taskTemplate.title,
-                  priority: taskTemplate.priority,
-                  aiGenerated: isAiPhase,
-                  dueDate: new Date(taskDueMs),
-                };
-              }),
-            });
-          }
-        })
-      );
+          await prisma.task.createMany({
+            data: taskData,
+          });
+        }
+      }
     }
 
     // Fetch the complete project with all relations

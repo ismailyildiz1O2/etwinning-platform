@@ -483,6 +483,9 @@ export default function NewProjectPage() {
       const project = await res.json();
       toast.success("Project created successfully! 🎉");
       router.push(`/projects/${project.id}`);
+      setTimeout(() => {
+        window.location.href = `/projects/${project.id}`;
+      }, 300);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to create project"
