@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { autoPruneDeletedItems } from "@/lib/auto-prune";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,6 +10,9 @@ export async function GET(request: NextRequest) {
     if (!session?.user?.id || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Auto permanent delete items soft-deleted more than 30 days ago
+    await autoPruneDeletedItems();
 
     const projects = await prisma.project.findMany({
       select: {
