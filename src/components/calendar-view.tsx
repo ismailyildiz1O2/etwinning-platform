@@ -18,7 +18,8 @@ import {
   isSameDay,
   isToday,
 } from "date-fns";
-import { tr } from "date-fns/locale";
+import { tr, enUS } from "date-fns/locale";
+import { useI18n } from "./i18n-provider";
 import { ChevronLeft, ChevronRight, Check, Calendar as CalendarIcon, CalendarDays, CalendarRange, LayoutList } from "lucide-react";
 import { cn, getPriorityColor } from "@/lib/utils";
 
@@ -39,6 +40,9 @@ interface CalendarViewProps {
 type ViewMode = "month" | "2months" | "week" | "day";
 
 export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
+  const { locale } = useI18n();
+  const isTr = locale === "tr";
+  const dateLocale = isTr ? tr : enUS;
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<ViewMode>("month");
 
@@ -54,7 +58,9 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
     else if (view === "day") setCurrentDate(subDays(currentDate, 1));
   };
 
-  const weekDays = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+  const weekDays = isTr
+    ? ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]
+    : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const renderTask = (task: Task) => (
     <button
@@ -109,7 +115,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
             </span>
             {dayTasks.length > 0 && (
               <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
-                {dayTasks.length} görev
+                {dayTasks.length} {isTr ? "görev" : (dayTasks.length === 1 ? "task" : "tasks")}
               </span>
             )}
           </div>
@@ -133,7 +139,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
       <div className="flex-1 flex flex-col">
         {view === "2months" && (
           <div className="px-4 py-2 font-semibold text-gray-700 dark:text-gray-300 capitalize text-center">
-            {format(date, "MMMM yyyy", { locale: tr })}
+            {format(date, "MMMM yyyy", { locale: dateLocale })}
           </div>
         )}
         <div className="grid grid-cols-7 border-b border-gray-200/80 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30">
@@ -176,7 +182,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
       <div className="flex-1 flex flex-col">
         <div className="border-b border-gray-200/80 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30">
           <div className="px-2 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            {format(currentDate, "EEEE", { locale: tr })}
+            {format(currentDate, "EEEE", { locale: dateLocale })}
           </div>
         </div>
         <div className="bg-gray-200/50 dark:bg-gray-800/50 gap-[1px] flex-1 min-h-[600px] flex">
@@ -189,14 +195,14 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
   };
 
   const getHeaderTitle = () => {
-    if (view === "month" || view === "2months") return format(currentDate, "MMMM yyyy", { locale: tr });
+    if (view === "month" || view === "2months") return format(currentDate, "MMMM yyyy", { locale: dateLocale });
     if (view === "week") {
       const start = startOfWeek(currentDate, { weekStartsOn: 1 });
       const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-      if (isSameMonth(start, end)) return `${format(start, "d")} - ${format(end, "d MMMM yyyy", { locale: tr })}`;
-      return `${format(start, "d MMMM", { locale: tr })} - ${format(end, "d MMMM yyyy", { locale: tr })}`;
+      if (isSameMonth(start, end)) return `${format(start, "d")} - ${format(end, "d MMMM yyyy", { locale: dateLocale })}`;
+      return `${format(start, "d MMMM", { locale: dateLocale })} - ${format(end, "d MMMM yyyy", { locale: dateLocale })}`;
     }
-    if (view === "day") return format(currentDate, "d MMMM yyyy, EEEE", { locale: tr });
+    if (view === "day") return format(currentDate, "d MMMM yyyy, EEEE", { locale: dateLocale });
     return "";
   };
 
@@ -219,7 +225,7 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
               onClick={() => setCurrentDate(new Date())}
               className="px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm transition-all text-gray-600 dark:text-gray-400"
             >
-              Bugün
+              {isTr ? "Bugün" : "Today"}
             </button>
             <button
               onClick={handleNext}
@@ -233,10 +239,10 @@ export function CalendarView({ tasks, onTaskClick }: CalendarViewProps) {
         {/* View Toggle */}
         <div className="flex items-center bg-gray-100/50 dark:bg-gray-800/50 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
           {[
-            { id: "day", label: "Gün", icon: LayoutList },
-            { id: "week", label: "Hafta", icon: CalendarDays },
-            { id: "month", label: "Ay", icon: CalendarIcon },
-            { id: "2months", label: "2 Ay", icon: CalendarRange },
+            { id: "day", label: isTr ? "Gün" : "Day", icon: LayoutList },
+            { id: "week", label: isTr ? "Hafta" : "Week", icon: CalendarDays },
+            { id: "month", label: isTr ? "Ay" : "Month", icon: CalendarIcon },
+            { id: "2months", label: isTr ? "2 Ay" : "2 Months", icon: CalendarRange },
           ].map((v) => {
             const Icon = v.icon;
             return (

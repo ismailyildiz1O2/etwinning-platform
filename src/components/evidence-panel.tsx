@@ -337,7 +337,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
               onClick={() => setIsAddingLink(false)}
               className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             >
-              İptal
+              {locale === "tr" ? "İptal" : "Cancel"}
             </button>
             <button
               onClick={handleAddLink}
@@ -523,7 +523,7 @@ export function EvidencePanel({ projectId, project, onUpdate }: EvidencePanelPro
                 onClick={() => setEditingFile(null)}
                 className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
-                İptal
+                {locale === "tr" ? "İptal" : "Cancel"}
               </button>
               <button
                 onClick={handleEditFile}

@@ -173,7 +173,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
         {/* Members Sidebar Section */}
         <div className="p-4 border-b border-t border-gray-200 dark:border-gray-800 mt-auto flex-1 overflow-y-auto">
           <h2 className="font-semibold flex items-center gap-2 mb-2 text-sm text-gray-500">
-            <Users className="w-4 h-4" /> Kişiler
+            <Users className="w-4 h-4" /> {locale === "tr" ? "Kişiler" : "People"}
           </h2>
           <div className="space-y-4">
             <div>
@@ -346,7 +346,7 @@ export function ChatPanel({ projectId, projectMembers = [] }: { projectId: strin
                     onClick={() => setAssignPopoverUser(null)}
                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                   >
-                    İptal
+                    {locale === "tr" ? "İptal" : "Cancel"}
                   </button>
                   <button
                     type="submit"

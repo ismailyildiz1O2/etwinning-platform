@@ -33,7 +33,7 @@ interface ProjectSettings {
 }
 
 export default function ProjectSettingsPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
@@ -76,7 +76,7 @@ export default function ProjectSettingsPage() {
       }
       setTwinspaceUrl(data.twinspaceUrl || "");
     } catch {
-      toast.error("Proje yüklenemedi");
+      toast.error(locale === "tr" ? "Proje yüklenemedi" : "Project could not be loaded");
     } finally {
       setLoading(false);
     }

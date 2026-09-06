@@ -13,7 +13,7 @@ interface QualityLabelPanelProps {
 }
 
 export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [draft, setDraft] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -85,9 +85,9 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
       if (!res.ok) throw new Error();
       const data = await res.json();
       setDraft(data.draft);
-      toast.success("Başvuru taslağı oluşturuldu!");
+      toast.success(locale === "tr" ? "Başvuru taslağı oluşturuldu!" : "Application draft generated!");
     } catch {
-      toast.error("Taslak oluşturulamadı.");
+      toast.error(locale === "tr" ? "Taslak oluşturulamadı." : "Draft could not be generated.");
     } finally {
       setIsGenerating(false);
     }
@@ -96,7 +96,7 @@ export function QualityLabelPanel({ projectId, project }: QualityLabelPanelProps
   const handleCopy = () => {
     navigator.clipboard.writeText(draft);
     setCopied(true);
-    toast.success("Panoya kopyalandı");
+    toast.success(locale === "tr" ? "Panoya kopyalandı" : "Copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
 

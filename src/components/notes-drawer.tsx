@@ -164,7 +164,7 @@ export function NotesDrawer({ projectId, isOpen, onClose }: NotesDrawerProps) {
             >
               <div className="flex items-center gap-2">
                 <NotebookText className="w-4 h-4" />
-                Notlarım {notes.length > 0 && <span className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-full">{notes.length}</span>}
+                {locale === "tr" ? "Notlarım" : "My Notes"} {notes.length > 0 && <span className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-full">{notes.length}</span>}
               </div>
               {activeTab === "list" && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full" />

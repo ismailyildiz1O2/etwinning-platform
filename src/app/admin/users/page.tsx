@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Rol güncellenemedi");
+        throw new Error(data.error || "Role could not be updated");
       }
       toast.success("User role updated");
       fetchUsers();

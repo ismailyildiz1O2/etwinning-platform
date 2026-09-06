@@ -296,7 +296,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 >
                   <Pencil className="w-3.5 h-3.5" />
-                  Düzenle
+                  {locale === "tr" ? "Düzenle" : "Edit"}
                 </button>
                 <button
                   onClick={async (e) => {
@@ -320,7 +320,7 @@ export function TaskItem({ task, onToggle, onClick, onDelete, onEdit, isSubTask 
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 >
                   <ArrowUpDown className="w-3.5 h-3.5" />
-                  Öncelik Değiştir
+                  {locale === "tr" ? "Öncelik Değiştir" : "Change Priority"}
                 </button>
                 <hr className="my-1 border-gray-200 dark:border-gray-700" />
                 <button
