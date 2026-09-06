@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract relevant data for the prompt
-    let projectContext = `Proje Adı: ${project.name}\nProje Açıklaması: ${project.description || "Belirtilmemiş"}\n\n`;
-    projectContext += "Aşamalar ve Görevler:\n";
+    let projectContext = `Project name: ${project.name}\nProject description: ${project.description || "Not provided"}\n\n`;
+    projectContext += "Phases and tasks:\n";
 
     const criteriaTags: Record<string, any[]> = {};
     QUALITY_LABEL_CRITERIA.forEach(c => criteriaTags[c.id] = []);
@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     project.phases.forEach((phase: any) => {
       projectContext += `- ${phase.title}\n`;
       phase.tasks.forEach((task: any) => {
-        projectContext += `  * Görev: ${task.title} (Durum: ${task.isCompleted ? 'Tamamlandı' : 'Devam Ediyor'})\n`;
+        projectContext += `  * Task: ${task.title} (Status: ${task.isCompleted ? 'Completed' : 'In progress'})\n`;
         if (task.description) {
-          projectContext += `    Açıklama: ${task.description}\n`;
+          projectContext += `    Description: ${task.description}\n`;
         }
         
         let tags: string[] = [];
@@ -81,11 +81,11 @@ export async function POST(request: NextRequest) {
       });
     });
 
-    projectContext += "\nKalite Etiketi Kriterlerine Göre Analiz:\n";
+    projectContext += "\nAnalysis by Quality Label criteria:\n";
     QUALITY_LABEL_CRITERIA.forEach(c => {
-      projectContext += `${c.label}: ${criteriaTags[c.id].length} görev bu kriterle etiketlenmiş.\n`;
+      projectContext += `${c.label}: ${criteriaTags[c.id].length} task(s) tagged with this criterion.\n`;
       criteriaTags[c.id].forEach(item => {
-        projectContext += `  - Görev: ${item.taskTitle} (${item.filesCount} kanıt dosyası, ${item.notesCount} not)\n`;
+        projectContext += `  - Task: ${item.taskTitle} (${item.filesCount} evidence files, ${item.notesCount} notes)\n`;
       });
     });
 
@@ -93,49 +93,50 @@ export async function POST(request: NextRequest) {
     const { generateContentWithGemini } = await import("@/lib/ai");
     
     const prompt = `
-Aşağıda bir eTwinning projesinin detayları, aşamaları, görevleri ve eTwinning Kalite Etiketi kriterlerine göre sınıflandırılmış kanıt bilgileri yer almaktadır.
+Below are the details of an eTwinning project: its phases, tasks and the evidence classified according to the eTwinning Quality Label criteria.
 
 ${projectContext}
 
-Bu bilgileri kullanarak resmi bir eTwinning Kalite Etiketi başvuru metni taslağı oluştur.
-Metin profesyonel, net ve ikna edici olmalı.
-Aşağıdaki ana başlıkları içermelidir:
-1. Projenin Kısa Özeti
-2. İşbirliği ve Ortak Okullar Arası İletişim
-3. Pedagojik Yenilikçilik ve Yaratıcılık
-4. Müfredatla Entegrasyon
-5. Teknoloji Kullanımı (Web 2.0 vb.)
-6. Sonuçlar, Etki ve Değerlendirme
+Using this information, write a draft of an official eTwinning Quality Label application text.
+The text must be professional, clear and convincing, and it MUST be written in English.
+It must contain the following main sections:
+1. Short Summary of the Project
+2. Collaboration and Communication Between Partner Schools
+3. Pedagogical Innovation and Creativity
+4. Curriculum Integration
+5. Use of Technology (Web 2.0 tools etc.)
+6. Results, Impact and Evaluation
 
-Her başlık altında, projede gerçekleştirilen somut etkinlikleri (görevleri) örnek olarak göster.
-Sadece taslağı ver, ekstra markdown (\`\`\` vb.) veya açıklama kullanma, dümdüz metin olsun.
+Under each section, refer to the concrete activities (tasks) carried out in the project as examples.
+Return only the draft as plain text: no markdown (\`\`\` etc.), no extra explanations.
 `;
 
     let draft = await generateContentWithGemini(prompt);
 
     if (!draft) {
-      // Fallback: Generate a structured template from project context
-      draft = `KALİTE ETİKETİ BAŞVURU TASLAĞI (Otomatik Şablon)
+      // Fallback: generate a structured template from project context
+      const count = (id: string) => criteriaTags[id]?.length || 0;
+      draft = `QUALITY LABEL APPLICATION DRAFT (Automatic Template)
 
-1. Projenin Kısa Özeti
-${project.name} projesi başarıyla yürütülmüştür. ${project.description || "Proje hedeflerine ulaşılmıştır."}
+1. Short Summary of the Project
+The project "${project.name}" has been carried out successfully. ${project.description || "The project objectives have been achieved."}
 
-2. İşbirliği ve Ortak Okullar Arası İletişim
-Projemiz boyunca okullar arası yoğun işbirliği yapılmıştır. ${criteriaTags['collaboration']?.length || 0} adet işbirlikçi görev tamamlanmıştır.
+2. Collaboration and Communication Between Partner Schools
+Partner schools collaborated intensively throughout the project. ${count("isbirligi")} collaborative task(s) were completed.
 
-3. Pedagojik Yenilikçilik ve Yaratıcılık
-Projede yenilikçi öğretim yöntemleri kullanılmıştır. ${criteriaTags['innovation']?.length || 0} adet görev pedagojik yenilikçilik içermektedir.
+3. Pedagogical Innovation and Creativity
+Innovative teaching methods were used in the project. ${count("yenilikcilik")} task(s) involved pedagogical innovation.
 
-4. Müfredatla Entegrasyon
-Proje etkinlikleri okul müfredatıyla başarılı bir şekilde entegre edilmiştir. ${criteriaTags['curriculum']?.length || 0} adet görev doğrudan müfredatla ilişkilendirilmiştir.
+4. Curriculum Integration
+Project activities were successfully integrated into the school curriculum. ${count("mufredat")} task(s) were directly linked to the curriculum.
 
-5. Teknoloji Kullanımı (Web 2.0 vb.)
-Öğrencilerimiz çeşitli Web 2.0 araçlarını güvenli ve etkili bir şekilde kullanmıştır. ${criteriaTags['technology']?.length || 0} adet teknoloji odaklı görev tamamlanmıştır.
+5. Use of Technology (Web 2.0 tools etc.)
+Our students used a variety of Web 2.0 tools safely and effectively. ${count("teknoloji")} technology-focused task(s) were completed.
 
-6. Sonuçlar, Etki ve Değerlendirme
-Projemiz öğrenci ve öğretmenler üzerinde kalıcı bir olumlu etki bırakmıştır. ${criteriaTags['results']?.length || 0} adet sonuç odaklı etkinlik yapılmıştır.
+6. Results, Impact and Evaluation
+The project had a lasting positive impact on students and teachers. ${count("sonuc")} result-oriented activity(ies) were carried out.
 
-Lütfen bu taslağı kendi proje detaylarınız ve kanıt linkleriniz ile genişletiniz.`;
+Please expand this draft with your own project details and evidence links.`;
     }
 
     return NextResponse.json({ draft });

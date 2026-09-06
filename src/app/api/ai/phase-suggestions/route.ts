@@ -12,45 +12,11 @@ export interface PhaseTaskSuggestion {
 
 interface PhaseSuggestionsRequest {
   phaseId: string;
-  locale?: "en" | "tr";
 }
 
-// Template fallback used when Gemini is not configured or fails
-function generateFallbackSuggestions(
-  phaseTitle: string,
-  projectName: string,
-  locale: "en" | "tr"
-): PhaseTaskSuggestion[] {
-  if (locale === "tr") {
-    return [
-      {
-        title: `${phaseTitle} için ortak okullarla çevrim içi tanışma toplantısı düzenle`,
-        description: `${projectName} projesinin bu aşamasında ortak okullarla bir video görüşme planlayın ve beklentileri netleştirin.`,
-        priority: "high",
-      },
-      {
-        title: "Öğrencilerle karma ülke takımları oluştur",
-        description: "Her takımda farklı ülkelerden öğrenciler olacak şekilde gruplar kurun ve görev paylaşımı yapın.",
-        priority: "high",
-      },
-      {
-        title: "Ortak bir dijital pano (Padlet) aç ve öğrenci çalışmalarını topla",
-        description: "Bu aşamadaki tüm ürünlerin tek bir yerde toplanması için ortak bir pano oluşturun.",
-        priority: "medium",
-      },
-      {
-        title: "Aşama sonunda öğrencilerle kısa bir değerlendirme anketi yap",
-        description: "Mentimeter veya Google Forms ile öğrencilerin geri bildirimlerini alın ve sonuçları TwinSpace'e ekleyin.",
-        priority: "medium",
-      },
-      {
-        title: "Aşama kanıtlarını (fotoğraf, video, ürün) TwinSpace'e yükle",
-        description: "Kalite Etiketi başvurusu için bu aşamada üretilen tüm kanıtları belgeleyin.",
-        priority: "low",
-      },
-    ];
-  }
-
+// Template fallback used when Gemini is not configured or fails.
+// All generated content is in English because eTwinning tasks are shared with international partners.
+function generateFallbackSuggestions(phaseTitle: string, projectName: string): PhaseTaskSuggestion[] {
   return [
     {
       title: `Hold an online kick-off meeting with partner schools for ${phaseTitle}`,
@@ -92,7 +58,6 @@ export async function POST(request: NextRequest) {
     if (!body.phaseId) {
       return NextResponse.json({ error: "phaseId is required" }, { status: 400 });
     }
-    const locale: "en" | "tr" = body.locale === "tr" ? "tr" : "en";
 
     const phase = await prisma.phase.findUnique({
       where: { id: body.phaseId },
@@ -125,7 +90,7 @@ export async function POST(request: NextRequest) {
 
     const fallback = () =>
       NextResponse.json({
-        suggestions: generateFallbackSuggestions(phase.title, phase.project.name, locale),
+        suggestions: generateFallbackSuggestions(phase.title, phase.project.name),
         source: "fallback",
       });
 
@@ -139,12 +104,11 @@ export async function POST(request: NextRequest) {
       ? phase.tasks.map((t) => `- ${t.title}${t.isCompleted ? " (done)" : ""}`).join("\n")
       : "- (none yet)";
 
-    const language = locale === "tr" ? "Turkish" : "English";
-
     const systemPrompt = `You are an experienced eTwinning project mentor helping teachers plan collaborative international school projects.
 You suggest concrete, actionable tasks that fit the given project phase.
 Prefer the Web 2.0 tools available on this platform when a tool is relevant: ${toolNames}.
-Always answer ONLY with valid JSON. Every text field must be written in ${language}.`;
+Always answer ONLY with valid JSON.
+IMPORTANT: Every title and description MUST be written in English, regardless of the language of the project name, description or existing tasks. eTwinning tasks are shared with international partner schools.`;
 
     const userPrompt = `Project: ${phase.project.name}
 Project description: ${phase.project.description || "(not provided)"}
@@ -157,6 +121,7 @@ Suggest exactly 5 NEW tasks for this phase. Requirements:
 - Each task must be specific, realistic for teachers and students, and meaningful in an eTwinning context.
 - Cover different aspects: collaboration between partner schools, student activities, digital tools, evaluation/evidence.
 - Do not duplicate or paraphrase the existing tasks.
+- Write every title and description in English.
 
 Return JSON in this exact structure:
 {

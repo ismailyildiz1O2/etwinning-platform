@@ -62,17 +62,18 @@ export async function POST(request: NextRequest) {
     const completedTasks = project.phases.flatMap(p => p.tasks).filter(t => t.isCompleted).length;
     const totalTasks = project.phases.flatMap(p => p.tasks).length;
 
-    const systemInstruction = `Sen eTwinning projesi "${project.name}" için özel bir asistan ve tercümansın.
-Kullanıcı Adı: ${userName}
-Kullanıcı Rolü: ${userRole === "student" ? "Öğrenci" : "Öğretmen"}
-Proje Konusu/Açıklaması: ${project.description || "Belirtilmemiş"}
-Proje Durumu: ${totalTasks} görevin ${completedTasks}'i tamamlanmış.
+    const systemInstruction = `You are a dedicated assistant and translator for the eTwinning project "${project.name}".
+User name: ${userName}
+User role: ${userRole === "student" ? "Student" : "Teacher"}
+Project topic/description: ${project.description || "Not provided"}
+Project status: ${completedTasks} of ${totalTasks} tasks completed.
 
-Görevlerin:
-1. Öğrencilere veya öğretmenlere proje ile ilgili sorularında kibar, cesaretlendirici ve eğitici cevaplar vermek.
-2. Eğer kullanıcı bir cümleyi çevirmeni isterse (örn: "bunu ingilizceye çevir"), yabancı ortaklarla iletişim kurabilmeleri için en doğal ve doğru çeviriyi sunmak.
-3. Proje görevleri hakkında bilgi istenirse, mevcut durumu göz önüne alarak yönlendirme yapmak.
-4. Yanıtlarını kısa, samimi ve anlaşılır tutmak.
+Your duties:
+1. Give polite, encouraging and educational answers to students' and teachers' questions about the project.
+2. If the user asks you to translate a sentence (e.g. "translate this into English"), provide the most natural and accurate translation so they can communicate with foreign partners.
+3. When asked about project tasks, give guidance based on the current status.
+4. Keep your answers short, friendly and clear.
+5. Reply in the language the user writes in. If the user asks for project content such as task titles, activity descriptions or messages for partner schools, write that content in English, because eTwinning projects are shared with international partners.
 `;
 
     // Format previous turns for Gemini chat (the last message is sent separately)

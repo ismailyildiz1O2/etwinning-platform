@@ -34,7 +34,7 @@ export function PhaseAISuggestDialog({ phaseId, phaseTitle, onClose, onTasksAdde
       const res = await fetch("/api/ai/phase-suggestions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phaseId: id, locale }),
+        body: JSON.stringify({ phaseId: id }),
       });
       if (isCancelled()) return;
       if (!res.ok) throw new Error();

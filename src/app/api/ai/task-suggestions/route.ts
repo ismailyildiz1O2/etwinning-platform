@@ -25,145 +25,145 @@ function generateFallbackSuggestions(input: TaskSuggestionRequest): Suggestion[]
   const description = (input.taskDescription || "").toLowerCase();
   const combined = `${title} ${description}`;
 
-  // --- araştırma (research) ---
-  if (combined.includes("araştırma") || combined.includes("arastirma")) {
+  // --- research ---
+  if (combined.includes("araştırma") || combined.includes("arastirma") || combined.includes("research")) {
     return [
-      { id: generateId(), text: "Öğrencilere güvenilir kaynak kullanımı konusunda mini bir eğitim verin. Wikipedia yerine akademik kaynaklar ve resmi kurumların web sitelerini tercih etmelerini sağlayın.", type: "tip", icon: "🔍" },
-      { id: generateId(), text: "Araştırma bulgularını paylaşmak için ortak bir Padlet veya Google Jamboard panosu oluşturun. Her okul kendi bölümünü doldursun.", type: "tool", icon: "📌" },
-      { id: generateId(), text: "Öğrencilerin araştırma sürecini belgelemesi için bir 'Araştırma Günlüğü' şablonu hazırlayın: kaynak, tarih, öğrenilen bilgi.", type: "resource", icon: "📓" },
-      { id: generateId(), text: "Her okulun araştırma sonuçlarını 3 dakikalık kısa video sunumlarla paylaşacağı bir 'Mini Konferans' etkinliği planlayın.", type: "activity", icon: "🎤" },
-      { id: generateId(), text: "Araştırma konularını alt başlıklara bölerek her partner okula farklı bir alt başlık atayın. Böylece tekrardan kaçınıp derinlemesine içerik üretilir.", type: "tip", icon: "💡" },
+      { id: generateId(), text: "Give students a short training session on using reliable sources. Encourage them to prefer academic sources and official institutional websites over Wikipedia.", type: "tip", icon: "🔍" },
+      { id: generateId(), text: "Create a shared Padlet or Google Jamboard board to share research findings. Let each school fill in its own section.", type: "tool", icon: "📌" },
+      { id: generateId(), text: "Prepare a 'Research Journal' template so students can document their research process: source, date, and what they learned.", type: "resource", icon: "📓" },
+      { id: generateId(), text: "Plan a 'Mini Conference' event where each school shares its research results in short 3-minute video presentations.", type: "activity", icon: "🎤" },
+      { id: generateId(), text: "Split the research topics into sub-topics and assign a different sub-topic to each partner school. This avoids repetition and produces more in-depth content.", type: "tip", icon: "💡" },
     ];
   }
 
-  // --- tanışma (icebreaker) ---
-  if (combined.includes("tanışma") || combined.includes("tanisma") || combined.includes("icebreaker") || combined.includes("kendini tanıt")) {
+  // --- icebreaker ---
+  if (combined.includes("tanışma") || combined.includes("tanisma") || combined.includes("icebreaker") || combined.includes("kendini tanıt") || combined.includes("introduce") || combined.includes("introduction") || combined.includes("getting to know")) {
     return [
-      { id: generateId(), text: "Her öğrencinin kendini tanıtan 60 saniyelik bir video çekmesini sağlayın. Videoları Flipgrid veya TwinSpace'te paylaşın.", type: "activity", icon: "🎬" },
-      { id: generateId(), text: "Ortak bir 'Tahmin Et Kim?' oyunu düzenleyin: her öğrenci 3 ilginç bilgi paylaşsın, diğerleri kime ait olduğunu tahmin etsin.", type: "activity", icon: "🎲" },
-      { id: generateId(), text: "Canva veya Book Creator ile 'Hakkımda' dijital kartları oluşturun. İsim, hobiler, favori yemek, hayalindeki meslek gibi bilgiler ekleyin.", type: "tool", icon: "🎨" },
-      { id: generateId(), text: "İlk tanışma toplantısı için Zoom/Teams'te küçük gruplar (breakout rooms) oluşturun. 4-5 kişilik gruplar daha rahat iletişim sağlar.", type: "tip", icon: "💬" },
-      { id: generateId(), text: "Ortak bir sınıf haritası oluşturun: Google My Maps üzerinde her okulun konumunu işaretleyin ve kısa tanıtım notları ekleyin.", type: "resource", icon: "🗺️" },
+      { id: generateId(), text: "Have each student record a 60-second video introducing themselves. Share the videos on Flipgrid or in the TwinSpace.", type: "activity", icon: "🎬" },
+      { id: generateId(), text: "Organize a shared 'Guess Who?' game: each student shares 3 interesting facts, and the others guess who they belong to.", type: "activity", icon: "🎲" },
+      { id: generateId(), text: "Create digital 'About Me' cards with Canva or Book Creator. Include details such as name, hobbies, favorite food, and dream job.", type: "tool", icon: "🎨" },
+      { id: generateId(), text: "For the first icebreaker meeting, set up small groups (breakout rooms) in Zoom/Teams. Groups of 4-5 make communication more comfortable.", type: "tip", icon: "💬" },
+      { id: generateId(), text: "Create a shared class map: mark each school's location on Google My Maps and add short introduction notes.", type: "resource", icon: "🗺️" },
     ];
   }
 
-  // --- toplantı (meeting) ---
-  if (combined.includes("toplantı") || combined.includes("toplanti") || combined.includes("meeting") || combined.includes("görüşme")) {
+  // --- meeting ---
+  if (combined.includes("toplantı") || combined.includes("toplanti") || combined.includes("meeting") || combined.includes("görüşme") || combined.includes("videoconference") || combined.includes("video conference") || combined.includes("webinar")) {
     return [
-      { id: generateId(), text: "Toplantı öncesinde ortak bir gündem belgesi paylaşın. Her partner okulun gündem maddeleri eklemesini sağlayın.", type: "tip", icon: "📋" },
-      { id: generateId(), text: "Saat farkı olan ortaklarla çalışıyorsanız World Time Buddy aracını kullanarak herkes için uygun ortak zaman dilimi belirleyin.", type: "tool", icon: "🕐" },
-      { id: generateId(), text: "Toplantı notlarını otomatik olarak almak için Otter.ai veya Microsoft Teams'in transkript özelliğini kullanın.", type: "tool", icon: "📝" },
-      { id: generateId(), text: "Her toplantının sonunda bir sonraki adımları ve sorumlulukları netleştiren bir 'Eylem Planı' oluşturun.", type: "tip", icon: "✅" },
-      { id: generateId(), text: "Öğrencilerin toplantıda aktif katılımını sağlamak için Mentimeter veya Slido ile interaktif anketler ve soru-cevap oturumları ekleyin.", type: "activity", icon: "📊" },
+      { id: generateId(), text: "Share a common agenda document before the meeting. Let each partner school add its own agenda items.", type: "tip", icon: "📋" },
+      { id: generateId(), text: "If you work with partners in different time zones, use World Time Buddy to find a meeting time that suits everyone.", type: "tool", icon: "🕐" },
+      { id: generateId(), text: "Use Otter.ai or the transcript feature in Microsoft Teams to take meeting notes automatically.", type: "tool", icon: "📝" },
+      { id: generateId(), text: "At the end of each meeting, create an 'Action Plan' that clarifies the next steps and who is responsible for them.", type: "tip", icon: "✅" },
+      { id: generateId(), text: "To keep students actively involved during the meeting, add interactive polls and Q&A sessions with Mentimeter or Slido.", type: "activity", icon: "📊" },
     ];
   }
 
-  // --- anket / değerlendirme (survey / evaluation) ---
-  if (combined.includes("anket") || combined.includes("değerlendirme") || combined.includes("degerlendirme") || combined.includes("survey") || combined.includes("form")) {
+  // --- survey / evaluation ---
+  if (combined.includes("anket") || combined.includes("değerlendirme") || combined.includes("degerlendirme") || combined.includes("survey") || combined.includes("form") || combined.includes("evaluation") || combined.includes("assessment") || combined.includes("questionnaire") || combined.includes("feedback")) {
     return [
-      { id: generateId(), text: "Google Forms veya Microsoft Forms ile çok dilli anketler oluşturun. Her soruyu birden fazla dilde yazarak tüm ortakların anlamasını sağlayın.", type: "tool", icon: "📊" },
-      { id: generateId(), text: "Anket sonuçlarını görselleştirmek için Canva Infographic veya Google Data Studio kullanın. Veriler böylece daha anlaşılır olur.", type: "tool", icon: "📈" },
-      { id: generateId(), text: "Proje sürecini değerlendirmek için öğrencilere 'KWL Tablosu' (Biliyorum-Merak Ediyorum-Öğrendim) kullandırın.", type: "resource", icon: "📋" },
-      { id: generateId(), text: "Ara değerlendirme anketi ekleyin: 'Bu aşamada en çok ne öğrendin?', 'Hangi zorlukları yaşadın?', 'Önerin nedir?' gibi açık uçlu sorular sorun.", type: "tip", icon: "💡" },
-      { id: generateId(), text: "Akran değerlendirmesi için rubrik oluşturun. Öğrencilerin birbirlerinin çalışmalarını yapıcı geri bildirimle değerlendirmesini sağlayın.", type: "activity", icon: "🤝" },
+      { id: generateId(), text: "Create multilingual surveys with Google Forms or Microsoft Forms. Write each question in more than one language so all partners can understand it.", type: "tool", icon: "📊" },
+      { id: generateId(), text: "Use Canva Infographic or Google Data Studio to visualize the survey results. This makes the data much easier to understand.", type: "tool", icon: "📈" },
+      { id: generateId(), text: "Have students use a 'KWL Chart' (Know - Want to know - Learned) to evaluate the project process.", type: "resource", icon: "📋" },
+      { id: generateId(), text: "Add a mid-project evaluation survey with open-ended questions such as 'What did you learn most in this phase?', 'What challenges did you face?', and 'What would you suggest?'.", type: "tip", icon: "💡" },
+      { id: generateId(), text: "Create a rubric for peer assessment. Let students evaluate each other's work with constructive feedback.", type: "activity", icon: "🤝" },
     ];
   }
 
-  // --- fotoğraf / video (media) ---
-  if (combined.includes("fotoğraf") || combined.includes("fotograf") || combined.includes("video") || combined.includes("film") || combined.includes("medya")) {
+  // --- photo / video (media) ---
+  if (combined.includes("fotoğraf") || combined.includes("fotograf") || combined.includes("video") || combined.includes("film") || combined.includes("medya") || combined.includes("photo") || combined.includes("media") || combined.includes("picture")) {
     return [
-      { id: generateId(), text: "Öğrencilere fotoğraf çekerken 'üçte bir kuralı' ve iyi aydınlatma gibi temel kompozisyon ipuçlarını öğretin.", type: "tip", icon: "📷" },
-      { id: generateId(), text: "Video düzenleme için CapCut, iMovie veya Clipchamp gibi ücretsiz ve öğrenci dostu araçlar kullanın.", type: "tool", icon: "🎬" },
-      { id: generateId(), text: "KVKK ve GDPR uyumluluğu için fotoğraf/video izin formlarını önceden hazırlayıp velilerden onay alın.", type: "tip", icon: "🔒" },
-      { id: generateId(), text: "Ortak bir fotoğraf yarışması düzenleyin: her okul proje temasına uygun en iyi 5 fotoğrafını seçip oylama yapın.", type: "activity", icon: "🏆" },
-      { id: generateId(), text: "Fotoğraf ve videoları düzenli saklamak için Google Drive veya OneDrive'da paylaşımlı bir klasör yapısı oluşturun (ülke/tarih/etkinlik).", type: "resource", icon: "📁" },
+      { id: generateId(), text: "Teach students basic composition tips for taking photos, such as the 'rule of thirds' and good lighting.", type: "tip", icon: "📷" },
+      { id: generateId(), text: "Use free, student-friendly tools such as CapCut, iMovie, or Clipchamp for video editing.", type: "tool", icon: "🎬" },
+      { id: generateId(), text: "Prepare photo/video consent forms in advance and obtain parental approval to stay compliant with GDPR and local data protection laws.", type: "tip", icon: "🔒" },
+      { id: generateId(), text: "Organize a joint photo contest: each school selects its 5 best photos that fit the project theme, then everyone votes.", type: "activity", icon: "🏆" },
+      { id: generateId(), text: "Create a shared folder structure in Google Drive or OneDrive (country/date/activity) to keep photos and videos well organized.", type: "resource", icon: "📁" },
     ];
   }
 
-  // --- e-kitap (ebook) ---
-  if (combined.includes("e-kitap") || combined.includes("kitap") || combined.includes("ebook") || combined.includes("book creator")) {
+  // --- ebook ---
+  if (combined.includes("e-kitap") || combined.includes("kitap") || combined.includes("ebook") || combined.includes("book creator") || combined.includes("e-book")) {
     return [
-      { id: generateId(), text: "Book Creator, StoryJumper veya Ourboox kullanarak interaktif e-kitaplar oluşturun. Ses, video ve animasyon eklenebilir.", type: "tool", icon: "📚" },
-      { id: generateId(), text: "Her partner okula e-kitabın bir bölümünü atayın. Sonunda tüm bölümleri birleştirerek uluslararası ortak bir eser ortaya çıkarın.", type: "tip", icon: "✍️" },
-      { id: generateId(), text: "E-kitaba QR kodlar ekleyin: her sayfadaki QR kod ek videolara, ses kayıtlarına veya interaktif içeriğe yönlendirsin.", type: "resource", icon: "📱" },
-      { id: generateId(), text: "E-kitabın kapak tasarımı için bir tasarım yarışması düzenleyin. Tüm ortaklar oy kullansın.", type: "activity", icon: "🎨" },
-      { id: generateId(), text: "Tamamlanan e-kitabı Issuu veya Calaméo'da yayınlayarak geniş bir kitleyle paylaşın ve proje görünürlüğünü artırın.", type: "tip", icon: "🌐" },
+      { id: generateId(), text: "Create interactive e-books using Book Creator, StoryJumper, or Ourboox. You can add audio, video, and animations.", type: "tool", icon: "📚" },
+      { id: generateId(), text: "Assign one chapter of the e-book to each partner school. In the end, combine all chapters into a joint international publication.", type: "tip", icon: "✍️" },
+      { id: generateId(), text: "Add QR codes to the e-book: the QR code on each page can link to extra videos, audio recordings, or interactive content.", type: "resource", icon: "📱" },
+      { id: generateId(), text: "Run a design contest for the e-book cover. Let all partners vote.", type: "activity", icon: "🎨" },
+      { id: generateId(), text: "Publish the finished e-book on Issuu or Calaméo to reach a wider audience and increase the visibility of the project.", type: "tip", icon: "🌐" },
     ];
   }
 
-  // --- sergi / sunum (exhibition / presentation) ---
-  if (combined.includes("sergi") || combined.includes("sunum") || combined.includes("presentation") || combined.includes("infografik")) {
+  // --- exhibition / presentation ---
+  if (combined.includes("sergi") || combined.includes("sunum") || combined.includes("presentation") || combined.includes("infografik") || combined.includes("exhibition") || combined.includes("infographic") || combined.includes("showcase")) {
     return [
-      { id: generateId(), text: "Sanal sergi için Artsteps veya Kunstmatrix platformlarını kullanarak 3D sanal galeri oluşturun.", type: "tool", icon: "🏛️" },
-      { id: generateId(), text: "Canva, Genially veya Prezi ile interaktif sunumlar hazırlayın. Statik slaytlar yerine tıklanabilir ve animasyonlu içerikler tercih edin.", type: "tool", icon: "🖥️" },
-      { id: generateId(), text: "Sergi/sunum günü için velileri ve okul yönetimini davet eden dijital davetiyeler hazırlayın. Bu, projenin görünürlüğünü artırır.", type: "tip", icon: "✉️" },
-      { id: generateId(), text: "Her okulun sergi köşesini temsil eden kısa tanıtım videoları çekin ve sunum öncesinde sosyal medyada paylaşın.", type: "activity", icon: "📢" },
-      { id: generateId(), text: "Infografik oluşturmak için Piktochart veya Venngage kullanın. Proje verilerini ve öğrenme çıktılarını görsel olarak özetleyin.", type: "resource", icon: "📊" },
+      { id: generateId(), text: "For a virtual exhibition, create a 3D virtual gallery using platforms such as Artsteps or Kunstmatrix.", type: "tool", icon: "🏛️" },
+      { id: generateId(), text: "Prepare interactive presentations with Canva, Genially, or Prezi. Prefer clickable, animated content over static slides.", type: "tool", icon: "🖥️" },
+      { id: generateId(), text: "Prepare digital invitations for parents and school management for the exhibition/presentation day. This increases the visibility of the project.", type: "tip", icon: "✉️" },
+      { id: generateId(), text: "Record short teaser videos representing each school's exhibition corner and share them on social media before the presentation.", type: "activity", icon: "📢" },
+      { id: generateId(), text: "Use Piktochart or Venngage to create infographics. Summarize project data and learning outcomes visually.", type: "resource", icon: "📊" },
     ];
   }
 
-  // --- logo / afiş / tasarım (design) ---
-  if (combined.includes("logo") || combined.includes("afiş") || combined.includes("afis") || combined.includes("tasarım") || combined.includes("tasarim") || combined.includes("design")) {
+  // --- logo / poster / design ---
+  if (combined.includes("logo") || combined.includes("afiş") || combined.includes("afis") || combined.includes("tasarım") || combined.includes("tasarim") || combined.includes("design") || combined.includes("poster") || combined.includes("banner")) {
     return [
-      { id: generateId(), text: "Logo tasarımı için Canva, Adobe Express veya LogoMakr gibi ücretsiz araçlar kullanın. Öğrencilere temel tasarım ilkelerini (renk uyumu, sadelik) anlatın.", type: "tool", icon: "🎨" },
-      { id: generateId(), text: "Her okuldan logo/afiş önerileri toplayın ve tüm ortakların katıldığı demokratik bir oylama yapın.", type: "activity", icon: "🗳️" },
-      { id: generateId(), text: "Tasarımlarda proje temasını, ortaklık ruhunu ve kültürel çeşitliliği yansıtan semboller kullanmaya özen gösterin.", type: "tip", icon: "💡" },
-      { id: generateId(), text: "Tasarım sürecini belgelemek için 'Tasarım Günlüğü' tutun: ilk eskizler, geri bildirimler, revizyonlar ve final versiyonu.", type: "resource", icon: "📓" },
-      { id: generateId(), text: "Tüm tasarımlarda tutarlı bir renk paleti ve yazı tipi kullanın. Brand kit oluşturmak projeye profesyonel bir görünüm kazandırır.", type: "tip", icon: "🖌️" },
+      { id: generateId(), text: "Use free tools such as Canva, Adobe Express, or LogoMakr for logo design. Explain basic design principles (color harmony, simplicity) to students.", type: "tool", icon: "🎨" },
+      { id: generateId(), text: "Collect logo/poster proposals from each school and hold a democratic vote in which all partners take part.", type: "activity", icon: "🗳️" },
+      { id: generateId(), text: "Make sure the designs use symbols that reflect the project theme, the spirit of partnership, and cultural diversity.", type: "tip", icon: "💡" },
+      { id: generateId(), text: "Keep a 'Design Journal' to document the design process: first sketches, feedback, revisions, and the final version.", type: "resource", icon: "📓" },
+      { id: generateId(), text: "Use a consistent color palette and font across all designs. Creating a brand kit gives the project a professional look.", type: "tip", icon: "🖌️" },
     ];
   }
 
-  // --- güvenlik / e-güvenlik (digital safety) ---
-  if (combined.includes("güvenlik") || combined.includes("guvenlik") || combined.includes("e-güvenlik") || combined.includes("safety") || combined.includes("gizlilik")) {
+  // --- digital safety / e-safety ---
+  if (combined.includes("güvenlik") || combined.includes("guvenlik") || combined.includes("e-güvenlik") || combined.includes("safety") || combined.includes("gizlilik") || combined.includes("privacy") || combined.includes("e-safety") || combined.includes("esafety") || combined.includes("security") || combined.includes("cyberbullying")) {
     return [
-      { id: generateId(), text: "Öğrencilere çevrimiçi güvenlik kurallarını öğretmek için Common Sense Education'ın dijital vatandaşlık müfredatını kullanın.", type: "resource", icon: "🛡️" },
-      { id: generateId(), text: "Kişisel bilgi paylaşımı konusunda net kurallar belirleyin: gerçek adres, telefon numarası gibi bilgiler kesinlikle paylaşılmamalı.", type: "tip", icon: "🔒" },
-      { id: generateId(), text: "Siber zorbalık farkındalık posteri oluşturma etkinliği düzenleyin. Her okul kendi dilinde posterler hazırlayıp paylaşsın.", type: "activity", icon: "🚫" },
-      { id: generateId(), text: "Güçlü şifre oluşturma, iki faktörlü kimlik doğrulama ve güvenli internet kullanımı konusunda interaktif bir quiz hazırlayın.", type: "activity", icon: "🔐" },
-      { id: generateId(), text: "Telif hakkı ve Creative Commons lisansları hakkında öğrencileri bilgilendirin. Projede kullanılan tüm görsellerin lisans durumunu kontrol ettirin.", type: "tip", icon: "©️" },
+      { id: generateId(), text: "Use Common Sense Education's digital citizenship curriculum to teach students online safety rules.", type: "resource", icon: "🛡️" },
+      { id: generateId(), text: "Set clear rules about sharing personal information: details such as home addresses and phone numbers must never be shared.", type: "tip", icon: "🔒" },
+      { id: generateId(), text: "Organize a cyberbullying awareness poster activity. Each school prepares posters in its own language and shares them.", type: "activity", icon: "🚫" },
+      { id: generateId(), text: "Prepare an interactive quiz on creating strong passwords, two-factor authentication, and safe internet use.", type: "activity", icon: "🔐" },
+      { id: generateId(), text: "Inform students about copyright and Creative Commons licenses. Have them check the license status of every image used in the project.", type: "tip", icon: "©️" },
     ];
   }
 
-  // --- kalite etiketi (quality label) ---
+  // --- quality label ---
   if (combined.includes("kalite etiketi") || combined.includes("quality label") || combined.includes("kalite")) {
     return [
-      { id: generateId(), text: "Kalite etiketi başvurusunda proje sürecini kronolojik olarak belgeleyin: planlama, uygulama, değerlendirme ve yaygınlaştırma aşamalarını net gösterin.", type: "tip", icon: "🏅" },
-      { id: generateId(), text: "TwinSpace'i düzenli tutun: sayfaları aşamalara göre organize edin, öğrenci çalışmalarını ve işbirliği kanıtlarını sistematik olarak yükleyin.", type: "tip", icon: "📂" },
-      { id: generateId(), text: "Öğrenci ve öğretmen değerlendirme anketlerini muhakkak ekleyin. Proje öncesi-sonrası karşılaştırma yapabilen ölçme araçları güçlü kanıt sağlar.", type: "resource", icon: "📊" },
-      { id: generateId(), text: "Proje çıktılarını yerel ve ulusal medyada, okul web sitesinde ve sosyal medyada paylaşarak yaygınlaştırma kanıtları oluşturun.", type: "activity", icon: "📰" },
-      { id: generateId(), text: "Müfredat entegrasyonunu belgeleyin: hangi derslerde, hangi kazanımlarla ilişkilendirildiğini gösteren bir tablo hazırlayın.", type: "resource", icon: "📚" },
+      { id: generateId(), text: "In the Quality Label application, document the project process chronologically: clearly show the planning, implementation, evaluation, and dissemination phases.", type: "tip", icon: "🏅" },
+      { id: generateId(), text: "Keep the TwinSpace well organized: arrange pages by phase and systematically upload student work and evidence of collaboration.", type: "tip", icon: "📂" },
+      { id: generateId(), text: "Be sure to include student and teacher evaluation surveys. Assessment tools that allow a before-and-after comparison provide strong evidence.", type: "resource", icon: "📊" },
+      { id: generateId(), text: "Create dissemination evidence by sharing project outputs in local and national media, on the school website, and on social media.", type: "activity", icon: "📰" },
+      { id: generateId(), text: "Document curriculum integration: prepare a table showing which subjects and learning outcomes the project is linked to.", type: "resource", icon: "📚" },
     ];
   }
 
   // --- twinspace ---
   if (combined.includes("twinspace") || combined.includes("twin space")) {
     return [
-      { id: generateId(), text: "TwinSpace'te her proje aşaması için ayrı sayfalar oluşturun. Net bir navigasyon yapısı hem öğrenciler hem değerlendiriciler için kolaylık sağlar.", type: "tip", icon: "📑" },
-      { id: generateId(), text: "TwinSpace forumlarını aktif kullanın: her hafta bir tartışma konusu belirleyerek öğrenciler arası etkileşimi artırın.", type: "activity", icon: "💬" },
-      { id: generateId(), text: "Öğrencileri TwinSpace'e yönetici olarak ekleyin, böylece kendi içeriklerini yükleyebilir ve sayfalarda düzenleme yapabilirler.", type: "tip", icon: "👥" },
-      { id: generateId(), text: "TwinSpace'in 'Materyal' bölümüne ortak çalışma şablonları, rubrikler ve planlama dokümanları yükleyin.", type: "resource", icon: "📎" },
-      { id: generateId(), text: "TwinSpace günlük/blog özelliğini kullanarak proje sürecini düzenli olarak kayıt altına alın.", type: "resource", icon: "📝" },
+      { id: generateId(), text: "Create separate pages in the TwinSpace for each project phase. A clear navigation structure helps both students and evaluators.", type: "tip", icon: "📑" },
+      { id: generateId(), text: "Make active use of the TwinSpace forums: set a discussion topic every week to increase interaction between students.", type: "activity", icon: "💬" },
+      { id: generateId(), text: "Add students to the TwinSpace as administrators so they can upload their own content and edit pages.", type: "tip", icon: "👥" },
+      { id: generateId(), text: "Upload collaboration templates, rubrics, and planning documents to the 'Materials' section of the TwinSpace.", type: "resource", icon: "📎" },
+      { id: generateId(), text: "Use the TwinSpace journal/blog feature to record the project process on a regular basis.", type: "resource", icon: "📝" },
     ];
   }
 
-  // --- harita (map) ---
-  if (combined.includes("harita") || combined.includes("map") || combined.includes("coğrafya") || combined.includes("cografya")) {
+  // --- map / geography ---
+  if (combined.includes("harita") || combined.includes("map") || combined.includes("coğrafya") || combined.includes("cografya") || combined.includes("geography")) {
     return [
-      { id: generateId(), text: "Google My Maps ile interaktif bir proje haritası oluşturun. Her partner okulun konumuna tıklandığında okul tanıtımı ve öğrenci çalışmaları görünsün.", type: "tool", icon: "🗺️" },
-      { id: generateId(), text: "StoryMapJS kullanarak proje hikayenizi harita üzerinden anlatın. Her konum bir proje aşamasını veya etkinliği temsil edebilir.", type: "tool", icon: "📍" },
-      { id: generateId(), text: "Öğrencilerin kendi bölgelerindeki önemli noktaları fotoğraflayıp haritaya eklemelerini sağlayın. Kültürel miras, doğal güzellikler vb.", type: "activity", icon: "📸" },
-      { id: generateId(), text: "Harita üzerinde karşılaştırmalı veri gösterimi yapın: iklim, nüfus, gelenek gibi verileri görselleştirerek kültürler arası farkındalık oluşturun.", type: "resource", icon: "📊" },
-      { id: generateId(), text: "Tamamlanan dijital haritayı proje web sitesine veya TwinSpace'e embed ederek interaktif bir şekilde paylaşın.", type: "tip", icon: "🌐" },
+      { id: generateId(), text: "Create an interactive project map with Google My Maps. When someone clicks a partner school's location, show the school introduction and student work.", type: "tool", icon: "🗺️" },
+      { id: generateId(), text: "Use StoryMapJS to tell your project story on a map. Each location can represent a project phase or an activity.", type: "tool", icon: "📍" },
+      { id: generateId(), text: "Have students photograph important places in their own region and add them to the map: cultural heritage, natural beauty, etc.", type: "activity", icon: "📸" },
+      { id: generateId(), text: "Display comparative data on the map: visualize data such as climate, population, and traditions to build intercultural awareness.", type: "resource", icon: "📊" },
+      { id: generateId(), text: "Embed the finished digital map on the project website or in the TwinSpace to share it interactively.", type: "tip", icon: "🌐" },
     ];
   }
 
   // --- Default: general project management tips ---
   return [
-    { id: generateId(), text: "Bu görev için net bir zaman çizelgesi ve kilometre taşları belirleyin. Küçük, ölçülebilir hedefler motivasyonu artırır.", type: "tip", icon: "📅" },
-    { id: generateId(), text: "Görevle ilgili ilerlemeyi takip etmek için TwinSpace'te bir kontrol listesi (checklist) oluşturun.", type: "resource", icon: "✅" },
-    { id: generateId(), text: "Bu görev için tüm ortaklardan en az bir öğrencinin aktif katılımını sağlayın. Sorumluluk paylaşımı işbirliğini güçlendirir.", type: "tip", icon: "🤝" },
-    { id: generateId(), text: "Görev tamamlandığında kısa bir yansıtma (reflection) etkinliği yapın: 'Ne iyi gitti? Ne geliştirebiliriz?' sorularını tartışın.", type: "activity", icon: "🪞" },
-    { id: generateId(), text: "Görevi belgelemek için ekran görüntüleri, fotoğraflar ve kısa notlar alın. Bu materyaller kalite etiketi başvurusunda çok değerli olacaktır.", type: "tip", icon: "📸" },
+    { id: generateId(), text: "Set a clear timeline and milestones for this task. Small, measurable goals increase motivation.", type: "tip", icon: "📅" },
+    { id: generateId(), text: "Create a checklist in the TwinSpace to track progress on this task.", type: "resource", icon: "✅" },
+    { id: generateId(), text: "Make sure at least one student from every partner school takes an active part in this task. Sharing responsibility strengthens collaboration.", type: "tip", icon: "🤝" },
+    { id: generateId(), text: "When the task is complete, hold a short reflection activity: discuss the questions 'What went well?' and 'What could we improve?'.", type: "activity", icon: "🪞" },
+    { id: generateId(), text: "Take screenshots, photos, and short notes to document the task. These materials will be very valuable for the Quality Label application.", type: "tip", icon: "📸" },
   ];
 }
 
@@ -190,35 +190,36 @@ export async function POST(request: NextRequest) {
         const { web2Tools } = await import("@/lib/web2-tools");
         const toolNames = web2Tools.map(t => t.name).join(", ");
 
-        const systemPrompt = `Sen bir eTwinning proje asistanısın. Öğretmenlere görev bazında pratik, uygulanabilir öneriler sunuyorsun.
-Platformumuzda şu Web 2.0 araçları bulunmaktadır: ${toolNames}.
-Etkinlik ve araç önerilerinde ÖNCELİKLİ OLARAK bu listedeki araçları kullan.
-Yanıtlarını YALNIZCA geçerli JSON formatında döndürürsün, başka hiçbir şey yazmazsın.
-Her öneri Türkçe olmalıdır.`;
+        const systemPrompt = `You are an eTwinning project assistant. You provide teachers with practical, actionable suggestions for each project task.
+The following Web 2.0 tools are available on our platform: ${toolNames}.
+When suggesting activities and tools, give PRIORITY to the tools in this list.
+You return your answer ONLY as valid JSON and write nothing else.
+Every suggestion text MUST be written in English, regardless of the language of the task title or description, because the content is shared with international partner schools.`;
 
-        const userPrompt = `Aşağıdaki eTwinning proje görevi için en fazla 5 öneri üret.
+        const userPrompt = `Generate at most 5 suggestions for the eTwinning project task below.
 
-Görev: ${body.taskTitle}
-${body.taskDescription ? `Açıklama: ${body.taskDescription}` : ""}
-${body.phaseTitle ? `Aşama: ${body.phaseTitle}` : ""}
-${body.projectName ? `Proje: ${body.projectName}` : ""}
+Task: ${body.taskTitle}
+${body.taskDescription ? `Description: ${body.taskDescription}` : ""}
+${body.phaseTitle ? `Phase: ${body.phaseTitle}` : ""}
+${body.projectName ? `Project: ${body.projectName}` : ""}
 
-Her öneri şu formatta olmalı:
-- text: Detaylı, uygulanabilir öneri metni (Türkçe). (Eğer bir araç öneriyorsan, öncelikli olarak yukarıdaki listedeki araçlardan birini seç ve adını metin içinde geçir.)
-- type: "tip" | "resource" | "activity" | "tool" (önerinin türü)
-- icon: Uygun bir emoji
+Each suggestion must have the following format:
+- text: A detailed, actionable suggestion text written in English. (If you suggest a tool, prefer one from the list above and mention its name in the text.)
+- type: "tip" | "resource" | "activity" | "tool" (the kind of suggestion)
+- icon: A suitable emoji
 
-Kurallar:
-1. En fazla 5 öneri üret
-2. Öneriler somut ve uygulanabilir olsun
-3. eTwinning projeleri bağlamında anlamlı olsun
-4. Farklı türlerde öneriler ver (sadece tip değil, tool, activity, resource da olsun)
-5. 'tool' veya 'activity' önerilerinde, öncelikli olarak size verilen araç listesindeki uygulamaları dahil et.
+Rules:
+1. Generate at most 5 suggestions
+2. Suggestions must be concrete and actionable
+3. Suggestions must be meaningful in the context of eTwinning projects
+4. Provide a mix of types (not only "tip" but also "tool", "activity", and "resource")
+5. For "tool" or "activity" suggestions, prioritize the applications from the tool list you were given
+6. Write every suggestion text in English, even if the task title or description is in another language
 
-JSON formatı:
+JSON format:
 {
   "suggestions": [
-    { "text": "Öneri metni", "type": "tip", "icon": "💡" }
+    { "text": "Suggestion text", "type": "tip", "icon": "💡" }
   ]
 }`;
 

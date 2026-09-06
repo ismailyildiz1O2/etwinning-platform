@@ -439,7 +439,7 @@ export function TaskDrawer({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Görev Detayı
+            Task Details
           </h2>
           <button
             onClick={onClose}
@@ -458,7 +458,7 @@ export function TaskDrawer({
             {/* Title */}
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Başlık
+                Title
               </label>
               <input
                 type="text"
@@ -471,7 +471,7 @@ export function TaskDrawer({
             {/* Description */}
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Açıklama
+                Description
               </label>
               <textarea
                 value={description}
@@ -484,7 +484,7 @@ export function TaskDrawer({
             {/* Priority */}
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                Öncelik
+                Priority
               </label>
               <div className="mt-2 flex gap-2">
                 {(["low", "medium", "high"] as const).map((p) => (
@@ -522,7 +522,7 @@ export function TaskDrawer({
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" />
-                Atanan Kişi
+                Assignee
               </label>
               <select
                 value={assigneeId}
@@ -723,7 +723,7 @@ export function TaskDrawer({
                   className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 hover:border-pink-300 dark:hover:border-pink-700 transition-all"
                 >
                   <ImageIcon className="w-3.5 h-3.5" />
-                  Fotoğraf
+                  Photo
                 </button>
                 <button
                   onClick={() => {
@@ -765,7 +765,7 @@ export function TaskDrawer({
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-                  AI Önerileri
+                  AI Suggestions
                 </label>
                 {suggestionsLoaded && suggestions.length > 0 && (
                   <button
@@ -802,7 +802,7 @@ export function TaskDrawer({
                         {loadingSuggestions ? "Generating suggestions..." : "Get AI Suggestions"}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        Bu görev için yapılabilecekleri, araçları ve aktiviteleri öner
+                        Suggest actions, tools and activities for this task
                       </p>
                     </div>
                   </div>
@@ -853,7 +853,7 @@ export function TaskDrawer({
                                       ) : (
                                         <ListPlus className="w-3 h-3" />
                                       )}
-                                      Görev Ekle
+                                      Add Task
                                     </button>
                                   )}
                                 </div>
@@ -874,7 +874,7 @@ export function TaskDrawer({
                         ) : (
                           <RefreshCw className="w-3.5 h-3.5" />
                         )}
-                        {loadingSuggestions ? "Yenileniyor..." : "Yeniden Öner"}
+                        {loadingSuggestions ? "Refreshing..." : "Suggest Again"}
                       </button>
                     </>
                   )}
@@ -923,7 +923,7 @@ export function TaskDrawer({
                 </div>
               ) : (
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
-                  Henüz not eklenmemiş
+                  No notes yet
                 </p>
               )}
 
@@ -954,18 +954,18 @@ export function TaskDrawer({
               <div className="space-y-2">
                 <div className="flex items-start gap-2 text-xs text-gray-400">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                  <span>Görev oluşturuldu</span>
+                  <span>Task created</span>
                 </div>
                 {files.length > 0 && (
                   <div className="flex items-start gap-2 text-xs text-gray-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0" />
-                    <span>{files.length} dosya yüklendi</span>
+                    <span>{files.length} file(s) uploaded</span>
                   </div>
                 )}
                 {task?.isCompleted && (
                   <div className="flex items-start gap-2 text-xs text-green-500">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0" />
-                    <span>Görev tamamlandı</span>
+                    <span>Task completed</span>
                   </div>
                 )}
               </div>
