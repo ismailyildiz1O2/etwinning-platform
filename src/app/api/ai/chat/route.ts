@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { chatWithGemini, isGeminiConfigured, type ChatTurn } from "@/lib/ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
     const userRole = membership.role;
     const userName = session.user.name;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey.trim() === "" || apiKey === "AIzaSy...") {
+    if (!isGeminiConfigured()) {
       return NextResponse.json({
         reply: "Hello! For me to work at full capacity (with real AI), a valid Google Gemini API Key needs to be added from the project settings. Currently I can only give this automated message.",
       });
@@ -76,26 +75,22 @@ Görevlerin:
 4. Yanıtlarını kısa, samimi ve anlaşılır tutmak.
 `;
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction,
-    });
-
-    // Format messages for Gemini Chat (excluding system messages)
-    const formattedHistory = messages.slice(0, -1).map((msg: any) => ({
+    // Format previous turns for Gemini chat (the last message is sent separately)
+    const history: ChatTurn[] = messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
       role: msg.role === "assistant" ? "model" : "user",
-      parts: [{ text: msg.content }],
+      text: msg.content,
     }));
 
     const lastMessage = messages[messages.length - 1].content;
 
-    const chat = model.startChat({
-      history: formattedHistory,
-    });
+    const responseText = await chatWithGemini(history, lastMessage, systemInstruction);
 
-    const result = await chat.sendMessage(lastMessage);
-    const responseText = result.response.text();
+    if (!responseText) {
+      return NextResponse.json(
+        { error: "The AI assistant is temporarily unavailable. Please try again." },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({ reply: responseText });
   } catch (error) {

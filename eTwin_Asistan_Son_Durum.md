@@ -84,5 +84,10 @@ Projenin Vercel üzerinde yayına alınması için son adımlar:
         *   `DIRECT_URL`: `postgresql://neondb_owner:...` (Neon Direkt Bağlantı)
         *   `NEXTAUTH_SECRET`: Uygulamanızın güvenlik anahtarı.
         *   `NEXTAUTH_URL`: Yayınlandıktan sonra uygulamanın URL'si (Örn: `https://etwinning-platform.vercel.app`)
+        *   `GEMINI_API_KEY`: Google AI Studio'dan alınan Gemini anahtarı (AI özellikleri için; boşsa şablon moduna düşer)
+        *   `GEMINI_MODEL` (opsiyonel): Varsayılan `gemini-3.6-flash`
+        *   `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: Dosya yükleme
+        *   `RESEND_API_KEY`: Davet e-postaları
+        *   `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google ile giriş
 
 3.  **Deploy Butonu:** Ayarlar kaydedilip Deploy işlemine başlanır. Uygulama otomatik olarak derlenecek ve canlı URL üzerinden herkesin erişimine açılacaktır.

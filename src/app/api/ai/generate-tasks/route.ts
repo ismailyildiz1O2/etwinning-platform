@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { TemplateTask } from "@/lib/etwinning-template";
+import { generateJsonWithGemini, isGeminiConfigured } from "@/lib/ai";
 
 interface GenerateTasksRequest {
   topic: string;
@@ -59,10 +60,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
     // Fallback if no Gemini key
-    if (!apiKey) {
+    if (!isGeminiConfigured()) {
       return NextResponse.json(generateFallbackTasks(body));
     }
 
@@ -88,30 +87,15 @@ Respond ONLY with valid JSON in this exact structure:
   ]
 }`;
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" },
-          }),
-        }
-      );
+      const parsed = await generateJsonWithGemini<{
+        phase2Tasks?: TemplateTask[];
+        phase3Tasks?: TemplateTask[];
+      }>(prompt);
 
-      if (!response.ok) {
+      if (!parsed) {
         return NextResponse.json(generateFallbackTasks(body));
       }
 
-      const resData = await response.json();
-      const text = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!text) {
-        return NextResponse.json(generateFallbackTasks(body));
-      }
-
-      const parsed = JSON.parse(text);
       return NextResponse.json({
         phase2Tasks: parsed.phase2Tasks || [],
         phase3Tasks: parsed.phase3Tasks || [],

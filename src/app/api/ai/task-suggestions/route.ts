@@ -183,10 +183,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
     // If we have an API key, use Gemini for AI suggestions
-    if (apiKey) {
+    const { generateJsonWithGemini, isGeminiConfigured } = await import("@/lib/ai");
+    if (isGeminiConfigured()) {
       try {
         const { web2Tools } = await import("@/lib/web2-tools");
         const toolNames = web2Tools.map(t => t.name).join(", ");
@@ -223,27 +222,24 @@ JSON formatı:
   ]
 }`;
 
-        const { generateContentWithGemini } = await import("@/lib/ai");
-        const content = await generateContentWithGemini(userPrompt, systemPrompt);
+        const parsed = await generateJsonWithGemini<{
+          suggestions?: { text: string; type: string; icon: string }[];
+        }>(userPrompt, systemPrompt);
 
-        if (content) {
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const parsed = JSON.parse(jsonMatch[0]);
-            const suggestions: Suggestion[] = (parsed.suggestions || [])
-              .slice(0, 5)
-              .map((s: { text: string; type: string; icon: string }) => ({
-                id: generateId(),
-                text: s.text,
-                type: s.type as Suggestion["type"],
-                icon: s.icon || "💡",
-              }));
+        if (parsed) {
+          const suggestions: Suggestion[] = (parsed.suggestions || [])
+            .slice(0, 5)
+            .map((s: { text: string; type: string; icon: string }) => ({
+              id: generateId(),
+              text: s.text,
+              type: s.type as Suggestion["type"],
+              icon: s.icon || "💡",
+            }));
 
-            return NextResponse.json({
-              suggestions,
-              source: "ai",
-            });
-          }
+          return NextResponse.json({
+            suggestions,
+            source: "ai",
+          });
         }
         // If AI fails or returns invalid JSON, fall through to fallback
       } catch (aiError) {
