@@ -107,6 +107,30 @@ export interface ChatTurn {
 }
 
 /**
+ * Gemini requires chat history to start with a user turn and to alternate
+ * user/model. Drop empty turns and any leading model turns (e.g. a UI
+ * welcome message), then merge consecutive turns with the same role.
+ */
+function normalizeHistory(history: ChatTurn[]): ChatTurn[] {
+  const cleaned = history.filter((turn) => turn.text && turn.text.trim());
+  const firstUser = cleaned.findIndex((turn) => turn.role === "user");
+  if (firstUser === -1) return [];
+
+  const result: ChatTurn[] = [];
+  for (const turn of cleaned.slice(firstUser)) {
+    const last = result[result.length - 1];
+    if (last && last.role === turn.role) {
+      last.text = `${last.text}
+
+${turn.text}`;
+    } else {
+      result.push({ role: turn.role, text: turn.text });
+    }
+  }
+  return result;
+}
+
+/**
  * Multi-turn chat. `history` holds the previous turns, `message` is the new
  * user message. Returns the model reply, or null if Gemini is unavailable.
  */
@@ -122,9 +146,10 @@ export async function chatWithGemini(
     const chat = ai.chats.create({
       model: GEMINI_MODEL,
       ...(systemInstruction ? { config: { systemInstruction } } : {}),
-      history: history
-        .filter((turn) => turn.text && turn.text.trim())
-        .map((turn) => ({ role: turn.role, parts: [{ text: turn.text }] })),
+      history: normalizeHistory(history).map((turn) => ({
+        role: turn.role,
+        parts: [{ text: turn.text }],
+      })),
     });
     const response = await chat.sendMessage({ message });
     const text = response.text;

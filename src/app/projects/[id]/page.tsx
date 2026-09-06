@@ -10,6 +10,7 @@ import { EvidencePanel } from "@/components/evidence-panel";
 import { CalendarView } from "@/components/calendar-view";
 import { ChatPanel } from "@/components/chat-panel";
 import { MembersPanel } from "@/components/members-panel";
+import { PhaseAISuggestDialog, AddTaskDialog } from "@/components/phase-ai-suggest-dialog";
 import {
   cn,
   getStatusColor,
@@ -88,6 +89,8 @@ export default function ProjectDetailPage() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNotesDrawerOpen, setIsNotesDrawerOpen] = useState(false);
+  const [aiSuggestPhaseId, setAiSuggestPhaseId] = useState<string | null>(null);
+  const [addTaskPhaseId, setAddTaskPhaseId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"tasks" | "calendar" | "quality-label" | "evidence" | "chat" | "members" | "my-tasks" | "tools">("tasks");
 
   const fetchProject = useCallback(async () => {
@@ -512,8 +515,8 @@ export default function ProjectDetailPage() {
                     onTaskClick={handleTaskClick}
                     onTaskEdit={handleTaskClick}
                     onTaskDelete={handleTaskDelete}
-                    onAddTask={() => toast.info("Task addition feature will be added soon")}
-                    onAISuggest={() => toast.info("AI suggestion feature will be added soon")}
+                    onAddTask={(phaseId) => setAddTaskPhaseId(phaseId)}
+                    onAISuggest={(phaseId) => setAiSuggestPhaseId(phaseId)}
                   />
                 ))}
             </div>
@@ -697,6 +700,22 @@ export default function ProjectDetailPage() {
         projectId={projectId}
         isOpen={isNotesDrawerOpen}
         onClose={() => setIsNotesDrawerOpen(false)}
+      />
+
+      <PhaseAISuggestDialog
+        key={aiSuggestPhaseId ?? "ai-closed"}
+        phaseId={aiSuggestPhaseId}
+        phaseTitle={project?.phases?.find((p) => p.id === aiSuggestPhaseId)?.title}
+        onClose={() => setAiSuggestPhaseId(null)}
+        onTasksAdded={fetchProject}
+      />
+
+      <AddTaskDialog
+        key={addTaskPhaseId ?? "add-closed"}
+        phaseId={addTaskPhaseId}
+        phaseTitle={project?.phases?.find((p) => p.id === addTaskPhaseId)?.title}
+        onClose={() => setAddTaskPhaseId(null)}
+        onTaskAdded={fetchProject}
       />
     </div>
   );
