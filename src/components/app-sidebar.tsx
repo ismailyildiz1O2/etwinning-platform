@@ -7,12 +7,12 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Archive,
   Wrench,
   ShieldCheck,
   CheckSquare,
 } from "lucide-react";
+import { BrandTile } from "@/components/brand-mark";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -56,9 +56,7 @@ export function AppSidebar({ projects = [], isOpen = true, onToggle, isMobile = 
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-gray-100 dark:border-gray-800/80">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/25">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
+          <BrandTile size={36} className="shadow-lg shadow-blue-500/25" />
           {!collapsed && (
             <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
               eTwin

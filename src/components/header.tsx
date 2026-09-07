@@ -8,10 +8,10 @@ import {
   LogOut,
   User,
   Settings,
-  Sparkles,
   ChevronDown,
   Globe,
 } from "lucide-react";
+import { BrandTile } from "@/components/brand-mark";
 import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
@@ -74,9 +74,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
+          <BrandTile size={32} />
         </Link>
 
         <div className="hidden sm:flex items-center gap-2">

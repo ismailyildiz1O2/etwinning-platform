@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ChevronRight,
 } from "lucide-react";
+import { BrandTile } from "@/components/brand-mark";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -36,9 +37,7 @@ export default async function HomePage() {
         {/* Header */}
         <header className="flex items-center justify-between px-6 lg:px-12 py-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/25">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
+            <BrandTile size={40} className="shadow-lg shadow-blue-500/25" />
             <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
               eTwin Asistan
             </span>
@@ -173,9 +172,7 @@ export default async function HomePage() {
         <footer className="px-6 lg:px-12 py-8 border-t border-gray-200/50 dark:border-gray-800/50">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-white" />
-              </div>
+              <BrandTile size={28} />
               <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                 eTwin Asistan
               </span>

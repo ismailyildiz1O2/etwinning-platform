@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, UserPlus, Sparkles, Loader2, User } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, UserPlus, Loader2, User } from "lucide-react";
+import { BrandTile } from "@/components/brand-mark";
 import Link from "next/link";
 
 const registerSchema = z
@@ -91,9 +92,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-2xl shadow-blue-500/30 mb-4">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
+          <BrandTile size={64} className="mx-auto shadow-2xl shadow-blue-500/30 mb-4" />
           <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400">
             eTwin Assistant
           </h1>
