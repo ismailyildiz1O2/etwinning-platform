@@ -25,6 +25,6 @@ export async function proxy(request: NextRequest) {
 // Ensure the proxy doesn't run on public routes and static assets
 export const config = {
   matcher: [
-    "/((?!api/auth|auth|_next/static|_next/image|favicon.ico).*)"
+    "/((?!api/auth|auth|_next/static|_next/image|favicon.ico|icon.svg|apple-icon.png|brand/).*)"
   ],
 };
